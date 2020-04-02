@@ -1,0 +1,2211 @@
+Quality rule id;Quality rule name;Remediation effort (in minutes);Critical;Technologies
+3570;Avoid using Keywords as names; ;FALSE;.NET (Legacy Analyzer)/C#/VB.NET
+550;Class naming convention - case control (C++);;FALSE;C++
+552;Method naming convention - case control (C++);;FALSE;C++
+554;Constant naming convention - case control (C++);;FALSE;C++
+556;Macros naming convention - case control;;FALSE;C++
+558;Data Members naming convention - case control;;FALSE;C++
+562;File naming convention - embedded Class;;FALSE;C++
+564;Avoid including files other than header files;;FALSE;C++
+566;Avoid large Classes - too many Methods (C++);;FALSE;C++
+568;Avoid large Classes - too many Data Members (C++);;FALSE;C++
+570;Avoid large Interfaces - too many Methods (C++);;FALSE;C++
+576;Avoid large Classes - too many Constructors (C++);;FALSE;C++
+578;Avoid Classes with multiple inheritance;;FALSE;C++
+580;Avoid using Structures;;FALSE;C++
+584;Avoid Classes with at least one virtual Function and without a virtual Destructor;;FALSE;C++
+588;Avoid using Global Variables (C++);;FALSE;C++
+590;Avoid using global objects in Constructors and Destructors;;FALSE;C++
+592;Ensure you provide a user-defined copy constructor or disable copy when a class allocates memory in its constructor;;TRUE;C++
+610;Avoid circular references between header files;;FALSE;C++
+620;Avoid base Classes without virtual Destructors;;FALSE;C++
+628;Avoid invocation of virtual Methods of the declared Class in a Constructor or Destructor;;TRUE;C++
+630;Avoid data members that are not private;;FALSE;C++
+634;Avoid using VARIANT Structures;;FALSE;C++
+678;Never throw an exception from a Destructor;;TRUE;C++
+1050;Static Functions naming conventions - case control;;FALSE;C
+1052;Macros naming conventions - case control;;FALSE;C
+1054;Types naming conventions - suffix control;;FALSE;C
+1058;Avoid large Files - too many Lines of Code;;FALSE;C/C++
+1060;Avoid large Macros - too many Lines of Code;;FALSE;C/C++
+1066;Avoid implementation files that do not include a header file with the same name;;FALSE;C/C++
+1070;Avoid header files circular references;;FALSE;C
+1072;Avoid using memory management Functions (free/malloc/realloc);;FALSE;C/C++
+1074;Avoid using signals management Functions;;FALSE;C/C++
+1078;Avoid undocumented Header files;;FALSE;C/C++
+1082;Avoid header files with a very low comment/code ratio;;FALSE;C/C++
+1084;Non static functions naming conventions - case control;;FALSE;C
+1090;Avoid unreferenced Files;;FALSE;C
+1092;Avoid undocumented Implementation files;;FALSE;C/C++
+1094;Avoid Implementation files with a very low comment/code ratio;;FALSE;C/C++
+1558;Package naming convention - prefix control;;FALSE;PL/SQL
+1560;Package Function naming convention - prefix control;;FALSE;PL/SQL
+1562;Package Stored Procedure naming convention - prefix control;;FALSE;PL/SQL
+1564;Cursor naming convention - prefix control;;FALSE;PL/SQL
+1574;Use at most one statement per line;;FALSE;Forms/PL/SQL
+1576;Use varchar2 instead of char and varchar;;FALSE;PL/SQL
+1578;Avoid using LONG & LONG RAW datatype for Table Columns;;FALSE;PL/SQL
+1580;Avoid using execute immediate;;TRUE;Forms/PL/SQL
+1582;Avoid large Tables - too many columns;;FALSE;PL/SQL
+1588;Use WHEN OTHERS in exception management;;FALSE;Forms/PL/SQL
+1596;"Avoid using ""nullable"" Columns except in the last position in a Table";;FALSE;PL/SQL
+1598;Avoid Rule HINT  /*+ rule */ or --+ rule in PL/SQL code;;FALSE;Forms/PL/SQL
+1606;Triggers should not directly modify tables, a procedure or function should be used instead;;FALSE;Forms/PL/SQL
+1608;Avoid cascading Triggers;;FALSE;Forms/PL/SQL
+1634;Avoid unreferenced Tables;;FALSE;Microsoft T-SQL/PL/SQL/SQL Server/Sybase T-SQL
+2230;Use of style sheets (JEE);;FALSE;JEE
+2232;Pages should use error handling page;;FALSE;JEE
+2236;Avoid use of standard SQL API;;FALSE;JEE
+2238;Avoid unreferenced JSPs and web client files;;FALSE;JEE
+2242;Avoid direct definition of JavaScript Functions in a Web page (JEE);;FALSE;JEE
+2244;Avoid undocumented Web Server Pages;;FALSE;JEE
+2248;Avoid Web Server pages having a very low Comment/Code ratio;;FALSE;JEE
+2254;Avoid large Page files (JEE);;FALSE;JEE
+2258;All image files should be in a specific directory;;FALSE;JEE
+2260;All script files should be in a specific directory;;FALSE;JEE
+2262;All stylesheet files should be in a specific directory;;FALSE;JEE
+2264;All page files should be in a specific directory;;FALSE;JEE
+2266;Avoid non standard file extensions (JEE);;FALSE;JEE
+2278;"Check the use of ""foreach"" custom tag library";;FALSE;JEE
+2280;Avoid using Document.all collection;;FALSE;JEE
+2282;Avoid large Include Files;;FALSE;JEE
+2284;Avoid large JSP Pages - too many Scriptlets;;FALSE;JEE
+2552;Event naming convention - case control;;FALSE;Visual Basic
+2558;Method/Sub naming convention - case control;;FALSE;Visual Basic
+2560;Property naming convention - case control;;FALSE;Visual Basic
+2562;Avoid long Functions;;FALSE;Visual Basic
+2564;Use a single Error Handling Method;;FALSE;Visual Basic
+2572;Avoid declaring VB Variables without typing them (Visual Basic);;FALSE;Visual Basic
+2574;Avoid using Global Variables (Visual Basic);;FALSE;Visual Basic
+2576;Avoid Variables declared as Variants;;TRUE;Visual Basic
+2580;Avoid use of Scripting.FileSystemObject;;FALSE;Visual Basic
+2582;Use Option Explicit;;FALSE;Visual Basic
+2584;Avoid using late binding;;FALSE;Visual Basic
+2586;"Utilization of ""DoEvents"" inside a loop";;TRUE;Visual Basic
+2588;Avoid declaring Class Variables without declaring access Properties;;FALSE;Visual Basic
+2590;"Avoid using ""On error Resume Next"" in the Class event terminate";;FALSE;Visual Basic
+2592;Encapsulation compliance;;FALSE;Visual Basic
+2616;Avoid undocumented Forms;;FALSE;.NET (Legacy Analyzer)/C#/VB.NET/Visual Basic
+2618;Avoid Forms with a very low comment/code ratio;;FALSE;VB.NET/Visual Basic
+2620;Avoid undocumented Modules;;FALSE;.NET (Legacy Analyzer)/VB.NET/Visual Basic
+2622;Avoid Modules with a very low comment/code ratio;;FALSE;VB.NET/Visual Basic
+2624;Avoid unreferenced Forms;;FALSE;C#/VB.NET/Visual Basic
+2626;Avoid unreferenced Modules;;FALSE;VB.NET/Visual Basic
+3058;Use of style sheets (ASP);;FALSE;ASP
+3060;Pages with less than 3 levels of inclusion;;FALSE;ASP
+3062;Use of error handling page;;FALSE;ASP
+3064;Avoid use of Session variables from Session_OnEnd;;FALSE;ASP
+3066;Use of Web Classes;;FALSE;ASP
+3070;Avoid non standard file extensions (ASP);;FALSE;ASP
+3072;Consistent File full name and directory structure;;FALSE;ASP
+3074;Index pages and global.asa must be located in the root directory;;FALSE;ASP
+3076;Avoid using more than one scripting language in one page;;FALSE;ASP
+3078;Avoid unreferenced code;;FALSE;ASP
+3080;Avoid undocumented Pages;;FALSE;ASP
+3082;Avoid ASP pages having a very low Comment/Code ratio;;FALSE;ASP
+3088;Avoid large Page files (ASP);;FALSE;ASP
+3102;Avoid using Transactions in an ASP Page;;FALSE;ASP
+3148;An include file must contain at most one Class definition;;FALSE;C++
+3550;Namespace naming convention - case control;;FALSE;.NET (Legacy Analyzer)/C#/VB.NET
+3554;Interface naming convention - case and character set control;;FALSE;.NET (Legacy Analyzer)/C#/VB.NET
+3558;Enumerations naming convention - case and character set control;;FALSE;.NET (Legacy Analyzer)/C#/VB.NET
+3560;Enumeration Items naming convention - case and character set control;;FALSE;.NET (Legacy Analyzer)/C#/VB.NET
+3562;Private Fields naming convention - case and character set control;;FALSE;.NET (Legacy Analyzer)/C#/VB.NET
+3564;Public Fields naming convention - case and character set control;;FALSE;.NET (Legacy Analyzer)/C#/VB.NET
+3566;Methods naming convention - case and character set control;;FALSE;.NET (Legacy Analyzer)/C#/VB.NET
+3568;Events naming convention - case and character set control;;FALSE;.NET (Legacy Analyzer)/C#/VB.NET
+3572;Controls naming convention - prefix, case and character set control;;FALSE;.NET (Legacy Analyzer)/C#/VB.NET
+3574;Properties naming convention - case and character set control;;FALSE;.NET (Legacy Analyzer)/C#/VB.NET
+3576;Avoid declaring public Fields;;TRUE;.NET (Legacy Analyzer)/C#/VB.NET
+3578;Avoid large Classes - too many Constructors (.NET);;FALSE;.NET (Legacy Analyzer)/C#/VB.NET
+3580;Avoid large Classes - too many Methods (.NET);;FALSE;.NET (Legacy Analyzer)/C#/VB.NET
+3586;Avoid large Methods - too many Lines of Code;;FALSE;.NET (Legacy Analyzer)/C#/VB.NET
+3590;Avoid Interface implementation on Structures;;FALSE;.NET (Legacy Analyzer)/C#/VB.NET
+3610;Avoid declaring VB Variables without typing them (.NET);;FALSE;.NET (Legacy Analyzer)/VB.NET
+3612;Avoid missing release of SQL connection after an effective lifetime (C#, VB.NET);;TRUE;.NET (Legacy Analyzer)/C#/VB.NET
+3614;Avoid using String.Empty for empty string tests;;FALSE;.NET (Legacy Analyzer)/C#/VB.NET
+3616;Data Access must be based on Stored Procedure Calls;;FALSE;.NET (Legacy Analyzer)/C#/VB.NET
+3626;Avoid Interfaces with a very low comment/code ratio;;FALSE;.NET (Legacy Analyzer)/C#/VB.NET
+3630;Avoid having Classes implementing too many Interfaces;;FALSE;.NET (Legacy Analyzer)/C#/VB.NET
+4056;Avoid recursive Triggers;;FALSE;Microsoft T-SQL/SQL Server/Sybase T-SQL
+4058;Avoid queries using old style join convention  instead of ANSI-Standard joins;;FALSE;SQL Server
+4062;Avoid Functions and Procedures doing an Insert, Update or Delete without managing a transaction;;FALSE;Microsoft T-SQL/SQL Server/Sybase T-SQL
+4064;Avoid Procedures using an Insert, Update, Delete, Create Table or Select without including error management;;TRUE;Microsoft T-SQL/SQL Server/Sybase T-SQL
+4066;Avoid Stored Procedures not returning a status value;;FALSE;Microsoft T-SQL/SQL Server/Sybase T-SQL
+4070;"Avoid use of ""truncate table""";;TRUE;Microsoft T-SQL/SQL Server/Sybase T-SQL
+4076;Avoid using temporary Objects;;FALSE;Microsoft T-SQL/SQL Server/Sybase T-SQL
+4084;Avoid nested Stored Procedures using temporary Tables;;FALSE;Microsoft T-SQL/SQL Server/Sybase T-SQL
+4554;Avoid large Classes - too many Methods (JEE);;FALSE;JEE
+4556;Avoid large Classes - too many Constructors (JEE);;FALSE;JEE
+4558;Avoid large Classes - too many Fields;;FALSE;JEE
+4560;Avoid large Interfaces - too many Methods (JEE);;FALSE;JEE
+4566;Avoid declaring Instance Variables without defined access type;;FALSE;JEE
+4568;Avoid declaring Public Instance Variables;;TRUE;JEE
+4570;Avoid declaring Non Final Class Variables with Public or Package access type;;FALSE;JEE
+4572;Avoid declaring Final Instance Variables that are not dynamically initialized;;FALSE;JEE
+4574;Avoid using deprecated objects;;FALSE;JEE
+4576;Provide accessors to Private Fields;;FALSE;JEE
+4578;Good use of Interfaces with collections as Method return types;;FALSE;JEE
+4580;Good use of Interfaces when instantiating a collection;;FALSE;JEE
+4592;Avoid hiding static Methods;;TRUE;JEE
+4594;Avoid using 'java.io.File';;FALSE;JEE
+4596;Avoid using 'java.lang.System.getenv()';;FALSE;JEE
+4598;Avoid using 'java.lang.Runtime.exec()';;FALSE;JEE
+4600;Avoid using 'java.System.exit()';;FALSE;JEE
+4602;Avoid using Fields (non static final) from other Classes;;TRUE;JEE
+4604;Avoid using 'java.lang.Error';;FALSE;JEE
+4606;Avoid using 'sun.*' Classes;;FALSE;JEE
+4610;Avoid using anonymous Classes;;FALSE;JEE
+4612;Avoid using native Methods (JNI);;FALSE;JEE
+4614;Proper overriding of 'clone()';;TRUE;JEE
+4616;Proper overriding of 'finalize()';;TRUE;JEE
+4618;Avoid instantiating Boolean;;FALSE;JEE
+4652;Avoid direct Class inheritance from java.lang.Throwable;;FALSE;JEE
+4656;Avoid declaring throwing an exception and not throwing it;;FALSE;JEE
+4666;Classes and Interfaces must have JavaDoc Comments;;FALSE;JEE
+4668;Classes and Interfaces must have JavaDoc @author tag;;FALSE;JEE
+4670;Methods must have JavaDoc comments;;FALSE;JEE
+4672;Methods must have appropriate JavaDoc @param tags;;FALSE;JEE
+4674;Methods must have appropriate JavaDoc @return tags;;FALSE;JEE
+4676;Methods must have appropriate JavaDoc @throws tags;;FALSE;JEE
+4678;Methods must have appropriate JavaDoc @exception tags;;FALSE;JEE
+4680;Fields must have JavaDoc Comments;;FALSE;JEE
+4694;Avoid using 'System.gc';;FALSE;JEE
+4696;Avoid using 'System.err' and 'System.out' within a try catch block;;FALSE;JEE
+4698;Avoid using 'System.err' and 'System.out' outside a try catch block;;FALSE;JEE
+4702;Avoid using 'Throwable.printStackTrace()' outside a try catch block;;FALSE;JEE
+4704;Avoid using Vector;;FALSE;JEE
+4706;Avoid using Hashtable;;FALSE;JEE
+4708;Avoid using Dynamic instantiation;;FALSE;JEE
+4712;Avoid inheritance down the Package path;;FALSE;JEE
+4716;Avoid Classes implementing too many Interfaces (JEE);;FALSE;JEE
+4718;Package size control;;FALSE;JEE
+4722;Track Classes referencing Database objects;;FALSE;JEE
+4730;Package naming convention - case control;;FALSE;JEE
+4732;Interface naming convention - case control;;FALSE;JEE
+4734;Class naming convention - case control (JEE);;FALSE;JEE
+4736;Method naming convention - case control (JEE);;FALSE;JEE
+4738;Constant naming convention - case control (JEE);;FALSE;JEE
+4740;Field naming convention - case control;;FALSE;JEE
+4744;EJB Entity access through their local Interface;;TRUE;JEE
+4746;EJB Session access through their local Interface;;TRUE;JEE
+5050;Avoid using HANDLE CONDITION;;FALSE;Cobol
+5052;Avoid using IGNORE CONDITION;;FALSE;Cobol
+5054;Avoid using HANDLE ABEND;;FALSE;Cobol
+5056;Using SEARCH ALL only with sorted data;;FALSE;Cobol
+5058;Avoid using SORT;;FALSE;Cobol
+5060;Avoid using MERGE;;FALSE;Cobol
+5062;Avoid using ALTER;;TRUE;Cobol
+5064;Program naming convention - prefix control;;FALSE;Cobol
+5066;Avoid using PERFORM ... THROUGH | THRU;;FALSE;Cobol
+5068;Avoid STOP RUN (use GOBACK instead);;FALSE;Cobol
+5070;Section naming convention - prefix control;;FALSE;Cobol
+5072;Avoid DISPLAY ... UPON CONSOLE;;FALSE;Cobol
+5074;Paragraph naming convention - prefix control;;FALSE;Cobol
+5080;Avoid Procedure Paragraphs that contains no statements;;FALSE;Cobol
+5082;Avoid Procedure Sections that contain no Paragraph;;FALSE;Cobol
+5086;Avoid using Sections in the PROCEDURE DIVISION (use Paragraphs only);;FALSE;Cobol
+5090;Avoid using NEXT SENTENCE;;FALSE;Cobol
+5092;Include a WHEN OTHER clause when using EVALUATE;;FALSE;Cobol
+5094;Avoid using MOVE CORRESPONDING ... TO ...;;TRUE;Cobol
+5100;Avoid large Sections - too many Lines of Code;;FALSE;Cobol
+5104;Avoid large Programs - too many Sections;;FALSE;Cobol
+5108;Avoid Sections with a very low comment/code ratio (COBOL);;FALSE;Cobol
+5110;Avoid Programs with a very low comment/code ratio (COBOL);;FALSE;Cobol
+5112;Avoid undocumented Sections (COBOL);;FALSE;Cobol
+5114;Avoid undocumented Programs (COBOL);;FALSE;Cobol
+5116;Avoid undocumented Paragraphs;;FALSE;Cobol
+5138;Avoid Programs with lines of more than 80 characters;;FALSE;Cobol
+5144;Avoid using GOTO statement (COBOL);;FALSE;Cobol
+5550;Avoid having joins with more than 4 Tables;;FALSE;Forms
+5554;"Avoid having SQL code in Triggers named ""pre-record""";;FALSE;Forms
+5558;Based Data Blocks naming convention - represented table;;FALSE;Forms
+5560;Based Data Block Items naming convention - represented column;;FALSE;Forms
+5562;Not Based Data Blocks naming convention - prefix control;;FALSE;Forms
+5564;Not Based Data Block Items naming convention - prefix control;;FALSE;Forms
+5566;Use of call_form built-in Function from a centralized location;;FALSE;Forms
+5572;Avoid objects without COMMENT property;;FALSE;Forms
+6050;Datawindow naming convention;;FALSE;PowerBuilder
+6052;Global function naming convention;;FALSE;PowerBuilder
+6054;Menu naming convention;;FALSE;PowerBuilder
+6056;Structure naming convention;;FALSE;PowerBuilder
+6062;Window naming convention;;FALSE;PowerBuilder
+6066;Global variable naming convention;;FALSE;PowerBuilder
+6068;Instance variable naming convention;;FALSE;PowerBuilder
+6070;User event naming convention;;FALSE;PowerBuilder
+6072;Method naming convention;;FALSE;PowerBuilder
+6076;Avoid Datawindows that does not access a database data;;FALSE;PowerBuilder
+6078;Avoid Datawindows accessing Database Procedures or Functions;;FALSE;PowerBuilder
+6082;Avoid PB Function/Event/Method accessing Database Procedures or Functions;;FALSE;PowerBuilder
+6084;Avoid having unreferenced code;;FALSE;PowerBuilder
+6102;Avoid undocumented Events;;FALSE;PowerBuilder
+6104;Avoid events with a very low comment/code ratio;;FALSE;PowerBuilder
+6106;User event naming convention - declare only;;FALSE;PowerBuilder
+6110;Controls must inherit from a userobject;;FALSE;PowerBuilder
+6112;Avoid using global variables;;FALSE;PowerBuilder
+6114;Avoid using global functions;;FALSE;PowerBuilder
+6124;Datawindows accessing database must be based on procedure;;FALSE;PowerBuilder
+6126;Avoid using dynamic SQL in scripts;;FALSE;PowerBuilder
+6128;Avoid window with too high level of inheritance;;FALSE;PowerBuilder
+6130;Avoid userobject with too high level of inheritance;;FALSE;PowerBuilder
+6132;Avoid overriding event;;FALSE;PowerBuilder
+6134;Avoid menu with too high level of inheritance;;FALSE;PowerBuilder
+6142;Avoid Windows with too many Methods;;FALSE;PowerBuilder
+6144;Avoid Userobject with too many Methods;;FALSE;PowerBuilder
+6150;Avoid Menus, UserObjects and Windows that have no inheritance relations with other objects;;FALSE;PowerBuilder
+6162;Avoid Artifacts with High integration complexity;;FALSE;PowerBuilder
+6184;Avoid Artifacts with Subqueries (Power Builder);;TRUE;PowerBuilder
+6194;Avoid Artifacts with lines of more than 80 characters;;FALSE;PowerBuilder
+7050;Function naming convention;;FALSE;ABAP
+7054;Avoid large Programs - too many Lines of Code (ABAP);;FALSE;ABAP
+7056;Avoid Programs/Includes including large Includes;;FALSE;ABAP
+7058;Avoid Programs with too many includes;;FALSE;ABAP
+7060;Avoid undocumented Programs (ABAP);;FALSE;ABAP
+7062;Avoid undocumented Includes;;FALSE;ABAP
+7066;Avoid Programs with low comment/code ratio;;FALSE;ABAP
+7068;Avoid Includes with low comment/code ratio;;FALSE;ABAP
+7072;Program naming convention;;FALSE;ABAP
+7074;Include naming convention;;FALSE;ABAP
+7076;Avoid Programs/Includes with too many Forms;;FALSE;ABAP
+7082;Avoid Function pools with more than 20 functions;;FALSE;ABAP
+7088;Processing Screen Naming Convention;;FALSE;ABAP
+7092;Avoid Include Circular references;;FALSE;ABAP
+7094;Avoid Programs with more than 3 levels of inclusion;;FALSE;ABAP
+7126;Avoid Artifacts with high Commented-out Code Lines/Code Lines ratio;;FALSE;ALL TECHNOLOGIES
+7130;Avoid Artifacts with High Depth of Nested Subqueries;;FALSE;ALL TECHNOLOGIES
+7132;Action Mappings should have few forwards;;FALSE;JEE
+7134;Avoid having local forward with same name as global forward;;FALSE;JEE
+7136;Each method in an Action Class should have a small complexity;;FALSE;JEE
+7138;Action Classes should only be called by Action Mappings tag (for Struts 1.x) or Action tag (for Struts 2.x);;FALSE;JEE
+7140;Action Artifacts should not directly call a JSP page;;TRUE;JEE
+7142;Action Classes should have only one public method;;FALSE;JEE
+7144;Action Artifacts should not directly use database objects;;TRUE;JEE
+7146;JSP pages should only reference Java Objects associated to J2EE Scoped Bean;;FALSE;JEE
+7148;JSP pages should always be accessed through their tiles definition;;FALSE;JEE
+7150;Favor PreparedStatement or CallableStatement over Statement;;FALSE;JEE
+7152;Avoid Fields in Servlet Classes that are not final static;;TRUE;JEE
+7154;Avoid Fields in Action Classes that are not final static;;TRUE;JEE
+7156;Avoid Too Many Copy Pasted Artifacts;;FALSE;ALL TECHNOLOGIES
+7188;Private fields must have JavaDoc Comments;;FALSE;JEE
+7190;Validator form validate() Method must call super.validate();;FALSE;JEE
+7192;Form Bean must extend Validator Class;;FALSE;JEE
+7194;Avoid large number of String concatenation (.NET);;FALSE;.NET (Legacy Analyzer)/C#/VB.NET
+7196;Avoid large number of String concatenation (JEE);;FALSE;JEE
+7198;Avoid String concatenation in loops (.NET);;FALSE;.NET (Legacy Analyzer)/C#/VB.NET
+7200;Avoid String concatenation in loops (JEE);;FALSE;JEE
+7202;Check usage of '==' and '!=' on objects;;TRUE;JEE
+7204;Avoid method invocation in a loop termination expression;;FALSE;ALL TECHNOLOGIES
+7206;Avoid the use of InstanceOf inside loops;;FALSE;JEE
+7208;Avoid the use of is inside loops;;FALSE;.NET (Legacy Analyzer)/C#/VB.NET
+7210;Avoid instantiations inside loops;;TRUE;JEE
+7212;Avoid instantiations inside loops (.NET);;TRUE;.NET (Legacy Analyzer)/C#/VB.NET
+7218;Avoid OPEN/CLOSE inside loops;;TRUE;Cobol
+7220;Avoid Unused Imports;;FALSE;JEE
+7234;EVALUATE statements must be closed by END-EVALUATE;;FALSE;Cobol
+7236;Avoid recursive calls with PERFORM statements;;TRUE;Cobol
+7238;Avoid calls between JSP Pages;;FALSE;JEE
+7240;Action Classes should only call Business Classes;;FALSE;JEE
+7242;Avoid implementing Action Classes inheriting directly from Struts Action;;FALSE;JEE
+7246;Avoid Packages with High Efferent Coupling (CE);;FALSE;JEE
+7248;Avoid Packages with High Afferent Coupling (CA);;FALSE;JEE
+7250;Avoid String initialization with String object (created using the 'new' keyword);;FALSE;JEE
+7252;"Call 'super.finalize ()' in the ""finally"" block of 'finalize ()' methods";;FALSE;JEE
+7254;Declare as Static all methods not using instance members (JEE);;FALSE;JEE
+7256;Provide a private default Constructor for utility Classes (JEE);;FALSE;JEE
+7258;DataReader must be called using CommandBehavior.CloseConnection enumeration;;FALSE;.NET (Legacy Analyzer)/C#/VB.NET
+7260;User Interface elements must not use directly the database;;FALSE;.NET (Legacy Analyzer)/C#/VB.NET
+7262;Avoid Namespaces with High Efferent Coupling (CE);;FALSE;.NET (Legacy Analyzer)/C#/VB.NET
+7264;Avoid namespaces with High Afferent Coupling (CA);;FALSE;.NET (Legacy Analyzer)/C#/VB.NET
+7266;"Call 'base.Dispose()' or 'MyBase.Finalize()' in the ""finally"" block of 'Dispose(bool)' methods";;FALSE;.NET (Legacy Analyzer)/C#/VB.NET
+7268;Dispose() methods should call GC.SuppressFinalize;;FALSE;.NET (Legacy Analyzer)/C#/VB.NET
+7270;Declare as Static all methods not using instance members (.NET);;FALSE;.NET (Legacy Analyzer)/C#/VB.NET
+7272;Provide a private default Constructor for utility Classes (.NET);;FALSE;.NET (Legacy Analyzer)/C#/VB.NET
+7274;Avoid GOTO jumps out of PERFORM range;;FALSE;Cobol
+7288;Avoid cyclic calls with PERFORM statements;;FALSE;Cobol
+7290;Avoid unreferenced Sections and Paragraphs;;FALSE;Cobol
+7292;Avoid cyclical calls and inheritances between packages;;TRUE;JEE
+7294;Avoid cyclical calls and inheritances between namespaces content;;TRUE;.NET (Legacy Analyzer)/C#/VB.NET
+7296;Never define static variables in header files;;TRUE;C/C++
+7300;Avoid large Paragraphs - too many Lines of Code;;FALSE;Cobol
+7302;Avoid using Pointers;;FALSE;Cobol
+7304;IF statements must be closed by END-IF;;FALSE;Cobol
+7306;Avoid declaring Inner Classes;;FALSE;JEE
+7308;Avoid using Inner Classes;;FALSE;JEE
+7340;Avoid Classes with Destructor not explicitly virtual whenever one of its base Class has a virtual Destructor;;FALSE;C++
+7342;Avoid functions overriding virtual functions without having the 'virtual' keyword;;FALSE;C++
+7344;"Avoid ""SELECT *"" queries";;FALSE;ALL TECHNOLOGIES
+7346;Avoid redundant indexes;;FALSE;ALL TECHNOLOGIES
+7348;Avoid too many Indexes on one Table;;FALSE;ALL TECHNOLOGIES
+7350;Avoid Tables having Indexes with a too large Index definition;;FALSE;ALL TECHNOLOGIES
+7352;Avoid calling properties that clone values in loops;;FALSE;.NET (Legacy Analyzer)/C#/VB.NET
+7358;Avoid call to AcceptChanges in a loop;;TRUE;.NET (Legacy Analyzer)/C#/VB.NET
+7362;Avoid action mappings validator turned off;;TRUE;JEE
+7366;File descriptor block must be defined with 0 record;;TRUE;Cobol
+7368;When using binary data items (COMP), then use the SYNCHRONIZED clause;;FALSE;Cobol
+7370;Avoid using inline PERFORM with too many lines of code;;FALSE;Cobol
+7372;Enable Struts Validator plugin;;TRUE;JEE
+7378;Avoid include JavaScript Files;;FALSE;JEE
+7380;Avoid unused validation form;;FALSE;JEE
+7382;Avoid Validator field without Form Field;;FALSE;JEE
+7386;Avoid Tables without a clustered Index;;FALSE;Microsoft T-SQL/SQL Server/Sybase T-SQL
+7388;Avoid artifacts having recursive calls;;FALSE;ALL TECHNOLOGIES
+7390;Avoid having multiple artifacts inserting data on the same SQL Table;;FALSE;ALL TECHNOLOGIES
+7392;Avoid having multiple artifacts deleting data on the same SQL table;;FALSE;ALL TECHNOLOGIES
+7394;Avoid having multiple artifacts updating data on the same SQL Table;;FALSE;ALL TECHNOLOGIES
+7404;Avoid unreferenced views;;FALSE;Microsoft T-SQL/PL/SQL/SQL Server/Sybase T-SQL
+7416;Avoid Form Field without Validator;;TRUE;JEE
+7418;Avoid SQL queries using functions on indexed columns in the WHERE clause;;FALSE;ALL TECHNOLOGIES
+7420;Avoid SQL queries with implicit conversions in the WHERE clause;;FALSE;ABAP/Forms/Microsoft T-SQL/PL/SQL/SQL Server/Sybase T-SQL
+7424;Avoid using SQL queries inside a loop;;TRUE;ALL TECHNOLOGIES
+7428;Avoid SQL queries not using the first column of a composite index in the WHERE clause;;FALSE;ALL TECHNOLOGIES
+7434;Avoid classes overriding only equals() or only hashCode();;TRUE;JEE
+7436;Prefer UNION ALL to UNION;;FALSE;ALL TECHNOLOGIES
+7438;Avoid non thread safe singleton;;TRUE;JEE
+7440;Suspicious similar method names or signatures in an inheritance tree;;TRUE;JEE
+7442;Avoid to use this within Constructor in multi-thread environment;;TRUE;JEE
+7444;Serialize session objects;;FALSE;JEE
+7446;Avoid double checked locking;;TRUE;JEE
+7448;Always validate user input with Request variables;;TRUE;ASP
+7458;Avoid large Interfaces - too many Methods (.NET);;FALSE;.NET (Legacy Analyzer)/C#/VB.NET
+7466;Avoid changing DataSource member before ValueMember/DisplayMember;;FALSE;.NET (Legacy Analyzer)/C#/VB.NET
+7468;Disable constraints before merging DataSet;;FALSE;.NET (Legacy Analyzer)/C#/VB.NET
+7470;Avoid doing select on Datatable in loop;;TRUE;.NET (Legacy Analyzer)/C#/VB.NET
+7474;Use BeginUpdate/EndUpdate when using Items.Add method in loop;;FALSE;.NET (Legacy Analyzer)/C#/VB.NET
+7476;"Turn off ""Multiple SQL statements for each measure""";;TRUE;Business Object
+7480;Use aggregate awareness for indicators;;FALSE;Business Object
+7482;Do not use Cartesian products in Universe properties;;TRUE;Business Object
+7484;Objects in Universe using inexistent Table/Column;;TRUE;Business Object
+7486;Split universes of more than X MB;;FALSE;Business Object
+7488;Use lazy fetching for collection;;TRUE;JEE
+7490;Avoid UPDATE trigger firing when not necessary;;TRUE;JEE
+7492;Avoid many-to-many association;;FALSE;JEE
+7494;Persistent class method's equals() and hashCode() must access its fields through getter methods;;TRUE;JEE
+7496;Use table-per-subclass strategy when subclasses have many properties;;FALSE;JEE
+7498;Collection must be the same between getter and setter;;FALSE;JEE
+7500;Use table-per-class-hierarchy when subclasses have few properties;;FALSE;JEE
+7502;Never use array to map a collection;;TRUE;JEE
+7504;Persistent classes should Implement hashCode() and equals();;TRUE;JEE
+7506;Define equals() and hashCode() for component;;TRUE;JEE
+7508;Collection-typed attributes getter must be defined with the correct interface;;FALSE;JEE
+7510;Use only Hibernate API to access to the database;;FALSE;JEE
+7512;Avoid empty Functions, Forms and Modules;;FALSE;ABAP
+7514;Avoid empty Includes;;FALSE;ABAP
+7516;Avoid empty Programs;;FALSE;ABAP
+7518;Avoid missing WHEN OTHERS in CASE statements;;FALSE;ABAP
+7520;Avoid unchecked return code (SY-SUBRC) after OPEN SQL or READ statement;;TRUE;ABAP
+7524;Avoid using BREAK or BREAK-POINT statement;;TRUE;ABAP
+7526;Avoid using hardcoded paths;;FALSE;ABAP
+7528;Never use the ON CHANGE OF statement;;FALSE;ABAP
+7530;"Avoid ""SELECT *"" or ""SELECT SINGLE *"" queries";;FALSE;ABAP
+7532;Avoid nested SELECT ... ENDSELECT statements;;TRUE;ABAP
+7534;Avoid READ TABLE without BINARY SEARCH;;TRUE;ABAP
+7536;Avoid using AT Events in combination of LOOP AT .... WHERE constructs;;TRUE;ABAP
+7538;Avoid using SELECT ... INTO CORRESPONDING FIELDS OF;;TRUE;ABAP
+7540;Avoid unreferenced Includes;;FALSE;ABAP
+7542;Avoid using FOR ALL ENTRIES IN without emptiness check;;FALSE;ABAP
+7544;Avoid using SELECT ... ENDSELECT statement;;FALSE;ABAP
+7548;Never use incompatible statements with the CICS environment;;TRUE;Cobol
+7550;Avoid using nested programs;;FALSE;Cobol
+7552;Avoid incoherent file accesses in Cobol programs and DISP clauses in JCL;;FALSE;Cobol
+7554;Never access an IMS segment with an access mode not authorized in the PCB;;FALSE;Cobol
+7556;Avoid instanceof in Methods that override or implement Object.equals(), Comparable.compareTo();;FALSE;JEE
+7558;Avoid accessing data by using the position and length;;FALSE;Cobol
+7562;Avoid static Field of type collection;;FALSE;JEE
+7568;Avoid undocumented User-exits;;FALSE;ABAP
+7570;Avoid User-Exits with low comment/code ratio;;FALSE;ABAP
+7572;Avoid accessing multiple times the same SAP Table or View in an SAP include (DELETE);;FALSE;ABAP
+7576;Avoid accessing multiple times the same SAP Table or View in an SAP include (INSERT);;FALSE;ABAP
+7578;Avoid accessing multiple times the same SAP Table or View in an SAP include (UPDATE);;FALSE;ABAP
+7580;Avoid accessing multiple times the same SAP Table or View in an SAP Program (DELETE);;FALSE;ABAP
+7582;Avoid accessing multiple times the same SAP Table or View in an SAP Program (INSERT);;FALSE;ABAP
+7584;Avoid accessing multiple times the same SAP Table or View in an SAP Program (UPDATE);;FALSE;ABAP
+7586;Avoid cyclic calls between Event and its handled Method;;FALSE;ABAP
+7592;"Avoid using ""ORDER BY"" in SELECTS";;FALSE;ABAP
+7594;"Avoid using ""SELECT DISTINCT"", use DELETE-ADJACENT";;FALSE;ABAP
+7596;Avoid Classes implementing too many Interfaces (ABAP);;FALSE;ABAP
+7598;Class naming convention;;FALSE;ABAP
+7602;Transaction naming convention;;FALSE;ABAP
+7612;Avoid Interfaces with a low comment/code ratio;;FALSE;ABAP
+7624;Class members should be declared as Private;;FALSE;ABAP
+7626;Avoid large Classes - too many Methods (ABAP);;FALSE;ABAP
+7628;Avoid large Classes - too many Data Members (ABAP);;FALSE;ABAP
+7630;Avoid large Interfaces - too many Methods (ABAP);;FALSE;ABAP
+7634;Avoid select-before-update when the Table is not associated to an UPDATE Trigger;;TRUE;JEE
+7636;Use version instead of timestamp;;FALSE;JEE
+7638;Avoid using DriverManager;;FALSE;JEE
+7640;Avoid catch blocks with assertion;;FALSE;JEE
+7642;Avoid SQL queries on XXL tables not using the first column of a composite index in the WHERE clause;;TRUE;ALL TECHNOLOGIES
+7644;Avoid executing multiple OPEN statements;;FALSE;Cobol
+7648;Avoid calling finalize();;FALSE;JEE
+7650;All types of a serializable Class must be serializable;;FALSE;JEE
+7652;Avoid throwing an exception in a catch block without chaining it;;FALSE;JEE
+7654;Avoid database tables associated to more than one Entity;;FALSE;JEE
+7658;Avoid SQL queries on XXL Tables using Functions on indexed Columns in the WHERE clause;;TRUE;ALL TECHNOLOGIES
+7660;Never use SQL queries with a cartesian product on XXL Tables;;TRUE;ABAP/Forms/Microsoft T-SQL/PL/SQL/SQL Server/Sybase T-SQL
+7662;Avoid SQL queries on XXL Tables with implicit conversions in the WHERE clause;;TRUE;ABAP/Forms/Microsoft T-SQL/PL/SQL/SQL Server/Sybase T-SQL
+7664;Avoid using FOR ALL ENTRIES IN without emptiness check on XXL Tables;;FALSE;ABAP
+7666;Avoid using SELECT ... ENDSELECT statement on XXL Tables;;FALSE;ABAP
+7668;Avoid using incorrect XML parsing model;;FALSE;JEE
+7670;Avoid accessing SAP standard Tables in modification from custom code;;TRUE;ABAP
+7672;Avoid using EXIT statement in Include;;FALSE;ABAP
+7676;Avoid too many packages referencing Mainframe;;FALSE;JEE
+7678;Avoid using specific logging implementation;;FALSE;JEE
+7680;Declare as Final all classes that will not be sub-classed;;FALSE;ABAP
+7682;Avoid domain model depending on other Java API;;FALSE;JEE
+7688;Never truncate data in MOVE statements;;TRUE;Cobol
+7690;Avoid unchecked return code (SQLCODE) after EXEC SQL query;;TRUE;Cobol
+7692;Each opened file must be closed;;FALSE;Cobol
+7694;Avoid calling the same paragraph with PERFORM and GO TO statements;;FALSE;Cobol
+7696;A Copybook should not include other Copybooks;;FALSE;Cobol
+7698;Files should be declared with a FILE-STATUS;;FALSE;Cobol
+7700;Use only Struts HTTP Servlet;;FALSE;JEE
+7702;Use a third party connection pool;;FALSE;JEE
+7704;Avoid static Fields that are not final;;FALSE;JEE
+7706;Avoid table and column names that are too long (portability);;FALSE;JEE
+7708;Avoid using session.setFlushMode(FlushMode.COMMIT, FlushMode.NEVER or FlushMode.MANUAL);;FALSE;JEE
+7710;Avoid non serializable Entities;;FALSE;JEE
+7712;Avoid public/protected setter for the generated identifier field;;FALSE;JEE
+7714;Do not use auto-wiring;;FALSE;JEE
+7716;Avoid defining singleton or factory when using Spring;;FALSE;JEE
+7718;Sections and paragraphs should be located after the first statement calling them;;FALSE;Cobol
+7720;Avoid too many EJB bean;;TRUE;JEE
+7722;Avoid using references to the id in the persistent class's method equals();;TRUE;JEE
+7724;Overriden equals() Methods in persistent Subclasses should only reference properties from the persistent base Class;;TRUE;JEE
+7726;Avoid Action artifacts that call packages that reference database;;FALSE;JEE
+7728;Avoid thread creation for application running on application server;;FALSE;JEE
+7730;Use declarative transaction;;FALSE;JEE
+7732;Avoid non validated inputs;;TRUE;JEE
+7734;Avoid to use Log.debug() without calling Log.isDebugEnabled();;FALSE;JEE
+7740;Avoid HTTP response splitting;;TRUE;C#/JEE/VB.NET
+7742;Avoid SQL injection vulnerabilities;;TRUE;C#/JEE/VB.NET
+7746;Avoid LDAP injection vulnerabilities;;TRUE;C#/JEE/VB.NET
+7748;Avoid OS command injection vulnerabilities;;TRUE;C#/JEE/VB.NET
+7750;Avoid XPath injection vulnerabilities;;TRUE;C#/JEE/VB.NET
+7752;Avoid file path manipulation vulnerabilities;;TRUE;C#/JEE/VB.NET
+7754;Avoid using COMPUTE statement for elementary arithmetic operation;;FALSE;Cobol
+7756;Avoid using READ statement without AT END clause or INVALID KEY clause;;FALSE;Cobol
+7760;Avoid triggers, functions and procedures with a very low comment/code ratio;;FALSE;Forms/Microsoft T-SQL/PL/SQL/SQL Server/Sybase T-SQL
+7762;Avoid undocumented Triggers, Functions and Procedures;;FALSE;Forms/Microsoft T-SQL/PL/SQL/SQL Server/Sybase T-SQL
+7766;Avoid Artifacts with High Cyclomatic Complexity;;FALSE;.NET (Legacy Analyzer)/ABAP/ASP/C/C#/C++/Cobol/Forms/JEE/JavaScript/Microsoft T-SQL/PL/SQL/PowerBuilder/SQL Server/Sybase T-SQL/VB.NET/Visual Basic
+7768;Avoid Artifacts with High Depth of Code;;FALSE;.NET (Legacy Analyzer)/ABAP/ASP/C/C#/C++/Cobol/Forms/JEE/JavaScript/Microsoft T-SQL/PL/SQL/PowerBuilder/SQL Server/Sybase T-SQL/VB.NET/Visual Basic
+7770;Avoid Artifacts with too many parameters;;FALSE;.NET (Legacy Analyzer)/ASP/C/C#/C++/Forms/JEE/Microsoft T-SQL/PL/SQL/PowerBuilder/SQL Server/Sybase T-SQL/VB.NET/Visual Basic
+7772;Avoid Artifacts with High Essential Complexity;;FALSE;.NET (Legacy Analyzer)/ABAP/ASP/C/C#/C++/Cobol/Forms/JEE/JavaScript/Microsoft T-SQL/PL/SQL/PowerBuilder/SQL Server/Sybase T-SQL/VB.NET/Visual Basic
+7774;Avoid Artifacts with High Integration Complexity;;FALSE;.NET (Legacy Analyzer)/ABAP/ASP/C/C#/C++/Cobol/Forms/JEE/JavaScript/Microsoft T-SQL/PL/SQL/SQL Server/Sybase T-SQL/VB.NET/Visual Basic
+7776;Avoid Artifacts with High Fan-In;;FALSE;.NET (Legacy Analyzer)/ABAP/ASP/C/C#/C++/Cobol/Forms/JEE/JavaScript/Microsoft T-SQL/PL/SQL/PowerBuilder/SQL Server/Sybase T-SQL/VB.NET/Visual Basic
+7778;Avoid Artifacts with High Fan-Out;;FALSE;.NET (Legacy Analyzer)/ABAP/ASP/C/C#/C++/Cobol/Forms/JEE/JavaScript/Microsoft T-SQL/PL/SQL/PowerBuilder/SQL Server/Sybase T-SQL/VB.NET/Visual Basic
+7780;Avoid Classes with a very low comment/code ratio;;FALSE;.NET (Legacy Analyzer)/ABAP/C#/C++/JEE/VB.NET/Visual Basic
+7782;Avoid empty finally blocks;;FALSE;.NET (Legacy Analyzer)/ASP/C#/JEE/VB.NET
+7784;Avoid Artifacts with lines longer than X characters;;FALSE;.NET (Legacy Analyzer)/ASP/C/C#/C++/Forms/JEE/JavaScript/Microsoft T-SQL/PL/SQL/SQL Server/Sybase T-SQL/VB.NET/Visual Basic
+7786;Avoid long Table or View names;;FALSE;Microsoft T-SQL/PL/SQL/SAP SQL/SQL Server/Sybase T-SQL
+7788;Avoid empty catch blocks;;TRUE;.NET (Legacy Analyzer)/ABAP/C#/JEE/VB.NET
+7790;Avoid Cursors inside a loop;;TRUE;Forms/Microsoft T-SQL/PL/SQL/SQL Server/Sybase T-SQL
+7792;Avoid Classes with a High Number Of Children;;FALSE;.NET (Legacy Analyzer)/ABAP/C#/C++/JEE/PowerBuilder/VB.NET/Visual Basic
+7794;Avoid Classes with a High Public Data Ratio;;FALSE;.NET (Legacy Analyzer)/C#/C++/JEE/PowerBuilder/VB.NET/Visual Basic
+7796;Avoid Classes with a High Lack of Cohesion - variant;;FALSE;.NET (Legacy Analyzer)/ABAP/C#/C++/JEE/PowerBuilder/VB.NET
+7798;Avoid Classes with a High Lack of Cohesion;;FALSE;.NET (Legacy Analyzer)/ABAP/C#/C++/JEE/PowerBuilder/VB.NET
+7800;Avoid Classes with High Coupling Between Objects;;FALSE;.NET (Legacy Analyzer)/C#/C++/JEE/PowerBuilder/VB.NET
+7802;Avoid Classes with a High Depth of Inheritance Tree;;FALSE;.NET (Legacy Analyzer)/ABAP/C#/C++/JEE/PowerBuilder/VB.NET/Visual Basic
+7804;Avoid Classes with High Weighted Methods per Class;;FALSE;.NET (Legacy Analyzer)/C#/C++/JEE/PowerBuilder/VB.NET/Visual Basic
+7806;Avoid Artifacts with Group By;;FALSE;ABAP/C/C#/C++/Cobol/Forms/JEE/Microsoft T-SQL/PL/SQL/PowerBuilder/SQL Server/Sybase T-SQL/VB.NET/Visual Basic
+7808;Avoid Artifacts with SQL statement including subqueries;;FALSE;ABAP/C/C++/Cobol/Forms/JEE/Microsoft T-SQL/PL/SQL/SQL Server/Sybase T-SQL/Visual Basic
+7810;Avoid Artifacts with a Complex SELECT Clause;;FALSE;ABAP/C/C++/Cobol/Forms/JEE/Microsoft T-SQL/PL/SQL/PowerBuilder/SQL Server/Sybase T-SQL/Visual Basic
+7812;Class naming convention - case and character set control;;FALSE;.NET (Legacy Analyzer)/C#/VB.NET/Visual Basic
+7814;Avoid Tables not using referential integrity;;FALSE;Microsoft T-SQL/PL/SQL/SQL Server/Sybase T-SQL
+7816;Avoid using GOTO statement;;FALSE;C/C#/C++/Forms/Microsoft T-SQL/PL/SQL/SQL Server/Sybase T-SQL/VB.NET
+7818;Avoid Functions having a very low Comment/Code ratio;;FALSE;ABAP/ASP/C/JEE/JavaScript/PowerBuilder/Visual Basic
+7820;Never use SQL queries with a cartesian product;;FALSE;ABAP/Forms/Microsoft T-SQL/PL/SQL/SQL Server/Sybase T-SQL
+7822;Avoid Artifacts with queries on more than 4 Tables;;FALSE;ABAP/C/C++/Cobol/Forms/JEE/Microsoft T-SQL/PL/SQL/PowerBuilder/SQL Server/Sybase T-SQL/Visual Basic
+7824;Avoid directly throwing instance of Exception class;;TRUE;.NET (Legacy Analyzer)/C#/JEE/VB.NET
+7826;Forms naming convention - prefix control;;FALSE;Forms/Visual Basic
+7828;Avoid Artifacts with High RAW SQL Complexity;;FALSE;ABAP/C/C++/Cobol/Forms/JEE/Microsoft T-SQL/PL/SQL/PowerBuilder/SQL Server/Sybase T-SQL/Visual Basic
+7830;Avoid unreferenced Interfaces;;FALSE;.NET (Legacy Analyzer)/ABAP/C#/JEE/VB.NET
+7832;Avoid unreferenced Classes;;FALSE;ABAP/C++/JEE/Visual Basic
+7834;Avoid undocumented Interfaces;;FALSE;.NET (Legacy Analyzer)/ABAP/C#/C++/VB.NET
+7836;Avoid undocumented Functions;;FALSE;ABAP/ASP/C/C++/JEE/JavaScript/PowerBuilder/Visual Basic
+7838;Avoid undocumented Methods;;FALSE;.NET (Legacy Analyzer)/ABAP/C#/C++/PowerBuilder/VB.NET/Visual Basic
+7840;Trigger naming convention - prefix control;;FALSE;Forms/Microsoft T-SQL/PL/SQL/SQL Server/Sybase T-SQL
+7842;Avoid large Artifacts - too many Lines of Code;;FALSE;.NET (Legacy Analyzer)/ABAP/C/C#/C++/Cobol/Forms/JEE/Microsoft T-SQL/PL/SQL/SQL Server/Sybase T-SQL/VB.NET
+7844;Avoid undocumented Classes;;FALSE;.NET (Legacy Analyzer)/ABAP/C#/C++/VB.NET/Visual Basic
+7846;Avoid Methods with a very low comment/code ratio;;FALSE;.NET (Legacy Analyzer)/ABAP/C/C#/C++/JEE/PowerBuilder/VB.NET
+7848;Interface naming convention - prefix;;FALSE;.NET (Legacy Analyzer)/ABAP/C#/C++/VB.NET
+7850;Avoid raising an exception in a Web Dynpro Supply Function or in a Method called by a Supply Function;;FALSE;ABAP
+7852;Database view naming convention - prefix control;;FALSE;Microsoft T-SQL/PL/SQL/SAP SQL/SQL Server/Sybase T-SQL
+7854;Database table naming convention - prefix control;;FALSE;Microsoft T-SQL/PL/SQL/SAP SQL/SQL Server/Sybase T-SQL
+7856;Avoid Tables with more than 20 columns on an OLTP system;;FALSE;Microsoft T-SQL/PL/SQL/SQL Server/Sybase T-SQL
+7858;Avoid passing parameter by value;;FALSE;ABAP
+7860;Avoid unreferenced Functions;;FALSE;ABAP/ASP/C/C++/Forms/JEE/JavaScript/Microsoft T-SQL/PL/SQL/Sybase T-SQL/Visual Basic
+7862;Avoid catching an exception of type Exception, RuntimeException, or Throwable;;FALSE;.NET (Legacy Analyzer)/C#/JEE/VB.NET
+7864;BAPIs must not cause the Program to abort or terminate;;TRUE;ABAP
+7866;Avoid SELECT ... BYPASSING BUFFER;;FALSE;ABAP
+7868;Avoid Open SQL queries in loops;;TRUE;ABAP
+7870;Avoid using the NOT LIKE operator in WHERE clauses;;FALSE;ABAP
+7872;Avoid using IS [NOT] NULL in WHERE condition;;FALSE;ABAP
+7874;Avoid using dynamic queries;;TRUE;ABAP
+7876;Avoid using SELECT ... FOR UPDATE;;FALSE;ABAP
+7878;Avoid Open SQL SELECT queries without WHERE condition;;TRUE;ABAP
+7880;Avoid nested loops;;FALSE;ABAP
+7882;Avoid using Native SQL;;TRUE;ABAP
+7884;Avoid disabling source code inspection;;FALSE;ABAP
+7886;Avoid using SYSTEM-CALL;;FALSE;ABAP
+7888;"Web Dynpro - Never use direct calls to routine via ""me->"", use ""wd_This->"" instead";;FALSE;ABAP
+7890;Web Dynpro - Never use INCLUDE statement;;TRUE;ABAP
+7892;Web Dynpro - Avoid changing the program flow;;TRUE;ABAP
+7894;Avoid using LOOP INTO, use LOOP ASSIGNING instead;;FALSE;ABAP
+7898;SQL Function naming convention - prefix control;;FALSE;Microsoft T-SQL/PL/SQL/SQL Server/Sybase T-SQL
+7900;Stored Procedure naming convention - prefix control;;FALSE;Forms/Microsoft T-SQL/PL/SQL/SQL Server/Sybase T-SQL
+7902;Avoid SQL queries that no index can support;;FALSE;ABAP/Cobol/Forms/Microsoft T-SQL/PL/SQL/SQL Server/Sybase T-SQL
+7904;Avoid SQL queries on XXL tables that no index can support;;TRUE;ABAP/Cobol/Microsoft T-SQL/PL/SQL/SQL Server/Sybase T-SQL
+7906;Avoid testing specific values for SY-UNAME;;TRUE;ABAP
+7908;Avoid unreferenced Methods;;FALSE;ABAP/C++/JEE/Visual Basic
+7910;Never exit a finally block with a return, break, continue, or throw;;TRUE;JEE
+7912;Avoid unreferenced Data Members;;FALSE;ABAP/C/C++/JEE
+7914;Avoid direct access to Database Tables;;FALSE;.NET (Legacy Analyzer)/ASP/C/C#/C++/JEE/PowerBuilder/VB.NET/Visual Basic
+7916;Avoid direct use of Database objects (JSP/ASP);;FALSE;ASP/JEE
+7918;Exceptions naming convention -suffix control;;FALSE;.NET (Legacy Analyzer)/C#/VB.NET
+7920;Exceptions naming convention - case and character set control;;FALSE;.NET (Legacy Analyzer)/C#/VB.NET
+7922;Avoid usage of 'std::find_first_of';;FALSE;C++
+7924;Avoid defining Functions with 'struct' or 'class' parameters passed by value;;FALSE;C/C++
+7926;Abstract Classes should be non copy-assignable;;FALSE;C++
+7930;Avoid redeclaring and overriding Methods with different default parameter values;;FALSE;C++
+7932;Avoid Constructors not supplying an initial value for all non-static data members;;FALSE;C++
+7934;Avoid Superclass (or Interface) knowing Subclass (or Interface);;FALSE;.NET (Legacy Analyzer)/ABAP/C#/JEE/VB.NET
+7936;Avoid using finalize();;TRUE;JEE
+7938;Override all overloads of a base Class virtual Method;;FALSE;C++
+7940;Avoid Stateful Beans not removed;;TRUE;JEE
+7942;Avoid EJBs using 'synchronized' qualifier, 'wait', 'notify' and 'notifyAll' Methods;;FALSE;JEE
+7944;Avoid High Response for Classes;;FALSE;.NET (Legacy Analyzer)/ABAP/C#/C++/JEE/PowerBuilder/VB.NET
+7946;Avoid queries using old style join convention  instead of ANSI-Standard joins;;FALSE;Forms/Microsoft T-SQL/PL/SQL/Sybase T-SQL
+7948;Do not mix Ansi joins syntax  with Oracle proprietary joins syntax in the same query;;FALSE;Forms/PL/SQL
+7950;Avoid definition of synonym as PUBLIC in PL/SQL context;;FALSE;PL/SQL
+7952;Avoid synonym with both private & PUBLIC Definition in PL/SQL context;;FALSE;PL/SQL
+7954;Avoid indirect String concatenation inside loops;;FALSE;JEE
+7956;Avoid indirect exception handling inside loops;;FALSE;JEE
+7958;Avoid orphaned synonyms in PL/SQL context;;FALSE;PL/SQL
+7960;Avoid looping chain of synonyms in PL/SQL context;;FALSE;Forms/PL/SQL
+7962;Avoid direct or indirect remote calls inside a loop;;TRUE;JEE
+7964;Avoid directly instantiating a Class used as a managed bean;;TRUE;JEE
+7966;Avoid includes in Header Files;;FALSE;C/C++
+7968;Never use strcat() function (C/C++);;FALSE;C/C++
+7970;Never use strcpy() function (C/C++);;FALSE;C/C++
+7972;Never use sprintf() or vsprintf() functions;;FALSE;C/C++
+7976;Never use gets() function;;FALSE;C/C++
+7978;Avoid using the scanf() function family;;FALSE;C/C++
+7980;Avoid using strtrns() function;;FALSE;C/C++
+7982;Avoid using strlen() function family;;FALSE;C/C++
+7984;Avoid using strecpy() function;;FALSE;C/C++
+7986;Avoid using streadd() function;;FALSE;C/C++
+7988;Avoid using snprintf() function family;;FALSE;C/C++
+7990;Avoid using realpath() function;;FALSE;C/C++
+7992;Avoid using getpass() function;;FALSE;C/C++
+7994;Avoid using getopt() function;;FALSE;C/C++
+7996;Provide a private default Constructor for utility Classes or use free Functions in a Namespace;;FALSE;C++
+7998;Avoid local variables that are not initialized at declaration time;;FALSE;C/C++
+8000;Avoid 'catch-all' statement;;FALSE;C++
+8002;Never perform C-style cast between incompatible Class pointers;;FALSE;C/C++
+8004;Avoid using 'delete this';;FALSE;C++
+8006;Avoid Classes with a copy Constructor and the default Destructor or assignment operator;;FALSE;C++
+8008;Avoid data members that are never read;;FALSE;C/C++
+8010;Do not overload the ampersand, comma, logical AND or logical OR operators;;FALSE;C++
+8012;Avoid unchecked return code (SY-SUBRC) after opening and reading dataset;;FALSE;ABAP
+8014;Avoid unchecked return code (SY-SUBRC) after AUTHORITY-CHECK;;TRUE;ABAP
+8016;Avoid unsecured EJB remote method;;TRUE;JEE
+8022;Avoid hiding attributes;;FALSE;C++/JEE
+8024;Avoid Classes with a non-empty Destructor and the default assignment operator or copy Constructor;;FALSE;C++
+8026;Avoid Classes with an assignment operator and the default Destructor or copy constructor;;FALSE;C++
+8028;Avoid missing default in switch statements;;FALSE;C/C#/C++/JEE/VB.NET
+8030;Check alphanumeric data before moving it into numeric data;;FALSE;Cobol
+8032;Avoid using a break statement in 'for' loops;;FALSE;.NET (Legacy Analyzer)/C/C#/C++/JEE/VB.NET
+8034;Variables defined in Working-Storage section must be initialized before to be read;;FALSE;Cobol
+8036;Avoid improperly written  triangular joins with XXL tables in PL/SQL code;;FALSE;Forms/PL/SQL
+8038;Avoid Struts 2 Validator field not referencing a java class field;;FALSE;JEE
+8040;Avoid Struts 2 Action Fields without Validation;;TRUE;JEE
+8042;Struts 2 Validation: Avoid unused validation form;;FALSE;JEE
+8044;Avoid log forging vulnerabilities;;TRUE;C#/JEE/VB.NET
+8046;Do not return non-const handles to Class data from const member Functions;;FALSE;C/C++
+8048;Invoke 'delete' with the same form as the matching 'new';;TRUE;C/C++
+8050;Do not hide declarations in other scopes;;FALSE;C/C++
+8052;Avoid setting a pointer to the address of a local variable defined in a lower scope;;TRUE;C/C++
+8054;Avoid calling blocking functions with an infinite timeout;;FALSE;C/C++
+8056;Method override fails due to mismatch of const/volatile qualifiers;;FALSE;C/C++
+8058;A pointer to a derived Class shall only be cast implicitly to a pointer to base Class;;FALSE;C/C++
+8060;A pointer to a base Class shall only be cast to a pointer to a derived Class by means of 'dynamic_cast';;FALSE;C/C++
+8062;An unconditional 'throw', 'return' or 'break' shall terminate every non-empty switch-clause;;FALSE;C/C++
+8064;Assignment operator should assign all non-static members of the target object;;FALSE;C/C++
+8066;Avoid using 'using namespace' or 'using' declarations in header files;;FALSE;C/C++
+8068;Do not return a dereferenced pointer allocated inside the function;;TRUE;C/C++
+8070;Do not alter a control variable in the body of a 'for' statement;;FALSE;C/C++
+8072;Never define collection of 'std::auto_ptr';;TRUE;C/C++
+8074;Avoid using 'class' or 'struct' parameters with variadic Functions;;FALSE;C/C++
+8076;Avoid using 'new[]', prefer 'std::vector' or 'std::array';;FALSE;C/C++
+8078;Casting from pointer to base Class to pointer to derived Class should be done through 'dynamic_cast' or 'static_cast';;FALSE;C/C++
+8080;Avoid exists independent clauses;;TRUE;Microsoft T-SQL/PL/SQL/Sybase T-SQL
+8082;Avoid Tables without Primary Key;;TRUE;Microsoft T-SQL/PL/SQL/Sybase T-SQL
+8086;Avoid types that own disposable fields and are not disposable;;FALSE;C#/VB.NET
+8088;Avoid override artifacts not having link demands identical to base;;FALSE;C#/VB.NET
+8090;Avoid using NaN to test the result of an expression;;FALSE;.NET (Legacy Analyzer)/C#/VB.NET
+8092;Avoid Objects having exposed pointers allowed to access unmanaged memory;;FALSE;.NET (Legacy Analyzer)/C#/VB.NET
+8094;Avoid locking of Objects with weak identities;;FALSE;C#/VB.NET
+8096;Avoid testing floating point numbers for equality;;TRUE;JEE
+8098;Avoid uncontrolled format string;;TRUE;C#/JEE/VB.NET
+8100;Blocking synchronous calls should have associated timeouts;;FALSE;JEE
+8102;Avoid hardcoded network resource names (JEE);;FALSE;JEE
+8104;Close database resources ASAP;;TRUE;JEE
+8106;Avoid empty IF-ENDIF blocks;;TRUE;ABAP
+8108;Avoid missing release of stream connection after an effective lifetime;;TRUE;C#/JEE/VB.NET
+8110;Avoid not using dedicated stored procedures when processing multiple data accesses;;TRUE;C#/JEE/VB.NET
+8112;Avoid improper processing of the execution status of data handling operations;;TRUE;C#/JEE/VB.NET
+8114;Avoid numerical data corruption during incompatible mutation (ABAP);;FALSE;ABAP
+8116;Avoid calling system function (CALL 'cfunc');;TRUE;ABAP
+8118;Avoid using the RFC_ABAP_INSTALL_AND_RUN function;;TRUE;ABAP
+8120;Avoid using CALL FUNCTION without error handling;;FALSE;ABAP
+8122;Avoid using CALL METHOD without error handling;;FALSE;ABAP
+8124;Do not use function module DB_EXISTS_INDEX (HANA);;FALSE;ABAP
+8126;Avoid using empty SELECT ... ENDSELECT loop;;TRUE;ABAP
+8130;Avoid using database hints;;FALSE;ABAP
+8132;Avoid using CHECK, EXIT,or RETURN in SELECT ... ENDSELECT loops;;TRUE;ABAP
+8134;Avoid unsorted data after SELECT queries;;TRUE;ABAP
+8136;Beans with normal scope must be proxyable to avoid runtime errors;;TRUE;JEE
+8140;Subscripts and iterators must be defined with BINARY usage;;FALSE;Cobol
+8142;Prefer using indexes instead of subscripts;;FALSE;Cobol
+8144;Avoid using INITIALIZE statement on data structures;;FALSE;Cobol
+8146;Avoid calling programs statically;;FALSE;Cobol
+8148;Avoid artifacts having Incorrect Type Conversion or Cast;;TRUE;C#/VB.NET
+8150;Avoid using Parse for primitive types and used instead TryParse;;FALSE;C#/VB.NET
+8152;Avoid having transaction with the Thread.Sleep method in a loop;;FALSE;C#/VB.NET
+8154;Avoid using GC.Collect();;FALSE;C#/VB.NET
+8156;Persistent classes should implement GetHashCode() and Equals();;FALSE;C#/VB.NET
+8158;Runtime Resource Management Control Element in a Component Built to Run on Application Servers;;TRUE;C#/VB.NET
+8160;Check PCB status code after DLI queries;;FALSE;Cobol
+8162;CICS return code should be checked;;FALSE;Cobol
+8214;CWE-672: Expired or Released Resource should not be used;;TRUE;JEE
+8216;CWE-681: Avoid numerical data corruption during incompatible mutation;;TRUE;JEE
+8218;Content type should be checked when receiving a HTTP Post;;TRUE;JEE
+8220;Avoid using deprecated method, constructor, field, type or package;;TRUE;JEE
+8222;Avoid hard-coded credentials;;TRUE;C#/JEE/VB.NET
+8236;Avoid using hard-coded values;;FALSE;Cobol
+8238;Avoid mixing trusted and untrusted data in HTTP requests;;TRUE;C#/JEE/VB.NET
+8240;Avoid using unsecured cookie;;TRUE;C#/JEE/VB.NET
+8242;Avoid using insufficient random values for cookies;;TRUE;C#/JEE/VB.NET
+8400;Avoid having lock on this object;;FALSE;C#/VB.NET
+8402;All types of a serializable class must be serializable;;FALSE;C#/VB.NET
+8408;Avoid reflected cross-site scripting (non persistent);;TRUE;C#/JEE/VB.NET
+8410;Avoid cross-site scripting (persistent);;TRUE;C#/JEE/VB.NET
+8412;"""CX_ROOT"" should not be used in TRY .. CATCH.. ENDTRY block";;TRUE;ABAP
+8414;Avoid weak cryptographic algorithm;;TRUE;C#/JEE/VB.NET
+8416;Avoid use of a reversible one-way hash;;TRUE;C#/JEE/VB.NET
+8418;Avoid NoSQL injection;;TRUE;C#/JEE/VB.NET
+8420;Avoid second order SQL injection;;TRUE;C#/JEE/VB.NET
+8422;Avoid Using COMMIT WORK or ROLLBACK WORK during update work process;;TRUE;ABAP
+8424;Avoid using hard-coded HMAC keys;;TRUE;C#/JEE/VB.NET
+8426;"Avoid calling database commands directly using system functions as ""C_DB_EXECUTE"" and ""C_DB_FUNCTION""";;TRUE;ABAP
+8428;Authorization check should be done before calling a transaction;;TRUE;ABAP
+8430;Avoid using hardcoded seed or no seed at all for random values generation;;TRUE;ABAP
+8432;Avoid Cross-Client Database Access using Open SQL statements with CLIENT SPECIFIED/USING CLIENT addition;;TRUE;ABAP
+8434;Avoid process control;;TRUE;C#/JEE/VB.NET
+8436;Avoid thread injection vulnerabilities;;TRUE;C#/JEE/VB.NET
+8438;Avoid code injection;;TRUE;C#/JEE/VB.NET
+8440;Avoid reflection injection;;TRUE;C#/JEE/VB.NET
+8442;Avoid resource injection;;TRUE;C#/JEE/VB.NET
+8444;Avoid resource URL manipulation;;TRUE;C#/JEE/VB.NET
+8446;Avoid URL redirection to untrusted site;;TRUE;C#/JEE/VB.NET
+8464;Avoid Open SQL SELECT queries without WHERE condition on XXL Tables;;TRUE;ABAP
+1024000;Avoid using AbsoluteLayout;;FALSE;JEE
+1024002;A Read permission is required to read data of Content Provider;;TRUE;JEE
+1024004;A Writing permission is required to write data of Content Provider;;TRUE;JEE
+1024006;Limit the accessibility of your app's Content Provider;;TRUE;JEE
+1024008;Always use onActivityResult to pass the login results when using Facebook SDK;;TRUE;JEE
+1024010;Apply signature-based permissions;;TRUE;JEE
+1024012;Avoid setting android:grantUriPermissions as True;;TRUE;JEE
+1024014;A permission is required for securing Receivers;;TRUE;JEE
+1024016;A permission is required for securing Services;;TRUE;JEE
+1024018;Always provide a permission to secure Activities;;TRUE;JEE
+1024020;Avoid using implicit intent;;TRUE;JEE
+1024022;Media Resources should be released;;TRUE;JEE
+1024024;All traffic to particular domains should use HTTPS;;TRUE;JEE
+1024026;Avoid using MODE_WORLD_READABLE and MODE_WORLD_WRITEABLE;;TRUE;JEE
+1024028;"Avoid using ""Android Protected Confirmation"" without User Confirmation";;TRUE;JEE
+1024030;Avoid using FingerprintManager as biometric API;;TRUE;JEE
+1024032;Always manage the BiometricPrompt onAuthenticationFailed method;;TRUE;JEE
+1024034;Always check all the BiometricPrompt error options in the onAuthenticationError method;;TRUE;JEE
+1024036;Always check all the BiometricPrompt acquired options in the onAuthenticationSucceeded method ;;TRUE;JEE
+1024038;Avoid processing Google Sign In Client without catching error;;FALSE;JEE
+1024040;Always activate unlockedDeviceRequired to avoid data decryption when device is unlocked;;TRUE;JEE
+1024042;Avoid using weak encryption algorithm (Android);;TRUE;JEE
+1024044;Always check the device supports Biometric capability before using BiometricPrompt API;;TRUE;JEE
+1020500;Avoid the use of the default JavaScript implementation [].forEach in AngularJS web app;;FALSE;HTML5
+1020502;Avoid the use of JSON.parse and JSON.stringify in AngularJS web app;;FALSE;HTML5
+1020504;Avoid using the call of web service with AngularJS $http inside a loop;;TRUE;HTML5
+1020506;Avoid using $scope in controllers;;FALSE;HTML5
+1020508;Use Angular wrapper service $document;;FALSE;HTML5
+1020510;Use Angular wrapper service $window;;FALSE;HTML5
+1020512;Use Angular wrapper service $timeout;;FALSE;HTML5
+1020514;Only use the angular.isUndefined or angular.isDefined methods in AngularJS application;;FALSE;HTML5
+1020516;Avoid using Javascript Array typecheck in AngularJS application;;FALSE;HTML5
+1020518;Avoid using Javascript Date typecheck in AngularJS application;;FALSE;HTML5
+1020520;Avoid using Javascript Function typecheck in AngularJS application;;FALSE;HTML5
+1020522;Avoid using Javascript String typecheck in AngularJS application;;FALSE;HTML5
+1020524;Avoid using Javascript Object typecheck in AngularJS application;;FALSE;HTML5
+1020526;Avoid using Javascript Number typecheck in AngularJS application;;FALSE;HTML5
+1020528;Avoid using Javascript Regexp typecheck in AngularJS application;;FALSE;HTML5
+1020530;Avoid using !angular.isUndefined() and !angular.isDefined() in AngularJS application;;FALSE;HTML5
+1020532;Use Angular factory() instead of service();;FALSE;HTML5
+1020534;Avoid using a web service with AngularJS $resource inside a loop;;TRUE;HTML5
+1020536;Avoid using $ or jQuery, use angular.element instead;;FALSE;HTML5
+1020538;Avoid wrapping angular.element objects with jQuery or $;;FALSE;HTML5
+1020540;Avoid using $http success and error function;;FALSE;HTML5
+1020542;Enable Content Security Policy when creating an AngularJS application;;TRUE;HTML5
+1020544;Avoid disabling Strict Contextual Escaping (SCE) when created;;TRUE;HTML5
+1020546;Avoid using unsanitized AngularJS application;;TRUE;HTML5
+1020548;Avoid disabling withCredentials option for the httpProvider;;TRUE;HTML5
+1020550;"Avoid using ""ng-repeat"" loop without ""track by"" option";;FALSE;HTML5
+1020552;Avoid enabling dangerous protocols in whitelist APIs;;FALSE;HTML5
+1050000;Avoid using the call of web service with iOS/Objective-C API inside a loop;;TRUE;Objective-C
+1050002;Avoid using NSString stringWithFormat on behalf of NSURL instance;;TRUE;Objective-C
+1050004;Avoid using NSPredicate predicateWithFormat;;TRUE;Objective-C
+1050006;Avoid using NSException raise:format: and raise:format:arguments:;;TRUE;Objective-C
+1050008;Avoid using NSMutableString appendFormat: on behalf of NSURL instance;;TRUE;Objective-C
+1050010;Avoid using NSURLRequest setAllowsAnyHTTPSCertificate:forHost;;TRUE;Objective-C
+1050012;Objective-C interface overrides the isEqual: method but not the hash method;;TRUE;Objective-C
+1050014;UIApplication delegate applicationDidEnterBackground: must delete sensitive data (Objective-C);;TRUE;Objective-C
+1050016;Never use strcat() function (Objective-C);;TRUE;Objective-C
+1050018;Never use strcpy() function (Objective-C);;TRUE;Objective-C
+1050020;Avoid return statement in @finally block;;TRUE;Objective-C
+1050022;Avoid using deprecated SSL protocol (Objective-C);;TRUE;Objective-C
+1050024;Avoid using kSecAttrAccessibleAlways attribute when storing data in the Keychain;;TRUE;Objective-C
+1050026;Avoid using non thread-safe Objective-C singleton pattern;;TRUE;Objective-C
+1050028;Always use LAContext canEvaluatePolicy: before using evaluatePolicy: (Objective-C);;TRUE;Objective-C
+1050030;Ensure the Objective-C error condition check is not fragile;;TRUE;Objective-C
+1050032;Ensure that LAContext evaluatePolicy: reply block success is checked (Objective-C);;FALSE;Objective-C
+1050034;Ensure that LAContext evaluatePolicy: reply block is not empty (Objective-C);;FALSE;Objective-C
+1050036;Ensure that iOS Projects are ARC enabled;;FALSE;Objective-C
+1050038;Avoid using NSURLRequestUseProtocolCachePolicy for NSURLRequest (Objective-C);;FALSE;Objective-C
+1050040;Avoid using SecTransform API;;TRUE;Objective-C
+1050042;Avoid synchronizing the credentials with iCloud (Objective-C);;FALSE;Objective-C
+1050044;Avoid weak encryption providing sufficient key size (Objective-C);;TRUE;Objective-C
+1050046;Avoid weak encryption algorithm (Objective-C);;FALSE;Objective-C
+1050048;Avoid creating file without protection (Objective-C);;TRUE;Objective-C
+1050050;Avoid using cryptography hash without salt (Objective-C);;TRUE;Objective-C
+1050052;Avoid empty finally block;;FALSE;Objective-C
+1050054;Mandate curly braces;;FALSE;Objective-C
+1050060;Avoid using a break statement in 'for' loops (Objective-C);;FALSE;Objective-C
+1050062;Avoid empty catch blocks (Objective-C);;TRUE;Objective-C
+1050064;Avoid using risky cryptographic hash (Objective-C);;TRUE;Objective-C
+1050066;Avoid using unsecured cookie (Objective-C);;TRUE;Objective-C
+592;Ensure you provide a user-defined copy constructor or disable copy when a class allocates memory in its constructor;;TRUE;C++
+1065000;"Avoid using ""continue"" statement";;FALSE;C/C++
+1065002;"""enum"" members other than the first one should not be explicitly initialized unless all members are explicitly initialized.";;FALSE;C/C++
+1065004;Ensure that dynamically allocated memory on local pointer in functions/methods is freed.;;FALSE;C/C++
+1065006;Avoid iterator invalidation.;;TRUE;C++
+1065008;Avoid use of unvalidated input in array indexing and memory allocation;;FALSE;C/C++
+1065010;Avoid using <cstdio> stream input output library (C++);;FALSE;C++
+1065012;Avoid using 'setjmp' or 'longjmp' (C/C++);;FALSE;C/C++
+1065014;Avoid using the library functions bsearch and qsort from <stdlib.h> (C/C++);;FALSE;C/C++
+1065016;Avoid using atof,atol, atoll or atoi functions from <stdlib.h> (C/C++);;FALSE;C/C++
+1065018;Avoid using offsetof from <cstddef>;;FALSE;C++
+1065020;Avoid using <ctime> (C++);;FALSE;C++
+1065022;Avoid using <stdio.h> (C/C++);;FALSE;C/C++
+1065024;"Avoid using the standard library time and date functions from ""<time.h>"" (C/C++)";;FALSE;C/C++
+1065026;Ensure exception objects are always caught by reference (C++);;FALSE;C++
+1065028;Ensure Switch statements have at least 2 case clauses (C/C++);;FALSE;C/C++
+1065030;All if … else if constructs shall be terminated with an else clause (C/C++);;FALSE;C/C++
+1065032;Avoid flexible array members (C/C++);;FALSE;C/C++
+1065034;Avoid throwing an exception object of pointer type (C++);;FALSE;C++
+1065036;Avoid using '//' and  '/*' within comments (C/C++);;FALSE;C/C++
+1065038;Avoid using 'signal.h' (C/C++);;FALSE;C/C++
+1065040;Avoid anonymous namespaces in header files (C++);;FALSE;C++
+1065042;Avoid non-void return type function without an explicit return of an expression (C/C++);;FALSE;C/C++
+1065044;"Avoid other than main(), namespace declarations and extern ""C"" declarations in the global namespace (C/C++)";;FALSE;C/C++
+1065046;Avoid using the unbounded functions of <cstring> library;;FALSE;C++
+1065048;Where multiple handlers are provided in a single try-catch statement or function-try-block, any ellipsis (catch-all) handler shall occur last.;;FALSE;C++
+1065050;"Avoid using ""sizeof"" on expressions that contain side effects";;FALSE;C/C++
+1065052;Avoid using Octal constants or escape sequences (C/C++);;FALSE;C/C++
+1065054;Do not override the standard library functions (C/C++);;FALSE;C/C++
+1065056;Avoid throwing exceptions outside of main();;FALSE;C++
+1065058;Ensure that there is at least one exception handler to catch-all otherwise unhandled exceptions;;FALSE;C++
+7272;Provide a private default Constructor for utility Classes (.NET);;FALSE;.NET (Legacy Analyzer)/C#/VB.NET
+1027000;Avoid Managed type declaration for Win32 API using Overlapped IO;;FALSE;C#
+1027002;Avoid exposing methods that use Platform Invocation Services to access unmanaged code;;FALSE;C#/VB.NET
+1027004;Avoid using deprecated XmlTextReader .NET API;;FALSE;C#/VB.NET
+1027008;Always Revert After Impersonation;;FALSE;C#/VB.NET
+1027010;Avoid weak encryption providing insufficient key size (.NET);;FALSE;C#/VB.NET
+1027012;Avoid storing Non-Serializable Object as HttpSessionState attributes.;;TRUE;C#/VB.NET
+1043006;Avoid disabling ValidateInput on ASP.NET Http Post/Put Request;;TRUE;ASP.NET
+1043008;Avoid disabling ValidateInput on controller;;TRUE;ASP.NET
+1043010;Avoid creating cookie without setting httpOnly option (C#);;TRUE;C#
+1043012;Avoid creating cookie without setting httpOnly option in Config file (ASP.NET);;TRUE;C#
+1043014;Avoid disabling ValidateRequest in Config file (ASP.NET);;TRUE;ASP.NET
+1043016;Avoid disabling ValidateRequest in ASPX page;;TRUE;ASP.NET
+1043018;Avoid storing passwords in the config files;;TRUE;C#
+1043020;Avoid having applications with the debug mode activated;;FALSE;C#
+1043022;Avoid using unsecured cookie (C#);;FALSE;C#
+1043024;Always enable RequireSSL attribute for cookies in Config file (ASP.NET);;FALSE;C#
+1043026;Avoid disabling EnableViewStateMac in Config file (ASP.NET);;FALSE;ASP.NET
+1043028;Avoid disabling EnableViewStateMac in ASPX page;;FALSE;ASP.NET
+1043030;Ensure the X-Frame-Options header is setup (ASP.NET);;TRUE;ASP.NET
+1043032;Avoid having ASPX pages with tracing activated;;FALSE;ASP.NET
+1043034;Avoid having applications with the tracing activated in the web config file;;FALSE;C#
+1043036;Avoid using Impersonate identity (ASP.NET);;FALSE;C#
+1043038;Avoid having applications with the tracing activated in the source code;;FALSE;C#
+1043044;Ensure that CSRF Protection is enabled (ASP.NET MVC);;TRUE;ASP.NET
+1043046;Avoid creating cookie with overly broad path (C#);;TRUE;C#
+1043048;Avoid having cookie with an overly broad domain (C#);;TRUE;C#
+1043050;Avoid having long timeout for HttpCookie (> 5 mn);;FALSE;C#
+1043052;Ensure aspnet:UseLegacyFormsAuthenticationTicketCompatibility is set to true;;FALSE;ASP.NET
+1043054;Avoid overly permissive Cross-Origin Resource Sharing (CORS) policy;;FALSE;ASP.NET
+1043058;Avoid disabling Header Checking flag in config file;;FALSE;ASP.NET
+1043060;Avoid disabling HMAC signature verification (C#);;TRUE;ASP.NET
+1043062;Avoid having all users accessing resources (.NET);;FALSE;ASP.NET
+1005006;Avoid having multiple artifacts deleting data on the same SQL table (EGL);;FALSE;EGL
+1005008;Avoid having multiple artifacts inserting data on the same SQL table (EGL);;FALSE;EGL
+1005010;Avoid having multiple artifacts updating data on the same SQL table (EGL);;FALSE;EGL
+1005012;Avoid Functions with High Fan-In (EGL);;FALSE;EGL
+1005014;Avoid Functions with High Fan-Out (EGL);;FALSE;EGL
+1005016;Avoid Programs with High Fan-In (EGL);;FALSE;EGL
+1005018;Avoid Programs with High Fan-Out (EGL);;FALSE;EGL
+1005020;Avoid old VAGen Compatibility statements (EGL);;FALSE;EGL
+1005022;Avoid Programs not having  the property includeReferencedFunctions set to YES (EGL);;FALSE;EGL
+1005024;Avoid programs not having the property allowUnqualifiedItemReferences set to YES (EGL);;FALSE;EGL
+1005026;Avoid Too Many Copy Pasted Artifacts (EGL);;FALSE;EGL
+1005028;Avoid Functions with High Cyclomatic Complexity (EGL);;FALSE;EGL
+1005030;"Avoid ""SELECT *"" queries (EGL)";;FALSE;EGL
+1005032;Avoid having Programs without a naming convention(EGL);;FALSE;EGL
+1005034;Avoid having SQL Records without a naming convention (EGL);;FALSE;EGL
+1005036;Avoid having Records without a naming convention (EGL);;FALSE;EGL
+1005038;Avoid programs with lines having more than 80 characters (EGL);;FALSE;EGL
+1005040;Avoid Programs with a very low comment/code ratio (EGL);;FALSE;EGL
+1005042;Avoid undocumented Programs (EGL);;FALSE;EGL
+1005044;Avoid Opening Cursor in a loop (EGL);;TRUE;EGL
+1005046;Avoid using string datatype (EGL);;FALSE;EGL
+1005048;Avoid using Unicode or dbCHar datatypes (EGL);;FALSE;EGL
+1005050;Avoid using Programs having textLiteralDefaultIsString property set to YES (EGL);;FALSE;EGL
+1005052;Avoid using copyStr and compareStr functions (EGL);;FALSE;EGL
+1005054;Avoid using prepare statement (EGL);;TRUE;EGL
+1005056;Always specify a result set id when doing result set operations like Open/get next or open for update/replace (EGL);;FALSE;EGL
+1005058;Avoid functions having UNION instead of UNION ALL (EGL);;FALSE;EGL
+1005060;Avoid using GROUP BY in SQL statement (EGL);;FALSE;EGL
+1005062;Avoid Artifacts with a Complex SELECT Clause (EGL);;FALSE;EGL
+1005064;Avoid Artifacts With Queries on too many Tables (EGL);;FALSE;EGL
+1005066;Avoid Artifacts with Subqueries (EGL);;FALSE;EGL
+1005068;Avoid SQL query outside try-on block (EGL);;TRUE;EGL
+1005070;Avoid Program calls without checking the return code (EGL);;TRUE;EGL
+1005072;Enable Exception for migrated programs - throwNrfEofExceptions property must be set to YES (EGL);;FALSE;EGL
+1005074;Avoid having handleHardIOErrors property enabled (EGL);;FALSE;EGL
+1005076;Avoid having V60ExceptionCompatibility property set to NO (EGL);;FALSE;EGL
+1005078;Avoid program calls outside a try end block (EGL);;TRUE;EGL
+1005082;"Avoid declaring null arrays; prefer to set to empty (EGL)";;FALSE;EGL
+1005084;Avoid using parameters on the Record column level (EGL);;TRUE;EGL
+1005086;Avoid functions having creator to prefix table names in SQL statements and in SQL records (EGL);;TRUE;EGL
+1005088;Avoid programs not having the property I4GLItemsNullable set to NO (EGL);;FALSE;EGL
+1005090;Avoid Record Column without having the same nullable requirement as the corresponding SQL Table column (EGL);;FALSE;EGL
+1005092;Avoid having overrided record declaration with a duplicate declaration in the same application (EGL);;TRUE;EGL
+1005094;Avoid Programs with more than X Functions (EGL);;FALSE;EGL
+1005096;Avoid large Programs - too many Lines of Code (EGL);;FALSE;EGL
+1005098;Avoid large Functions - too many Lines of Code (EGL);;FALSE;EGL
+1003000;Avoid packages with high number of imports (Flex);;FALSE;Flex
+1003002;Avoid scripts high number of imports (Flex);;FALSE;Flex
+1003004;Avoid packages with view components referenced in a model class (Flex);;FALSE;Flex
+1003006;Avoid scripts with view components referenced in a model class (Flex);;FALSE;Flex
+1003008;Avoid class duplicated with a SDK class (Flex);;FALSE;Flex
+1003010;Avoid class that imports an internal class from another functional area (Flex);;FALSE;Flex
+1003012;Avoid using code behind files (Flex);;FALSE;Flex
+1003014;Avoid nested if statements (Flex);;FALSE;Flex
+1003016;Avoid long cases in switch (Flex);;FALSE;Flex
+1003018;Avoid nested switch statements (Flex);;FALSE;Flex
+1003020;Avoid empty overriden method (Flex);;FALSE;Flex
+1003022;Avoid empty statement (Flex);;FALSE;Flex
+1003024;Avoid empty private method (Flex);;FALSE;Flex
+1003026;Avoid too complex methods (Flex);;FALSE;Flex
+1003028;Avoid long parameter list (Flex);;FALSE;Flex
+1003030;Avoid function with unused parameter (Flex);;FALSE;Flex
+1003032;Avoid unused variable (Flex);;FALSE;Flex
+1003034;Avoid unused private method (Flex);;FALSE;Flex
+1003036;Avoid unused private field (Flex);;FALSE;Flex
+1003038;Cairngorm: Avoid Cairngorm event name without functional area (Flex);;FALSE;Flex
+1003040;Avoid Event name not set explicitly (Flex);;FALSE;Flex
+1003042;Avoid extension with same name as the class name (Flex);;FALSE;Flex
+1003044;Avoid field with name too short (Flex);;FALSE;Flex
+1003046;Avoid variable with name too short (Flex);;FALSE;Flex
+1003048;Avoid package name in upper case (Flex);;FALSE;Flex
+1003050;Avoid field names ending with numeric characters (Flex);;FALSE;Flex
+1003052;Avoid variable names ending with numeric characters (Flex);;FALSE;Flex
+1003054;Avoid local variable hiding a class property (Flex);;FALSE;Flex
+1003056;Avoid class name that does not start with capital letter (Flex);;FALSE;Flex
+1003058;Avoid fields with names that can reduce code readability (Flex);;FALSE;Flex
+1003060;Avoid variables with names that can reduce code readability (Flex);;FALSE;Flex
+1003062;Avoid too long line (Flex);;FALSE;Flex
+1003064;Avoid imports from the same package (Flex);;FALSE;Flex
+1003066;Avoid incorrectly formatted logger (Flex);;FALSE;Flex
+1003068;Avoid Attribute not documented with AsDocs (Flex);;FALSE;Flex
+1003070;Avoid class not documented with AsDocs (Flex);;FALSE;Flex
+1003072;Avoid method not documented with AsDocs (Flex);;FALSE;Flex
+1003074;Cairngorm: Avoid modelLocator that is Bindable at a class level (Flex);;FALSE;Flex
+1003076;Avoid adding or removing displayable children from updateDisplayList (Flex specific) (Flex);;FALSE;Flex
+1003078;Avoid popup using dynamic filters (Flex);;FALSE;Flex
+1003080;Avoid complex constructor (Flex);;FALSE;Flex
+1003082;Avoid Instantiating a variable in a loop (Flex);;FALSE;Flex
+1003084;Avoid recursive StyleManager call (Flex);;FALSE;Flex
+1003086;Avoid empty catch statement (Flex);;FALSE;Flex
+1003088;Avoid calling Alert.show directly (Flex);;FALSE;Flex
+1003090;Avoid style block embedded in the MXML file (Flex);;FALSE;Flex
+1003092;Avoid embedded metadata in class where a stylesheet may be cleaner (Flex);;FALSE;Flex
+1003094;Avoid embedded metadata in script where a stylesheet may be cleaner (Flex);;FALSE;Flex
+1003096;Avoid non-const public static fields (Flex);;FALSE;Flex
+1003098;Avoid non-static constant fields (Flex);;FALSE;Flex
+1003100;Avoid protected fields in final class (Flex);;FALSE;Flex
+1003102;Protected static methods should be declared private (Flex);;FALSE;Flex
+1003104;Avoid Parsley metadata placed on inaccessible members. (Flex);;FALSE;Flex
+1003106;Avoid too many methods in class (Flex);;FALSE;Flex
+1003108;Avoid too many methods in script (Flex);;FALSE;Flex
+1003110;Avoid functions that are too long (Flex);;FALSE;Flex
+1003112;Avoid too many public fields or functions (Flex);;FALSE;Flex
+1003114;Avoid class with too many fields (Flex);;FALSE;Flex
+1003116;Avoid Flex Script with too many fields (Flex);;FALSE;Flex
+1003118;Avoid Value Objects with too many fields (Flex);;FALSE;Flex
+1003120;Cairngorm: Avoid ModelLocator not only accessible from the main application file (Flex);;FALSE;Flex
+1003122;Cairngorm: Avoid FrontController that adds all its commands within the Controller constructor (Flex);;FALSE;Flex
+1003124;Avoid empty if statements (Flex);;FALSE;Flex
+1003126;Avoid more than one return path (Flex);;FALSE;Flex
+1003128;Avoid use of with statement (Flex);;FALSE;Flex
+1003130;Avoid managed events without matching [Event] metadata (Flex);;FALSE;Flex
+1003132;Avoid switch statement with less than 3 cases (Flex);;FALSE;Flex
+1003134;Avoid identical cases in switch (Flex);;FALSE;Flex
+1003136;Avoid unit test that does not contain at least one assertion (Flex);;FALSE;Flex
+1003138;Avoid BindingUtils class (Flex);;FALSE;Flex
+1003140;Avoid use of ChangeWatcher class (Flex);;FALSE;Flex
+1003142;Cairngorm: Avoid CairngormEventDispatcher called explicitly (Flex);;FALSE;Flex
+1003144;Cairngorm: Avoid more than one reference of ModelLocator per class (Flex);;FALSE;Flex
+1003146;Avoid calling callLater explicitly (Flex specific) (Flex);;FALSE;Flex
+1003148;Avoid clone method not overridden in a custom event (Flex);;FALSE;Flex
+1003150;Avoid event dispatched from a constructor (Flex);;FALSE;Flex
+1003152;Avoid dispatching events using hardcoded strings (Flex);;FALSE;Flex
+1003154;Avoid listening to events using hard coded strings (Flex);;FALSE;Flex
+1003156;Avoid partial source code delivery of application (Flex);;FALSE;Flex
+1003158;Avoid event without type specified (Flex);;FALSE;Flex
+1003160;Avoid conditions with hardcoded boolean values (Flex);;FALSE;Flex
+1003162;Avoid dynamic class (Flex);;FALSE;Flex
+1003164;Avoid dynamic (Object) type fields (Flex);;FALSE;Flex
+1003166;Avoid dynamic (Object) type variables (Flex);;FALSE;Flex
+1003168;Avoid using Object class in methods' parameters (Flex);;FALSE;Flex
+1003172;Avoid * and use strongly typed objects instead in fields (Flex);;FALSE;Flex
+1003174;Avoid * and use strongly typed objects instead in variables (Flex);;FALSE;Flex
+1003176;Avoid array-type field without ArrayElementType metadata (Flex);;FALSE;Flex
+1003178;Avoid incorrect message interceptor signature (Flex);;FALSE;Flex
+1003180;Avoid packages having artifacts with misplaced metadata (Flex);;FALSE;Flex
+1003182;Avoid classes having artifacts with misplaced metadata (Flex);;FALSE;Flex
+1003184;Avoid redundant type metadata argument for handler type (Flex);;FALSE;Flex
+1003186;Avoid redundant method metadata argument for handler (Flex);;FALSE;Flex
+1003188;Avoid packages having artifacts with unknown metadata attribute (Flex);;FALSE;Flex
+1003190;Avoid classes having artifacts with unknown metadata attribute (Flex);;FALSE;Flex
+1003192;Avoid globally bindable classes (Flex);;FALSE;Flex
+1003194;Avoid constructor with void return type specification (Flex);;FALSE;Flex
+1003196;Avoid switch statement without a default case (Flex);;FALSE;Flex
+1003198;Avoid MXML component with more than one entry point (Flex);;FALSE;Flex
+1003200;Avoid MXML component with more than two entry points (Flex);;FALSE;Flex
+1003202;Avoid public variables inside a custom event (Flex);;FALSE;Flex
+1003204;Avoid script block that are too long (Flex);;FALSE;Flex
+1002000;Do not use EQUIVALENCE in Subroutines (FORTRAN);;FALSE;Fortran
+1002002;Do not use EQUIVALENCE in Functions  (FORTRAN);;FALSE;Fortran
+1002004;Do not use EQUIVALENCE in Programs  (FORTRAN);;FALSE;Fortran
+1002006;Do not use EQUIVALENCE in Modules  (FORTRAN);;FALSE;Fortran
+1002008;Do not use COMMON blocks in Fortran-90 in Programs  (FORTRAN);;FALSE;Fortran
+1002010;Do not use COMMON blocks in Fortran-90 in Subroutines  (FORTRAN);;FALSE;Fortran
+1002012;Do not use COMMON blocks in Fortran-90 in Functions  (FORTRAN);;FALSE;Fortran
+1002014;Do not use COMMON blocks in Fortran-90 in Modules  (FORTRAN);;FALSE;Fortran
+1002016;Process the default case in the instruction SELECT CASE in Fortran-90 Programs  (FORTRAN);;FALSE;Fortran
+1002018;Process the default case in the instruction SELECT CASE in Fortran-90 Subroutines  (FORTRAN);;FALSE;Fortran
+1002020;Process the default case in the instruction SELECT CASE in Fortran-90 Functions  (FORTRAN);;FALSE;Fortran
+1002022;Process the default case in the instruction SELECT CASE in Fortran-90 Modules  (FORTRAN);;FALSE;Fortran
+1002024;Avoid using too many GOTO statement in Programs  (FORTRAN);;FALSE;Fortran
+1002026;Avoid using too many GOTO statement in Subroutines  (FORTRAN);;FALSE;Fortran
+1002028;Avoid using too many GOTO statement in Functions  (FORTRAN);;FALSE;Fortran
+1002030;Avoid using too many GOTO statement in Modules  (FORTRAN);;FALSE;Fortran
+1002032;Any Data must be declared, use IMPLICIT NONE in Programs  (FORTRAN);;FALSE;Fortran
+1002034;Any Data must be declared, use IMPLICIT NONE in Subroutines  (FORTRAN);;FALSE;Fortran
+1002036;Any Data must be declared, use IMPLICIT NONE in Functions  (FORTRAN);;FALSE;Fortran
+1002038;Any Data must be declared, use IMPLICIT NONE in Modules  (FORTRAN);;FALSE;Fortran
+1002040;Avoid using too many CONTINUE statements in Fortran-77 Programs  (FORTRAN);;FALSE;Fortran
+1002042;Avoid using too many CONTINUE statements in Fortran-77 Subroutines  (FORTRAN);;FALSE;Fortran
+1002044;Avoid using too many CONTINUE statements in Fortran-77 Functions  (FORTRAN);;FALSE;Fortran
+1002046;Avoid using too many CONTINUE statements in Fortran-77 Modules  (FORTRAN);;FALSE;Fortran
+1002048;Avoid using too many CYCLE or/and EXIT statements in Fortran-90 Program  (FORTRAN);;FALSE;Fortran
+1002050;Avoid using too many CYCLE or/and EXIT statements in Fortran-90 Subroutines  (FORTRAN);;FALSE;Fortran
+1002052;Avoid using too many CYCLE or/and EXIT statements in Fortran-90 Functions  (FORTRAN);;FALSE;Fortran
+1002054;Avoid using too many CYCLE or/and EXIT statements in Fortran-90 Modules  (FORTRAN);;FALSE;Fortran
+1002056;Avoid Programs with High Cyclomatic Complexity  (FORTRAN);;FALSE;Fortran
+1002058;Avoid Subroutines with High Cyclomatic Complexity  (FORTRAN);;FALSE;Fortran
+1002060;Avoid Functions with High Cyclomatic Complexity  (FORTRAN);;FALSE;Fortran
+1002062;Avoid Modules with High Cyclomatic Complexity  (FORTRAN);;FALSE;Fortran
+1002064;Avoid too many Exit statements in Programs  (FORTRAN);;FALSE;Fortran
+1002066;Avoid too many Exit statements in Subroutines  (FORTRAN);;FALSE;Fortran
+1002068;Avoid too many Exit statements in Functions  (FORTRAN);;FALSE;Fortran
+1002070;Avoid too many Exit statements in Modules  (FORTRAN);;FALSE;Fortran
+1002072;Avoid too many Entry statements in Programs  (FORTRAN);;FALSE;Fortran
+1002074;Avoid too many Entry statements in Subroutines  (FORTRAN);;FALSE;Fortran
+1002076;Avoid too many Entry statements in Functions  (FORTRAN);;FALSE;Fortran
+1002078;Avoid too many Entry statements in Modules  (FORTRAN);;FALSE;Fortran
+1002080;Avoid too many Exit and Entry points in Programs  (FORTRAN);;FALSE;Fortran
+1002082;Avoid too many Exit and Entry points in Subroutines  (FORTRAN);;FALSE;Fortran
+1002084;Avoid too many Exit and Entry points in Functions  (FORTRAN);;FALSE;Fortran
+1002086;Avoid too many Exit and Entry points in Modules  (FORTRAN);;FALSE;Fortran
+1002088;Avoid too many Statements (STMT) in a Subroutine  (FORTRAN);;FALSE;Fortran
+1002090;Avoid too many Statements (STMT) in a Program  (FORTRAN);;FALSE;Fortran
+1002092;Avoid too many Statements (STMT) in a Function  (FORTRAN);;FALSE;Fortran
+1002094;Avoid too many Statements (STMT) in a Module  (FORTRAN);;FALSE;Fortran
+1002096;Avoid using global SAVE in Fortran-90 Subroutines  (FORTRAN);;FALSE;Fortran
+1002098;Avoid using global SAVE in Fortran-90 Functions  (FORTRAN);;FALSE;Fortran
+1002100;Avoid using global SAVE in Fortran-90 Modules  (FORTRAN);;FALSE;Fortran
+1002102;Limit the use of the attribute ALLOCATE in Fortran-90 Programs  (FORTRAN);;FALSE;Fortran
+1002104;Limit the use of the attribute ALLOCATE in Fortran-90 Subroutines  (FORTRAN);;FALSE;Fortran
+1002106;Limit the use of the attribute ALLOCATE in Fortran-90 Functions  (FORTRAN);;FALSE;Fortran
+1002108;Limit the use of the attribute ALLOCATE in Fortran-90 Modules  (FORTRAN);;FALSE;Fortran
+1002110;Avoid Programs with High Average size of Statements (AVGS)  (FORTRAN);;FALSE;Fortran
+1002112;Avoid Subroutines with High Average size of Statements (AVGS)  (FORTRAN);;FALSE;Fortran
+1002114;Avoid Functions with High Average size of Statements (AVGS)  (FORTRAN);;FALSE;Fortran
+1002116;Avoid Modules with High Average size of Statements (AVGS)  (FORTRAN);;FALSE;Fortran
+1002118;Avoid Programs with High Program Length (PR_LGTH)  (FORTRAN);;FALSE;Fortran
+1002120;Avoid Subroutines with High Program Length (PR_LGTH)  (FORTRAN);;FALSE;Fortran
+1002122;Avoid Functions with High Program Length (PR_LGTH)  (FORTRAN);;FALSE;Fortran
+1002124;Avoid Modules with High Program Length (PR_LGTH)  (FORTRAN);;FALSE;Fortran
+1002126;Avoid Programs with High Vocabulary Frequency (VOCF)  (FORTRAN);;FALSE;Fortran
+1002128;Avoid Subroutines with High Vocabulary Frequency (VOCF)  (FORTRAN);;FALSE;Fortran
+1002130;Avoid Functions with High Vocabulary Frequency (VOCF)  (FORTRAN);;FALSE;Fortran
+1002132;Avoid Modules with High Vocabulary Frequency (VOCF)  (FORTRAN);;FALSE;Fortran
+1002134;Avoid Programs with more then 1 statement per line  (FORTRAN);;FALSE;Fortran
+1002136;Avoid Subroutines with more then 1 statement per line  (FORTRAN);;FALSE;Fortran
+1002138;Avoid Functions with more then 1 statement per line  (FORTRAN);;FALSE;Fortran
+1002140;Avoid Modules with more then 1 statement per line  (FORTRAN);;FALSE;Fortran
+1002142;Unavoid un-deallocated variables or arrays in Fortran-90 Modules  (FORTRAN);;FALSE;Fortran
+1002144;Unavoid un-deallocated variables or arrays in Fortran-90 Programs  (FORTRAN);;FALSE;Fortran
+1002146;Unavoid un-deallocated variables or arrays in Fortran-90 Subroutines  (FORTRAN);;FALSE;Fortran
+1002148;Unavoid un-deallocated variables or arrays in Fortran-90 Functions  (FORTRAN);;FALSE;Fortran
+1002150;Avoid Programs with a high Fan-in  (FORTRAN);;FALSE;Fortran
+1002152;Avoid Subroutines with a high Fan-in  (FORTRAN);;FALSE;Fortran
+1002154;Avoid Subroutines with a high Fan-out (FORTRAN);;FALSE;Fortran
+1002156;Avoid Functions with a high Fan-in (FORTRAN);;FALSE;Fortran
+1002158;Avoid Functions with a high Fan-out (FORTRAN);;FALSE;Fortran
+1002160;Avoid undocumented Programs (FORTRAN);;FALSE;Fortran
+1002162;Avoid undocumented Subroutines (FORTRAN);;FALSE;Fortran
+1002164;Avoid undocumented Functions (FORTRAN);;FALSE;Fortran
+1002166;Avoid undocumented Modules (FORTRAN);;FALSE;Fortran
+1002168;Avoid Programs with a low comment/code ratio (FORTRAN);;FALSE;Fortran
+1002170;Avoid Subroutines with a low comment/code ratio;;FALSE;Fortran
+1002172;Avoid Functions with a low comment/code ratio (FORTRAN);;FALSE;Fortran
+1002174;Avoid Modules with a low comment/code ratio (FORTRAN);;FALSE;Fortran
+1002176;Avoid unreferenced Programs (FORTRAN);;FALSE;Fortran
+1002178;Avoid unreferenced Subroutines (FORTRAN);;FALSE;Fortran
+1002180;Avoid unreferenced Functions (FORTRAN);;FALSE;Fortran
+1002182;Avoid unreferenced Modules (FORTRAN);;FALSE;Fortran
+1002184;Avoid Programs with a low number of Comment Blocks (FORTRAN);;FALSE;Fortran
+1002186;Avoid Subroutines with a low number of Comment Blocks (FORTRAN);;FALSE;Fortran
+1002188;Avoid Functions with a low number of Comment Blocks (FORTRAN);;FALSE;Fortran
+1002190;Avoid Modules with a low number of Comment Blocks;;FALSE;Fortran
+1002192;Avoid Programs with a low Comments Frequency;;FALSE;Fortran
+1002194;Avoid Subroutines with a low Comments Frequency (FORTRAN);;FALSE;Fortran
+1002196;Avoid Functions with a low Comments Frequency (FORTRAN);;FALSE;Fortran
+1002198;Avoid Modules with a low Comments Frequency (FORTRAN);;FALSE;Fortran
+1002200;Number of continuation lines can't be greater then XX in Fortran-90 Programs;;FALSE;Fortran
+1002202;Number of continuation lines can't be greater then XX in Fortran-90 Subroutines (FORTRAN);;FALSE;Fortran
+1002204;Number of continuation lines can't be greater then XX in Fortran-90 Modules;;FALSE;Fortran
+1002206;Number of continuation lines can't be greater then XX in Fortran-90 Functions (FORTRAN);;FALSE;Fortran
+1002208;All Read and Write statements in Programs must use the return code IOSTAT (FORTRAN);;FALSE;Fortran
+1002210;All Read and Write statements in Subroutines must use the return code IOSTAT (FORTRAN);;FALSE;Fortran
+1002212;All Read and Write statements in Functions must use the return code IOSTAT (FORTRAN);;FALSE;Fortran
+1002214;All Read and Write statements in Modules must use the return code IOSTAT (FORTRAN);;FALSE;Fortran
+1002216;Avoid Programs with a High number of Paths (FORTRAN);;FALSE;Fortran
+1002218;Avoid Subroutines with a High number of Paths (FORTRAN);;FALSE;Fortran
+1002220;Avoid Functions with a High number of Paths (FORTRAN);;FALSE;Fortran
+1002222;Avoid Modules with a High number of Paths (FORTRAN);;FALSE;Fortran
+1002224;Avoid high depth of code in Programs (FORTRAN);;FALSE;Fortran
+1002226;Avoid high depth of code in Subroutines (FORTRAN);;FALSE;Fortran
+1002228;Avoid high depth of code in Functions (FORTRAN);;FALSE;Fortran
+1002230;Avoid using the loop DO.. label.. CONTINUE in F90 Programs (FORTRAN);;FALSE;Fortran
+1002232;Avoid using the loop DO.. label.. CONTINUE in F90 Subroutines (FORTRAN);;FALSE;Fortran
+1002234;Avoid using the loop DO.. label.. CONTINUE in F90 Functions (FORTRAN);;FALSE;Fortran
+1002236;Avoid using the loop DO.. label.. CONTINUE in F90 Modules (FORTRAN);;FALSE;Fortran
+1002238;Avoid untested Return Code variables after Read or Write in Programs (FORTRAN);;FALSE;Fortran
+1002240;Avoid untested Return Code variables after Read or Write in Subroutines (FORTRAN);;FALSE;Fortran
+1002242;Avoid untested Return Code variables after Read or Write in Functions (FORTRAN);;FALSE;Fortran
+1002244;Avoid untested Return Code variables after Read or Write in Modules (FORTRAN);;FALSE;Fortran
+1002246;Avoid untested Return Code variables after ALLOCATE in Programs (FORTRAN);;FALSE;Fortran
+1002248;Avoid untested Return Code variables after ALLOCATE in Subroutines (FORTRAN);;FALSE;Fortran
+1002250;Avoid untested Return Code variables after ALLOCATE in Functions (FORTRAN);;FALSE;Fortran
+1002252;Avoid untested Return Code variables after ALLOCATE in Modules (FORTRAN);;FALSE;Fortran
+1002254;Avoid using free format files in Fortran-77 (FORTRAN);;FALSE;Fortran
+1002256;Logical operators should be enclosed in proper parenthesis in Programs (FORTRAN);;FALSE;Fortran
+1002258;Logical operators should be enclosed in proper parenthesis in Subroutines (FORTRAN);;FALSE;Fortran
+1002260;Logical operators should be enclosed in proper parenthesis in Functions (FORTRAN);;FALSE;Fortran
+1002262;Logical operators should be enclosed in proper parenthesis in Modules (FORTRAN);;FALSE;Fortran
+1002264;Avoid Programs with a high Fan-out (FORTRAN);;FALSE;Fortran
+1002266;Avoid high level of Nesting in Programs (FORTRAN);;FALSE;Fortran
+1002268;Avoid high level of Nesting in Functions (FORTRAN);;FALSE;Fortran
+1002270;Avoid high level of Nesting in Subroutines (FORTRAN);;FALSE;Fortran
+1002278;Avoid using fixed format files in Fortran-90 (FORTRAN);;FALSE;Fortran
+1002280;Avoid using global SAVE in Fortran-90 Programs (FORTRAN);;FALSE;Fortran
+1002282;All ALLOCATE statements in Fortran-90 Programs must use the return code STAT (FORTRAN);;FALSE;Fortran
+1002284;All ALLOCATE statements in Fortran-90 Subroutines must use the return code STAT (FORTRAN);;FALSE;Fortran
+1002286;All ALLOCATE statements in Fortran-90 Functions must use the return code STAT (FORTRAN);;FALSE;Fortran
+1002288;All ALLOCATE statements in Fortran-90 Modules must use the return code STAT (FORTRAN);;FALSE;Fortran
+1002290;Avoid using complex Allocates in Fortran 90 Programs (FORTRAN);;FALSE;Fortran
+1002292;Avoid using complex Allocates in Fortran 90 Subroutines (FORTRAN);;FALSE;Fortran
+1002294;Avoid using complex Allocates in Fortran 90 Function  (FORTRAN);;FALSE;Fortran
+1002296;Avoid using complex Allocates in Fortran 90 Modules (FORTRAN);;FALSE;Fortran
+1020000;Avoid Artifacts with High Cyclomatic Complexity (HTML5/Javascript);;FALSE;HTML5
+1020002;Avoid programs with low comment / code ratio  (HTML5/Javascript);;FALSE;HTML5
+1020004;Avoid using querySelectorAll;;TRUE;HTML5
+1020006;Avoid calling a function in a termination loop (Javascript);;TRUE;HTML5
+1020008;Avoid using for-in loop;;FALSE;HTML5
+1020010;Avoid using forEach();;FALSE;HTML5
+1020012;Avoid using a web service with WebSocket inside a loop;;TRUE;HTML5
+1020014;Avoid using a web service with XMLHttpRequest inside a loop;;TRUE;HTML5
+1020016;Avoid using too much dot notation in loop;;FALSE;HTML5
+1020018;Avoid using Web SQL databases;;TRUE;HTML5
+1020020;Avoid blocking page loading with synchronous Javascript import;;FALSE;HTML5
+1020022;"Avoid using submitted markup containing ""form"" and ""formaction"" attributes";;TRUE;HTML5
+1020024;"Avoid using submit markup related to ""form"" with id attribute";;TRUE;HTML5
+1020026;Avoid using autofocus and onfocus in submitted markup;;TRUE;HTML5
+1020028;Avoid using autofocus and onblur in submitted markup;;TRUE;HTML5
+1020030;Avoid using javascript or expression in the CSS file;;TRUE;HTML5
+1020032;Avoid using video poster attributes in combination with javascript;;TRUE;HTML5
+1020034;Avoid hosting HTML code in iframe srcdoc;;TRUE;HTML5
+1020036;Avoid using onscroll event with autofocus input;;TRUE;HTML5
+1020038;Avoid defining and calling functions inside loops;;FALSE;HTML5
+1020040;Avoid using delete with no object properties;;FALSE;HTML5
+1020042;Avoid having iframe inside a tag;;TRUE;HTML5
+1020044;Avoid using setData in ondragstart with attribute draggable set to true;;TRUE;HTML5
+1020046;Avoid using oninput in body containing input autofocus;;TRUE;HTML5
+1020048;Avoid using source tag in video/audio with event handler;;TRUE;HTML5
+1020050;"Avoid white-listing the ""dirname"" attribute in user generated content";;TRUE;HTML5
+1020052;Avoid using import with external URI;;TRUE;HTML5
+1020054;Avoid using delete on arrays;;FALSE;HTML5
+1020056;Avoid using Javascript Document.all collection;;FALSE;HTML5
+1020058;Avoid using eval() (Javascript);;TRUE;HTML5
+1020060;Avoid using console.log();;FALSE;HTML5
+1020062;Avoid using non thread-safe Javascript singleton pattern;;FALSE;HTML5
+1020064;Avoid Superclass knowing Subclass (Javascript);;FALSE;HTML5
+1020066;Avoid using Javascript Function constructor;;FALSE;HTML5
+1020068;Avoid return statement in finally block (Javascript);;TRUE;HTML5
+1020070;Avoid hardcoded network resource names (Javascript);;FALSE;HTML5
+1020072;Avoid direct access to Database Tables in Javascript;;FALSE;HTML5
+1020074;"Avoid enabling autocomplete ""on"" for inputs/forms";;FALSE;HTML5
+1020076;Avoid Artifacts with too many parameters (Javascript);;FALSE;HTML5
+1020078;Avoid using setTimeout() (Javascript);;TRUE;HTML5
+1020080;Avoid using setInterval() (Javascript);;TRUE;HTML5
+1020082;Avoid undocumented Functions (Javascript);;FALSE;HTML5
+1020084;Avoid unreferenced Functions (Javascript/HTML5);;FALSE;HTML5
+1020086;Avoid Functions having a very low Comment/Code ratio (Javascript);;FALSE;HTML5
+1020088;Avoid Artifacts with lines longer than X characters (Javascript/HTML5);;FALSE;HTML5
+1020090;Avoid Artifacts with High Depth of Code (Javascript);;FALSE;HTML5
+1020092;Avoid direct definition of JavaScript Functions in a Web page (Javascript/HTML5);;FALSE;HTML5
+1020094;Avoid creating cookie without setting httpOnly option (Javascript);;TRUE;HTML5
+1020096;Avoid using unsecured cookie (Javascript);;TRUE;HTML5
+1020098;Avoid creating cookie with overly broad path (Javascript);;TRUE;HTML5
+1020100;Avoid having cookie with an overly broad domain (Javascript);;TRUE;HTML5
+1020102;Always use JSON.parse & JSON.stringify with try/catch block (Javascript);;FALSE;HTML5
+1020104;Avoid hardcoded passwords (Javascript);;TRUE;HTML5
+1677000;Avoid string interpolations to prevent SQL injections (MyBatis/iBatis);;TRUE;JEE
+4592;Avoid hiding static Methods;;TRUE;JEE
+4594;Avoid using 'java.io.File';;FALSE;JEE
+4602;Avoid using Fields (non static final) from other Classes;;TRUE;JEE
+4702;Avoid using 'Throwable.printStackTrace()' with no argument;;FALSE;JEE
+7144;Struts Action Artifacts should not directly use database objects;;TRUE;JEE
+7146;JSP pages should only reference Java Objects associated to J2EE Scoped Bean;;FALSE;JEE
+7150;Favor PreparedStatement or CallableStatement over Statement;;FALSE;JEE
+7200;Avoid String concatenation in loops (JEE);;FALSE;JEE
+7202;Check usage of '==' and '!=' on objects;;TRUE;
+7210;Avoid instantiations inside loops;;TRUE;JEE
+7442;Avoid to use this within Constructor in multi-thread environment;;TRUE;JEE
+7446;Avoid double checked locking for JSE 4.x and previous version;;TRUE;JEE
+7504;Persistent classes should Implement hashCode() and equals();;TRUE;JEE
+7652;Avoid throwing an exception in a catch block without chaining it;;FALSE;JEE
+7706;Avoid table and column names that are too long (portability);;FALSE;JEE
+7714;Do not use auto-wiring;;FALSE;JEE
+7730;Use declarative transaction;;FALSE;JEE
+8104;Close database resources ASAP;;TRUE;JEE
+8214;Expired or Released Resource should not be used;;TRUE;JEE
+8216;Avoid using incompatible mutation;;TRUE;JEE
+1022000;Avoid using weak encryption algorithm as DES and triple DES;;TRUE;JEE
+1022002;Avoid using RSA Cryptographic algorithms without OAEP (Optimal Asymmetric Encryption Padding);;TRUE;JEE
+1039002;Avoid using deprecated SSL protocols to secure connection;;TRUE;JEE
+1039004;Avoid using HttpServletRequest.getRequestedSessionId();;TRUE;JEE
+1039006;Avoid using predictable SecureRandom Seeds;;TRUE;JEE
+1039008;Avoid thrown Exceptions in servlet methods;;TRUE;JEE
+1039010;Avoid using risky cryptographic hash (JEE);;TRUE;JEE
+1039012;Avoid using referer header field in HTTP request;;TRUE;JEE
+1039014;Avoid using Cipher with no HMAC to ensure data integrity;;TRUE;JEE
+1039016;Avoid Unvalidated URL Redirect;;TRUE;JEE
+1039018;Avoid using cryptography hash with hardcoded salt;;TRUE;JEE
+1039020;Avoid using javax.crypto.NullCipher;;TRUE;JEE
+1039022;Avoid using Insecure PBE Iteration Count;;TRUE;JEE
+1039024;Avoid using unsecured cookie (JEE);;TRUE;JEE
+1039026;Avoid creating cookie without setting httpOnly option (JEE);;TRUE;JEE
+1039028;Avoid weak encryption providing not sufficient key size (JEE);;TRUE;JEE
+1039030;Avoid using DefaultHttpClient constructor;;TRUE;JEE
+1039032;Avoid using DocumentBuilder without restriction of XML External Entity Reference (XXE);;TRUE;JEE
+1039034;Avoid using SAXParserFactory without restriction of XML External Entity Reference (XXE);;TRUE;JEE
+1039036;Avoid using XMLReader without restriction of XML External Entity Reference (XXE);;TRUE;JEE
+1039038;Avoid using XPathFactory without restriction of XML External Entity Reference (XXE);;TRUE;JEE
+1039040;Avoid using XMLStreamReader without restriction of XML External Entity Reference (XXE);;TRUE;JEE
+1039044;Avoid usage of BannedAPI when using ESAPI library;;FALSE;JEE
+1039046;Always use {@code} to wrap code statements or values such as null;;FALSE;JEE
+1039050;Add @Override on methods overriding or implementing a method declared in a super type;;FALSE;JEE
+1039052;Avoid Http Session without expiration;;TRUE;JEE
+1039056;Avoid insecure use of YAML deserialization when using SnakeYaml (JEE);;TRUE;JEE
+1039058;Avoid generating key with insufficient random generator in cookies;;TRUE;JEE
+1039062;Always implement readObject() to prevent untrusted deserialization when loading from ObjectInputStream;;TRUE;JEE
+1039064;Avoid having cookie with an overly broad domain (JEE);;TRUE;JEE
+1039066;Avoid creating cookie with overly broad path (JEE);;TRUE;JEE
+1039068;Avoid using the Non-Serializable Object Stored in Session;;TRUE;JEE
+1039070;Avoid using URL.equals(Object obj) or URL.hashCode();;FALSE;JEE
+1039072;Avoid using jYAML to deserialize YAML (JEE);;TRUE;JEE
+1039074;Avoid using Apache ActiveMQ 5.x before 5.13.0;;TRUE;JEE
+1020300;Avoid using the call of web service jQuery ajax inside a loop;;TRUE;HTML5
+1020302;Avoid using element type in jQuery;;FALSE;HTML5
+1020306;Always use find for Id->Child nested selectors;;FALSE;HTML5
+1020308;Always cache the returned objects in variables to be reused;;FALSE;HTML5
+1020310;"Use ""type="" to select elements by type";;FALSE;HTML5
+1020312;Avoid use of anonymous functions to attach events;;FALSE;HTML5
+1020314;Avoid using css() of many elements;;FALSE;HTML5
+1020316;Avoid Universal Selectors;;FALSE;HTML5
+1020318;Avoid using jQuery deprecated methods;;FALSE;HTML5
+1020320;Avoid using jQuery $.cookie;;FALSE;HTML5
+1020322;Avoid using Ajax method without dataType with jQuery version older than 3.0.0;;TRUE;HTML5
+1020324;Avoid using dialog with closeText parameter with jQuery UI version older than 1.12;;TRUE;HTML5
+1020328;Avoid using html() with jQuery 1.9.0 (or older);;TRUE;HTML5
+1020330;Avoid using $(location.hash) with jQuery version older than 1.6.3;;TRUE;HTML5
+1020332;Avoid using .append() after() with jQuery 1.4.2 (or older);;FALSE;HTML5
+1020334;Avoid using attr() with jQuery 3.0.0-rc1;;TRUE;HTML5
+1020336;Avoid using Dialog Widget with jQuery UI version older than 1.10.0;;TRUE;HTML5
+1020338;Avoid using Tooltip widget with jQuery UI version older than 1.10.0;;TRUE;HTML5
+1020340;Always implement the success/error/complete or done/fail/always callbacks when using jQuery ajax call;;TRUE;HTML5
+1020342;Avoid empty jQuery ajax error/fail blocks;;TRUE;HTML5
+1020700;Avoid the lack of error handling in the Node.js callbacks;;FALSE;HTML5
+1020702;Avoid using nodejs process.exit();;FALSE;HTML5
+1020704;Avoid using string concatenation when using __dirname and __filename;;FALSE;HTML5
+1020706;Ensure the Content-Security-Policy is activated (Node.js);;TRUE;HTML5
+1020708;Ensure the X-Powered-By header is disabled;;TRUE;HTML5
+1020710;Ensure the X-XSS-Protection header is enabled;;TRUE;HTML5
+1020712;Ensure the X-Frame-Options header is setup (Node.js);;TRUE;HTML5
+1020714;Avoid having multiple routes for the same path with Node.js Express App;;TRUE;HTML5
+1020716;Avoid using the call of web service with Node.js http.get or http.request inside a loop;;TRUE;HTML5
+1020718;Ensure that browser cannot cache or store a page;;FALSE;HTML5
+1020720;Avoid unsecure connection to the Node.js server;;TRUE;HTML5
+1020722;Avoid enabling unsecure Node.js server;;TRUE;HTML5
+1020724;Ensure that marked is sanitized;;TRUE;HTML5
+1020726;Ensure that CSRF Protection is enabled (Node.js);;TRUE;HTML5
+1020728;Avoid creating cookie without setting httpOnly option (Node.js);;TRUE;HTML5
+1020730;Ensure Node.js filesystem are closed;;FALSE;HTML5
+1020732;Avoid using risky cryptographic hash (Node.js);;FALSE;HTML5
+1020734;Avoid using unsecured cookie (Node.js);;TRUE;HTML5
+1020736;Avoid bypassing self-signed ssl certificate (Node.js);;TRUE;HTML5
+1020738;Avoid disabling SSL verification in node-curl;;TRUE;HTML5
+1020740;Avoid creating cookie with overly broad path (Node.js);;TRUE;HTML5
+1020742;Avoid creating cookie with overly broad domain (Node.js);;FALSE;HTML5
+1020744;Avoid using TLS library before Node.js 9.11.2 and 10.4.1;;FALSE;HTML5
+1020746;Avoid using HTTP/2 library with vulnerable versions;;FALSE;HTML5
+1020748;Avoid using the call of data service with Node.js inside a loop;;TRUE;HTML5
+1020750;Avoid using the file path validation with Node.js 8.5.0;;FALSE;HTML5
+1020758;Avoid using Buffer.fill() and/or Buffer.alloc() with vulnerable versions;;FALSE;HTML5
+1020760;Avoid using Buffer library and UCS-2 encoding with vulnerable versions;;FALSE;HTML5
+1020762;Avoid using url.parse() with vulnerable versions;;FALSE;HTML5
+1020764;Avoid using path library parsing functions with vulnerable versions;;FALSE;HTML5
+1020766;Avoid using Node.js ps library with vulnerable versions;;FALSE;HTML5
+1020768;Avoid using net.Socket object as stream with vulnerable version of Node.js;;FALSE;HTML5
+1020770;Avoid using Node.js query-mysql third-party before 0.0.3;;FALSE;HTML5
+1020772;Avoid Javascript string interpolations to prevent SQL injections;;TRUE;HTML5
+1020774;Avoid having multiple Artifacts updating data on the same NoSQL Collection;;FALSE;HTML5
+1020776;Avoid having multiple Artifacts inserting data on the same NoSQL Collection;;FALSE;HTML5
+1020778;Avoid having multiple artifacts deleting data on the same NoSQL collections;;FALSE;HTML5
+1101958;Avoid artifacts having db.collection.ensureIndex() to create new indexes;;FALSE;ASP.NET/C#/VB.NET
+1101962;Avoid using explain() in production code;;FALSE;ASP.NET/C#/VB.NET
+1101964;When using compound indexes, avoid having different index ordering in collection access;;FALSE;ASP.NET/C#/VB.NET
+1101966;Avoid having MongoDB databases access without authentication activated;;FALSE;ASP.NET/C#/VB.NET
+1101968;Avoid having multiple Artifacts updating data on the same NoSQL Collection;;FALSE;ASP.NET/C#/VB.NET
+1101970;Avoid having multiple Artifacts inserting data on the same NoSQL Collection;;FALSE;ASP.NET/C#/VB.NET
+1101972;Avoid having multiple artifacts deleting data on the same NoSQL collection;;FALSE;ASP.NET/C#/VB.NET
+1101916;When using compound indexes, avoid having different index ordering in collection access;;FALSE;JEE
+1101920;Avoid using explain() in production code (JEE);;FALSE;JEE
+1600100;Page fields using views must be display only (PeopleSoft);;FALSE;PeopleSoft
+1600102;Avoid inserting or deleting data on grid based on a record view (PeopleSoft);;FALSE;PeopleSoft
+1600104;Avoid disabling insert or delete on grid based on a record table (PeopleSoft);;FALSE;PeopleSoft
+1600106;Avoid using the SQLExec statements in the PeopleCode (PeopleSoft);;FALSE;PeopleSoft
+1600108;"Check if ""Commit"" statements have been used only where it is necessary (PeopleSoft)";;FALSE;PeopleSoft
+1600110;"Check existence of ""Update"", ""Insert"" & ""Delete"" Statements using SQLExec function (PeopleSoft)";;TRUE;PeopleSoft
+1600140;"Record field based on XLAT should be defined as ""Translate Table Edit"" (PeopleSoft)";;FALSE;PeopleSoft
+1600142;Message item must have a translation into another language (PeopleSoft);;FALSE;PeopleSoft
+1600144;XLAT item must have a translation into another language (PeopleSoft);;FALSE;PeopleSoft
+1600146;Field label item must have a translation into another language (PeopleSoft);;FALSE;PeopleSoft
+1600148;Menu label must have a translation into another language (PeopleSoft);;FALSE;PeopleSoft
+1600150;Number of substitution joker for message text must be equal (PeopleSoft);;FALSE;PeopleSoft
+1600160;Avoid deleting delivered values in standard XLAT (PeopleSoft);;FALSE;PeopleSoft
+1600162;Never delete a field from a standard panel (PeopleSoft);;FALSE;PeopleSoft
+1600166;Do NOT delete PeopleSoft defined fields from a record (PeopleSoft);;FALSE;PeopleSoft
+1600168;All new Translate value should be at dd/mm/yyyy (PeopleSoft);;FALSE;PeopleSoft
+1600170;Never remove a standard page from component (PeopleSoft);;FALSE;PeopleSoft
+1600180;Avoid modification of lengths or types of Fields (PeopleSoft);;TRUE;PeopleSoft
+1600182;Avoid renaming or changing attributes on existing projet's Fields (PeopleSoft);;FALSE;PeopleSoft
+1600184;Avoid PeopleCode Event with High Cyclomatic (PeopleSoft);;FALSE;PeopleSoft
+1600186;Avoid PeopleCode Functions with High Cyclomatic (PeopleSoft);;FALSE;PeopleSoft
+1600188;Avoid PeopleCode Methods with High Cyclomatic (PeopleSoft);;FALSE;PeopleSoft
+1600190;Avoid PeopleCode Classes with High Cyclomatic (PeopleSoft);;FALSE;PeopleSoft
+1600200;Don't use hardcoded message (PeopleSoft);;FALSE;PeopleSoft
+1600220;Avoid unfilled Field Label (PeopleSoft);;FALSE;PeopleSoft
+1600280;Avoid placing PeopleCode into Fields, prefer Component Level (PeopleSoft);;FALSE;PeopleSoft
+1600282;Write UNION ALL instead of UNION statement (PeopleSoft);;FALSE;PeopleSoft
+1600284;Avoid using comments in SQL queries (PeopleSoft);;FALSE;PeopleSoft
+1600286;Avoid using the Hints to force Oracle to use a specific access method (PeopleSoft);;FALSE;PeopleSoft
+1600288;Avoid using count(*) syntax (PeopleSoft);;FALSE;PeopleSoft
+1600290;Avoid using ROWNUM and ORDER BY (PeopleSoft);;FALSE;PeopleSoft
+1600292;In an INSERT statement, define explicitly the values for all the table columns (PeopleSoft);;FALSE;PeopleSoft
+1600294;Child records must share all keys as the parent record, plus one or more keys that uniquely identify each row (PeopleSoft);;FALSE;PeopleSoft
+1600296;Related Language tables must have the same key structure as the table with the addition of the field LANGUAGE_CD (PeopleSoft);;FALSE;PeopleSoft
+1600320;Avoid creating unused Field label (PeopleSoft);;FALSE;PeopleSoft
+1600380;Naming convention on Search Record (PeopleSoft);;FALSE;PeopleSoft
+1600384;Naming convention on Language Record Table (PeopleSoft);;FALSE;PeopleSoft
+1600386;Naming convention on Language Record View (PeopleSoft);;FALSE;PeopleSoft
+1600396;Naming convention on AE State Record (PeopleSoft);;FALSE;PeopleSoft
+1600398;Naming convention on AE Temporary Record (PeopleSoft);;FALSE;PeopleSoft
+1600400;Naming convention suffix on Record View (PeopleSoft);;FALSE;PeopleSoft
+1600402;Naming convention suffix on Record Derived (PeopleSoft);;FALSE;PeopleSoft
+1600460;Isolate common expressions (PeopleSoft);;FALSE;PeopleSoft
+1600480;Avoid too many Related displays (PeopleSoft);;FALSE;PeopleSoft
+1600482;Avoid unlimited occurs on grids (PeopleSoft);;FALSE;PeopleSoft
+1600484;Create all new Record Table in a specific tablespace (PeopleSoft);;FALSE;PeopleSoft
+1600486;Create all new Record Temp in a specific tablespace (PeopleSoft);;TRUE;PeopleSoft
+1600488;Avoid tables having indexes with a too large index definition (PeopleSoft);;FALSE;PeopleSoft
+1600490;Avoid disabling Deferred Processing on Fields (PeopleSoft);;FALSE;PeopleSoft
+1600492;Avoid disabling Deferred Processing on Pages (PeopleSoft);;FALSE;PeopleSoft
+1600494;Avoid disabling Deferred Processing on Components (PeopleSoft);;FALSE;PeopleSoft
+1600496;Send messages in the SavePostChange event (PeopleSoft);;FALSE;PeopleSoft
+1600500;Using DISTINCT, GROUP BY or UNION clause in a View implies that no join using an index can be done on this View (PeopleSoft);;TRUE;PeopleSoft
+1600502;All record must have at least one column as key (PeopleSoft);;FALSE;PeopleSoft
+1600504;All keys should be located at the top of the record definition, and listed in order of importance (PeopleSoft);;FALSE;PeopleSoft
+1600506;All select statements must list each field specifically (PeopleSoft);;FALSE;PeopleSoft
+1600508;Use as possible SQL section rather than PeopleCode in the application engine (PeopleSoft);;FALSE;PeopleSoft
+1600510;Always prefer joining tables to subqueries (PeopleSoft);;FALSE;PeopleSoft
+1600512;Use the DISTINCT clause only when we are sure that the query will return duplicate results (PeopleSoft);;FALSE;PeopleSoft
+1600514;Prefer using UNION to the OR operator (PeopleSoft);;FALSE;PeopleSoft
+1600516;SELECT ... FROM ... WHERE alias.col LIKE '%xxx' (PeopleSoft);;FALSE;PeopleSoft
+1600518;Prefer boolean operators (EXISTS, NOT EXISTS) and non-negative predicates (PeopleSoft);;FALSE;PeopleSoft
+1600520;IN vs EXIST Use IN when the subquery is the most selective (PeopleSoft);;FALSE;PeopleSoft
+1600522;Use TRUNCATE statement to clean a whole table (PeopleSoft);;FALSE;PeopleSoft
+1600524;For complex query, always prefer the subqueries to retrieve display fields not used as joins search criterias (PeopleSoft);;FALSE;PeopleSoft
+1600528;Avoid SQL with queries on more than 4 Tables (PeopleSoft);;FALSE;PeopleSoft
+1600530;Avoid SQL using GROUP BY (PeopleSoft);;FALSE;PeopleSoft
+1600532;Avoid PeopleCode using GROUP BY (PeopleSoft);;FALSE;PeopleSoft
+1600534;Avoid SQL using HAVING (PeopleSoft);;FALSE;PeopleSoft
+1600536;Avoid PeopleCode using HAVING (PeopleSoft);;FALSE;PeopleSoft
+1600538;Using the GetNextNumberWithGaps Function (PeopleSoft);;FALSE;PeopleSoft
+1600560;Component includes only page and never subpage (SBP) or secondary-page (PeopleSoft);;FALSE;PeopleSoft
+1600562;Non-Standard SQL Table Name must be empty for a Record Table (PeopleSoft);;FALSE;PeopleSoft
+1600564;Non-Standard SQL Table Name must be empty for a Record View (PeopleSoft);;FALSE;PeopleSoft
+1600566;Non-Standard SQL Table Name must be empty for a Record Query View (PeopleSoft);;FALSE;PeopleSoft
+1600568;New field added in a standard record must be at the end of the record (PeopleSoft);;FALSE;PeopleSoft
+1600570;All new Record must have a SYNCID (PeopleSoft);;FALSE;PeopleSoft
+1600572;"Ensure that ""Buid sequence N§"" is upper than ""Build sequence N°"" of all view used in the definition (PeopleSoft)";;FALSE;PeopleSoft
+1600574;All functions written will use the PeopleCode type of FieldFormula (PeopleSoft);;FALSE;PeopleSoft
+1600576;New field added in a standard record must be done in a specific KEY sub-record (PeopleSoft);;FALSE;PeopleSoft
+1600620;Avoid PeopleCode Events with a low comment/code ratio (PeopleSoft);;FALSE;PeopleSoft
+1600622;Avoid PeopleCode Functions with a low comment/code ratio (PeopleSoft);;FALSE;PeopleSoft
+1600624;Avoid PeopleCode Methods with a low comment/code ratio (PeopleSoft);;FALSE;PeopleSoft
+1600626;Avoid PeopleCode Classes with a low comment/code ratio (PeopleSoft);;FALSE;PeopleSoft
+1600628;Avoid undocumented PeopleCode Events (PeopleSoft);;FALSE;PeopleSoft
+1600630;Avoid undocumented PeopleCode Functions (PeopleSoft);;FALSE;PeopleSoft
+1600632;Avoid undocumented PeopleCode Methods (PeopleSoft);;FALSE;PeopleSoft
+1600634;Avoid undocumented PeopleCode Classes (PeopleSoft);;FALSE;PeopleSoft
+1600640;"Field label don't contain "":"" (PeopleSoft)";;FALSE;PeopleSoft
+1600642;Pages should be designed assuming the user has an 800x600 monitor resolution (PeopleSoft);;FALSE;PeopleSoft
+1600644;Developers should avoid developing web pages that result in horizontal scrolling (PeopleSoft);;FALSE;PeopleSoft
+1600646;Developers should not build long pages that are longer than 5 pages (PeopleSoft);;FALSE;PeopleSoft
+1600648;Avoid using a radio button or check box when the user has more than three choices (PeopleSoft);;FALSE;PeopleSoft
+1600650;Use Default Style and Font (PeopleSoft);;FALSE;PeopleSoft
+1600652;Key fields displayed on a panel should ALWAYS be display only (PeopleSoft);;FALSE;PeopleSoft
+1600654;Attribute No colon should be check for visible label (PeopleSoft);;FALSE;PeopleSoft
+1600656;Avoid specific visual design for grid (PeopleSoft);;FALSE;PeopleSoft
+1600658;Display control field must be before the related display field that depends on it (PeopleSoft);;FALSE;PeopleSoft
+1600660;Display and related fields from same record must be avoided (PeopleSoft);;FALSE;PeopleSoft
+1600662;All records with SETID in its key, must be linked to a record group (PeopleSoft);;FALSE;PeopleSoft
+1600664;Only one long character type field is allowed in a regular record definition (PeopleSoft);;FALSE;PeopleSoft
+1600666;Use DESCR and DESCRSHORT for description fields rather than record specific titles (PeopleSoft);;FALSE;PeopleSoft
+1600668;Do not define a recordField EFFDT or EFF_STATUS without the other (PeopleSoft);;FALSE;PeopleSoft
+1600670;FIELDNUM values should be numbered sequentially for Record (PeopleSoft);;FALSE;PeopleSoft
+1600674;Language records should have the same type as the based record (PeopleSoft);;FALSE;PeopleSoft
+1600676;Put Break statements in your Evaluate statements (PeopleSoft);;FALSE;PeopleSoft
+1600678;Consolidating PeopleCode Programs (PeopleSoft);;FALSE;PeopleSoft
+1600680;Move PeopleCode to a Component or Page Definition (PeopleSoft);;FALSE;PeopleSoft
+1600720;All new menu item must be into a permission list (PeopleSoft);;FALSE;PeopleSoft
+1600722;All new component interface must be into a permission list (PeopleSoft);;FALSE;PeopleSoft
+1600724;All new message channel must be into a permission list (PeopleSoft);;FALSE;PeopleSoft
+1600734;All new mobile page must be into a permission list (PeopleSoft);;FALSE;PeopleSoft
+1600736;All new process group must be into a permission list (PeopleSoft);;FALSE;PeopleSoft
+1600760;Avoid Classes with more than X Methods (PeopleSoft);;FALSE;PeopleSoft
+1600762;Avoid Records Tables with more than X Fields (PeopleSoft);;FALSE;PeopleSoft
+1600764;Avoid Records Views with more than X Fields (PeopleSoft);;FALSE;PeopleSoft
+1600766;Avoid Records Derived with more than X Fields (PeopleSoft);;FALSE;PeopleSoft
+1600768;Avoid Sub-records with more than X Fields (PeopleSoft);;FALSE;PeopleSoft
+1600770;Avoid Pages with more than X linked Records (PeopleSoft);;FALSE;PeopleSoft
+1600772;Avoid Pages with more than X linked Pages (PeopleSoft);;FALSE;PeopleSoft
+1600774;Avoid Methods with too many parameters (PeopleSoft);;FALSE;PeopleSoft
+1600840;Avoid using hardcoded usernames (PeopleSoft);;FALSE;PeopleSoft
+1601500;Avoid unused Record Table (PeopleSoft);;FALSE;PeopleSoft
+1601502;Avoid unused Record View (PeopleSoft);;FALSE;PeopleSoft
+1601504;Avoid unused Record Derived (PeopleSoft);;FALSE;PeopleSoft
+1601506;Avoid unused Record Sub (PeopleSoft);;FALSE;PeopleSoft
+1601508;Avoid unused Record Dynamic (PeopleSoft);;FALSE;PeopleSoft
+1601510;Avoid unused Record Query (PeopleSoft);;FALSE;PeopleSoft
+1601512;Avoid unused Record Temp (PeopleSoft);;FALSE;PeopleSoft
+1601514;Avoid unused Field (PeopleSoft);;FALSE;PeopleSoft
+1601516;Avoid unused Page (PeopleSoft);;FALSE;PeopleSoft
+1601518;Avoid unused Sub Page (PeopleSoft);;FALSE;PeopleSoft
+1601520;Avoid unused Secondary Page (PeopleSoft);;FALSE;PeopleSoft
+1601522;Avoid unused SQL (PeopleSoft);;FALSE;PeopleSoft
+1601524;Avoid unused Component Interface (PeopleSoft);;FALSE;PeopleSoft
+1601526;Avoid unused Application Engine (PeopleSoft);;FALSE;PeopleSoft
+1601530;Avoid unused Mobile Page (PeopleSoft);;FALSE;PeopleSoft
+1601532;Avoid unused Component (PeopleSoft);;FALSE;PeopleSoft
+1601534;Avoid unused Menu (PeopleSoft);;FALSE;PeopleSoft
+1601536;Avoid unused Popup Menu (PeopleSoft);;FALSE;PeopleSoft
+1601700;Naming convention prefix on Record Table (PeopleSoft);;FALSE;PeopleSoft
+1601702;Naming convention prefix on Record View (PeopleSoft);;FALSE;PeopleSoft
+1601704;Naming convention prefix on Record Derived (PeopleSoft);;FALSE;PeopleSoft
+1601706;Naming convention prefix on Record Sub (PeopleSoft);;FALSE;PeopleSoft
+1601708;Naming convention prefix on Record Dynamic (PeopleSoft);;FALSE;PeopleSoft
+1601710;Naming convention prefix on Record Query (PeopleSoft);;FALSE;PeopleSoft
+1601712;Naming convention prefix on Record Temp (PeopleSoft);;FALSE;PeopleSoft
+1601714;Naming convention prefix on Field (PeopleSoft);;FALSE;PeopleSoft
+1601716;Naming convention prefix on Page (PeopleSoft);;FALSE;PeopleSoft
+1601718;Naming convention prefix on Sub Page (PeopleSoft);;FALSE;PeopleSoft
+1601720;Naming convention prefix on Secondary Page (PeopleSoft);;FALSE;PeopleSoft
+1601722;Naming convention prefix on SQL (PeopleSoft);;FALSE;PeopleSoft
+1601724;Naming convention prefix on Component Interface (PeopleSoft);;FALSE;PeopleSoft
+1601726;Naming convention prefix on Application Engine (PeopleSoft);;FALSE;PeopleSoft
+1601728;Naming convention prefix on Package (PeopleSoft);;FALSE;PeopleSoft
+1601730;Naming convention prefix on Mobile Page (PeopleSoft);;FALSE;PeopleSoft
+1601732;Naming convention prefix on Component (PeopleSoft);;FALSE;PeopleSoft
+1601734;Naming convention prefix on Menu (PeopleSoft);;FALSE;PeopleSoft
+1601736;Naming convention prefix on Popup Menu (PeopleSoft);;FALSE;PeopleSoft
+1601738;Naming convention prefix on Field Label (PeopleSoft);;FALSE;PeopleSoft
+1601740;Naming convention prefix on Field Format (PeopleSoft);;FALSE;PeopleSoft
+1601742;Naming convention prefix on Portal Content Reference (PeopleSoft);;FALSE;PeopleSoft
+1601744;Naming convention prefix on Menu Item (PeopleSoft);;FALSE;PeopleSoft
+1601746;Naming convention prefix on Role (PeopleSoft);;FALSE;PeopleSoft
+1601750;Naming convention prefix on Permission List (PeopleSoft);;FALSE;PeopleSoft
+1601752;Naming convention prefix on File Layout (PeopleSoft);;FALSE;PeopleSoft
+1601754;Naming convention prefix on Messages Nodes (PeopleSoft);;FALSE;PeopleSoft
+1601756;Naming convention prefix on Business Process (PeopleSoft);;FALSE;PeopleSoft
+1601758;Naming convention prefix on Activity (PeopleSoft);;FALSE;PeopleSoft
+1601760;Naming convention prefix on Query (PeopleSoft);;FALSE;PeopleSoft
+1601762;Naming convention prefix on Process (PeopleSoft);;FALSE;PeopleSoft
+1601764;Naming convention prefix on HTML (PeopleSoft);;FALSE;PeopleSoft
+1601766;Naming convention prefix on URL (PeopleSoft);;FALSE;PeopleSoft
+1601800;Record Table should have a OwnerID (PeopleSoft);;FALSE;PeopleSoft
+1601802;Record View should have a OwnerID (PeopleSoft);;FALSE;PeopleSoft
+1601804;Record Derived should have a OwnerID (PeopleSoft);;FALSE;PeopleSoft
+1601806;Record Sub should have a OwnerID (PeopleSoft);;FALSE;PeopleSoft
+1601808;Record Dynamic should have a OwnerID (PeopleSoft);;FALSE;PeopleSoft
+1601810;Record Query should have a OwnerID (PeopleSoft);;FALSE;PeopleSoft
+1601812;Record Temp should have a OwnerID (PeopleSoft);;FALSE;PeopleSoft
+1601814;Field should have a OwnerID (PeopleSoft);;FALSE;PeopleSoft
+1601816;Page should have a OwnerID (PeopleSoft);;FALSE;PeopleSoft
+1601818;Sub Page should have a OwnerID (PeopleSoft);;FALSE;PeopleSoft
+1601820;Secondary Page should have a OwnerID (PeopleSoft);;FALSE;PeopleSoft
+1601822;SQL should have a OwnerID (PeopleSoft);;FALSE;PeopleSoft
+1601824;Component Interface should have a OwnerID (PeopleSoft);;FALSE;PeopleSoft
+1601826;Application Engine should have a OwnerID (PeopleSoft);;FALSE;PeopleSoft
+1601828;Package should have a OwnerID (PeopleSoft);;FALSE;PeopleSoft
+1601830;Mobile Page should have a OwnerID (PeopleSoft);;FALSE;PeopleSoft
+1601832;Component should have a OwnerID (PeopleSoft);;FALSE;PeopleSoft
+1601834;Menu should have a OwnerID (PeopleSoft);;FALSE;PeopleSoft
+1601836;Popup Menu should have a OwnerID (PeopleSoft);;FALSE;PeopleSoft
+1602000;Record Table should have a Description (PeopleSoft);;FALSE;PeopleSoft
+1602002;Record View should have a Description (PeopleSoft);;FALSE;PeopleSoft
+1602004;Record Derived should have a Description (PeopleSoft);;FALSE;PeopleSoft
+1602006;Record Sub should have a Description (PeopleSoft);;FALSE;PeopleSoft
+1602008;Record Dynamic should have a Description (PeopleSoft);;FALSE;PeopleSoft
+1602010;Record Query should have a Description (PeopleSoft);;FALSE;PeopleSoft
+1602012;Record Temp should have a Description (PeopleSoft);;FALSE;PeopleSoft
+1602016;Page should have a Description (PeopleSoft);;FALSE;PeopleSoft
+1602018;Sub Page should have a Description (PeopleSoft);;FALSE;PeopleSoft
+1602020;Secondary Page should have a Description (PeopleSoft);;FALSE;PeopleSoft
+1602022;SQL should have a Description (PeopleSoft);;FALSE;PeopleSoft
+1602024;Component Interface should have a Description (PeopleSoft);;FALSE;PeopleSoft
+1602026;Application Engine should have a Description (PeopleSoft);;FALSE;PeopleSoft
+1602028;Package should have a Description (PeopleSoft);;FALSE;PeopleSoft
+1602030;Mobile Page should have a Description (PeopleSoft);;FALSE;PeopleSoft
+1602032;Component should have a Description (PeopleSoft);;FALSE;PeopleSoft
+1602034;Menu should have a Description (PeopleSoft);;FALSE;PeopleSoft
+1602036;Popup Menu should have a Description (PeopleSoft);;FALSE;PeopleSoft
+1602100;Record Table should have a Long Description (PeopleSoft);;FALSE;PeopleSoft
+1602102;Record View should have a Long Description (PeopleSoft);;FALSE;PeopleSoft
+1602104;Record Derived should have a Long Description (PeopleSoft);;FALSE;PeopleSoft
+1602106;Record Sub should have a Long Description (PeopleSoft);;FALSE;PeopleSoft
+1602108;Record Dynamic should have a Long Description (PeopleSoft);;FALSE;PeopleSoft
+1602110;Record Query should have a Long Description (PeopleSoft);;FALSE;PeopleSoft
+1602112;Record Temp should have a Long Description (PeopleSoft);;FALSE;PeopleSoft
+1602114;Field should have a Long Description (PeopleSoft);;FALSE;PeopleSoft
+1602116;Page should have a Long Description (PeopleSoft);;FALSE;PeopleSoft
+1602118;Sub Page should have a Long Description (PeopleSoft);;FALSE;PeopleSoft
+1602120;Secondary Page should have a Long Description (PeopleSoft);;FALSE;PeopleSoft
+1602122;SQL should have a Long Description (PeopleSoft);;FALSE;PeopleSoft
+1602124;Component Interface should have a Long Description (PeopleSoft);;FALSE;PeopleSoft
+1602126;Application Engine should have a Long Description (PeopleSoft);;FALSE;PeopleSoft
+1602128;Package should have a Long Description (PeopleSoft);;FALSE;PeopleSoft
+1602130;Mobile Page should have a Long Description (PeopleSoft);;FALSE;PeopleSoft
+1602132;Component should have a Long Description (PeopleSoft);;FALSE;PeopleSoft
+1602134;Menu should have a Long Description (PeopleSoft);;FALSE;PeopleSoft
+1602136;Popup Menu should have a Long Description (PeopleSoft);;FALSE;PeopleSoft
+1602200;Never use PS and VP1 login to develop - Record Table (PeopleSoft);;FALSE;PeopleSoft
+1602202;Never use PS and VP1 login to develop - Record View (PeopleSoft);;FALSE;PeopleSoft
+1602204;Never use PS and VP1 login to develop - Record Derived (PeopleSoft);;FALSE;PeopleSoft
+1602206;Never use PS and VP1 login to develop - Record Sub (PeopleSoft);;FALSE;PeopleSoft
+1602208;Never use PS and VP1 login to develop - Record Dynamic (PeopleSoft);;FALSE;PeopleSoft
+1602210;Never use PS and VP1 login to develop - Record Query (PeopleSoft);;FALSE;PeopleSoft
+1602212;Never use PS and VP1 login to develop - Record Temp (PeopleSoft);;FALSE;PeopleSoft
+1602214;Never use PS and VP1 login to develop - Field (PeopleSoft);;FALSE;PeopleSoft
+1602216;Never use PS and VP1 login to develop - Page (PeopleSoft);;FALSE;PeopleSoft
+1602218;Never use PS and VP1 login to develop - Sub Page (PeopleSoft);;FALSE;PeopleSoft
+1602220;Never use PS and VP1 login to develop - Secondary Page (PeopleSoft);;FALSE;PeopleSoft
+1602222;Never use PS and VP1 login to develop - SQL (PeopleSoft);;FALSE;PeopleSoft
+1602224;Never use PS and VP1 login to develop - Component Interface (PeopleSoft);;FALSE;PeopleSoft
+1602226;Never use PS and VP1 login to develop - Application Engine (PeopleSoft);;FALSE;PeopleSoft
+1602228;Never use PS and VP1 login to develop - Package (PeopleSoft);;FALSE;PeopleSoft
+1602230;Never use PS and VP1 login to develop - Mobile Page (PeopleSoft);;FALSE;PeopleSoft
+1602232;Never use PS and VP1 login to develop - Component (PeopleSoft);;FALSE;PeopleSoft
+1602234;Never use PS and VP1 login to develop - Menu (PeopleSoft);;FALSE;PeopleSoft
+1602236;Never use PS and VP1 login to develop - Popup Menu (PeopleSoft);;FALSE;PeopleSoft
+1602400;All created or modified Record Table must be in a project (PeopleSoft);;FALSE;PeopleSoft
+1602402;All created or modified Record View must be in a project (PeopleSoft);;FALSE;PeopleSoft
+1602404;All created or modified  Record Derived must be in a project (PeopleSoft);;FALSE;PeopleSoft
+1602406;All created or modified Record Sub must be in a project (PeopleSoft);;FALSE;PeopleSoft
+1602408;All created or modified Record Dynamic must be in a project (PeopleSoft);;FALSE;PeopleSoft
+1602410;All created or modified Record Query must be in a project (PeopleSoft);;FALSE;PeopleSoft
+1602412;All created or modified Record Temp must be in a project (PeopleSoft);;FALSE;PeopleSoft
+1602414;All created or modified Field must be in a project (PeopleSoft);;FALSE;PeopleSoft
+1602416;All created or modified Page must be in a project (PeopleSoft);;FALSE;PeopleSoft
+1602418;All created or modified Sub Page must be in a project (PeopleSoft);;FALSE;PeopleSoft
+1602420;All created or modified Secondary Page must be in a project (PeopleSoft);;FALSE;PeopleSoft
+1602422;All created or modified SQL must be in a project (PeopleSoft);;FALSE;PeopleSoft
+1602424;All created or modified Component Interface must be in a project (PeopleSoft);;FALSE;PeopleSoft
+1602426;All created or modified Application Engine must be in a project (PeopleSoft);;FALSE;PeopleSoft
+1602428;All created or modified Package must be in a project (PeopleSoft);;FALSE;PeopleSoft
+1602430;All created or modified Mobile Page must be in a project (PeopleSoft);;FALSE;PeopleSoft
+1602432;All created or modified Component must be in a project (PeopleSoft);;FALSE;PeopleSoft
+1602434;All created or modified Menu must be in a project (PeopleSoft);;FALSE;PeopleSoft
+1602436;All created or modified Popup Menu must be in a project (PeopleSoft);;FALSE;PeopleSoft
+1007002;Avoid artifacts directly accessing database tables (PHP);;FALSE;PHP
+1007004;Avoid Methods and Functions with High Fan-In (PHP);;FALSE;PHP
+1007006;Avoid Methods and Functions with High Fan-Out (PHP);;FALSE;PHP
+1007008;Avoid JavaScript Functions with High Fan-In (PHP);;FALSE;PHP
+1007010;Avoid JavaScript Functions with High Fan-Out (PHP);;FALSE;PHP
+1007012;Avoid using embedded CSS in Web Pages (PHP);;FALSE;PHP
+1007014;Avoid direct definition of JavaScript Functions in a Web page (PHP);;FALSE;PHP
+1007016;Avoid artifacts with High Cyclomatic Complexity (PHP);;FALSE;PHP
+1007020;Avoid Sections with High Cyclomatic Complexity (PHP);;FALSE;PHP
+1007022;"Avoid artifacts using ""for"" loops which can be simplified to a ""while"" loop (PHP)";;FALSE;PHP
+1007024;Avoid incrementer jumbling in loops (PHP);;TRUE;PHP
+1007026;"Use identical type operator rather than ""equal"" operator (PHP)";;FALSE;PHP
+1007028;Use increment/decrement operators where possible (PHP);;FALSE;PHP
+1007030;Avoid using empty statement (PHP);;FALSE;PHP
+1007034;Avoid empty style definition (PHP);;FALSE;PHP
+1007036;Avoid classes having excessive number of derived classes(PHP);;FALSE;PHP
+1007038;Avoid classes having excessive number of dependencies (PHP);;FALSE;PHP
+1007042;Avoid Classes implementing excessive number of Interfaces (PHP);;FALSE;PHP
+1007046;Avoid Classes with High Depth of Inheritance Tree (PHP);;FALSE;PHP
+1007048;Avoid Interfaces with excessive number of methods (PHP);;FALSE;PHP
+1007050;Avoid method invocation in loop termination expression (PHP);;FALSE;PHP
+1007052;Avoid unreferenced PHP Files (PHP);;FALSE;PHP
+1007054;Avoid unreferenced JavaScript Functions (PHP);;FALSE;PHP
+1007056;Avoid unnecessary final modifiers inside final Classes (PHP);;FALSE;PHP
+1007058;Avoid artifacts with unused parameters (PHP);;FALSE;PHP
+1007060;Avoid unreferenced Classes (PHP);;FALSE;PHP
+1007062;Avoid unreferenced Interfaces (PHP);;FALSE;PHP
+1007064;Avoid unreferenced Methods (PHP);;FALSE;PHP
+1007070;Avoid method and functions without comments denoting scope end (PHP);;FALSE;PHP
+1007072;Avoid files with names not following naming convention (PHP);;FALSE;PHP
+1007074;Avoid having Methods and Functions without naming convention (PHP);;FALSE;PHP
+1007078;A class name should start with an upper case letter (PHP);;FALSE;PHP
+1007080;Avoid Class name not matching parent file name (PHP);;FALSE;PHP
+1007086;Use lowercase for control structures (PHP);;FALSE;PHP
+1007088;Avoid having variable with too short name (PHP);;FALSE;PHP
+1007090;Avoid having variable with too long name (PHP);;FALSE;PHP
+1007092;Avoid Classes with lines more than 120 characters in length (PHP);;FALSE;PHP
+1007094;Avoid Methods and Functions with lines more than 120 characters in length (PHP);;FALSE;PHP
+1007096;"Avoid ""elseif"" statements (PHP)";;FALSE;PHP
+1007098;Avoid undocumented artifacts (PHP);;FALSE;PHP
+1007100;Avoid artifacts with a very low comment/code ratio (PHP);;FALSE;PHP
+1007102;Avoid undocumented classes (PHP);;FALSE;PHP
+1007104;Avoid classes with a very low comment/code ratio (PHP);;FALSE;PHP
+1007106;Avoid undocumented Sections (PHP);;FALSE;PHP
+1007108;Avoid Sections with a very low comment/code ratio (PHP);;FALSE;PHP
+1007110;Avoid undocumented JavaScript Functions (PHP);;FALSE;PHP
+1007112;Avoid JavaScript Functions with a very low comment/code ratio (PHP);;FALSE;PHP
+1007114;Avoid unnecessary string concatenations (PHP);;FALSE;PHP
+1007116;Avoid artifacts with Object Instantiation in loops (PHP);;FALSE;PHP
+1007118;Avoid artifacts with sql statements referring more than 4 Tables (PHP);;FALSE;PHP
+1007120;Avoid artifacts with Group By sql statement (PHP);;FALSE;PHP
+1007122;Avoid empty catch blocks (PHP);;TRUE;PHP
+1007124;Avoid artifacts throwing exceptions without @Throws tag in doc comments (PHP);;FALSE;PHP
+1007126;Avoid classes with excessive lines of code (PHP);;FALSE;PHP
+1007128;Avoid artifacts with excessive number of parameters (PHP);;FALSE;PHP
+1007130;Avoid Artifacts with excessive lines of code (PHP);;FALSE;PHP
+1007132;Avoid classes with excessive number of fields (PHP);;FALSE;PHP
+1007134;Avoid classes with excessive number of methods (PHP);;FALSE;PHP
+1007136;Avoid classes having with excessive number of public methods and fields (PHP);;FALSE;PHP
+1007138;Avoid unused local variables (PHP);;FALSE;PHP
+1007140;Avoid unused private fields (PHP);;FALSE;PHP
+1007142;Avoid unused private methods (PHP);;FALSE;PHP
+1007144;Avoid classes with excessive number of weighted methods (PHP);;FALSE;PHP
+1007146;"Avoid unconditional ""if"" and ""else if\elseif"" statements (PHP)";;FALSE;PHP
+1007148;Avoid methods and constructor overridden only with parent artifact call (PHP);;FALSE;PHP
+1007150;Avoid artifacts with optional parameters before required parameters (PHP);;TRUE;PHP
+1007154;Avoid using goto statements (PHP);;TRUE;PHP
+1007156;Avoid using eval expressions (PHP);;TRUE;PHP
+1007158;Avoid artifacts using exit and die expressions (PHP);;TRUE;PHP
+1007166;Avoid classes without matching __get and __set (PHP);;FALSE;PHP
+1007168;Avoid using function or method return value that do not have return (PHP);;TRUE;PHP
+1007170;Avoid function return value ignored (PHP);;FALSE;PHP
+1007172;Avoid having constructors with return value (PHP);;FALSE;PHP
+1007176;Avoid using break or continue statements in loops with high cyclomatic complexity (PHP);;FALSE;PHP
+1007180;Use file inclusion based on API suitability (PHP);;FALSE;PHP
+1007184;Avoid using size functions inside loops (PHP);;FALSE;PHP
+1007190;Avoid using relative path for including files (PHP);;FALSE;PHP
+1007192;Avoid using PHP short tags (PHP);;TRUE;PHP
+1007202;Avoid direct access to superglobals (PHP);;TRUE;PHP
+1007206;Avoid using @error suppression (PHP);;TRUE;PHP
+1007210;Avoid using time() to get the system time (PHP);;FALSE;PHP
+1007212;Avoid having variables without naming conventions (PHP);;FALSE;PHP
+1007218;Avoid fetching database rows as array and accessing using subscript (PHP);;FALSE;PHP
+1007220;"Avoid artifacts with ""select *"" Sql statement (PHP)";;FALSE;PHP
+1007228;Avoid control structures without proper spacing before and after open\close braces - PSR2 (PHP);;FALSE;PHP
+1007230;Avoid artifacts without proper switch case declarations (PSR2) (PHP);;FALSE;PHP
+1007232;Avoid artifacts with variables passed by reference when calling a function (PHP);;FALSE;PHP
+1007234;Avoid having inline control statements (PHP);;FALSE;PHP
+1007236;Avoid having Class Methods or Constructor without scope modifiers - Symfony STD (PHP);;FALSE;PHP
+1007238;Avoid having multiple classes defined in a single file - Symfony STD (PHP);;FALSE;PHP
+1007240;Avoid artifacts having object instantiation without parenthesis - Symfony STD (PHP);;FALSE;PHP
+1007242;Avoid Methods and Functions having recursive calls (PHP);;FALSE;PHP
+1007244;Avoid cross-site scripting - Improper Neutralization of script-related HTML tags in a web page (PHP);;FALSE;PHP
+1007246;Avoid Remote File Inclusion - Improper Control of Filename for Include/Require Statement in PHP Program (PHP);;FALSE;PHP
+1007248;Use sufficient SSL\TLS context (PHP);;FALSE;PHP
+1007250;Avoid preg_replace with /e option (PHP);;TRUE;PHP
+1007252;Avoid filesystem function calls without sanitizing user input (PHP);;FALSE;PHP
+1007254;Avoid files that declare both symbols and execute logic with side effects (PHP);;FALSE;PHP
+1007256;Avoid cross-site scripting - Improper Neutralization of input in script tag during web page generation (PHP);;FALSE;PHP
+1007258;Avoid cross-site scripting - Improper Neutralization of input during web page generation (PHP);;FALSE;PHP
+1007260;Avoid Command Injection - Improper Neutralization of Special Elements used in an OS Command (PHP);;TRUE;PHP
+1007262;Avoid file name or path controlled by raw user input (PHP);;FALSE;PHP
+1007264;Avoid unrestricted file upload (PHP);;FALSE;PHP
+1007266;Avoid SQL Injection - Improper Neutralization of Special Elements used in an SQL Command within single quotes (PHP);;TRUE;PHP
+1007268;Avoid SQL Injection - Improper Neutralization of Special Elements used in an SQL Command without quotes (PHP);;TRUE;PHP
+1007270;Avoid SQL Injection - Improper Neutralization of Special Elements used in an SQL Command in dynamic query (PHP);;FALSE;PHP
+1007272;Avoid Session Fixation (PHP);;FALSE;PHP
+1007274;Avoid Object Injection (PHP);;FALSE;PHP
+1007276;Avoid Cookie Misconfiguration (path) (PHP);;FALSE;PHP
+1007278;Avoid weak hash functions (PHP);;FALSE;PHP
+1007280;Avoid System Information Leakage (PHP);;FALSE;PHP
+1007282;Avoid Cookie Misconfiguration (secure flag) (PHP);;FALSE;PHP
+1007284;Avoid Cookie Misconfiguration (httpOnly flag) (PHP);;FALSE;PHP
+1007286;Avoid PHP Dangerous Feature (PHP);;FALSE;PHP
+1007288;Avoid debug code in the production system (PHP);;FALSE;PHP
+1007290;Avoid cross site scripting (single quoted attribute) (PHP);;FALSE;PHP
+1001008;Avoid having multiple artifacts inserting data on the same SQL table (PLI);;FALSE;
+1001010;Avoid having multiple artifacts deleting data on the same SQL table (PLI);;FALSE;
+1001012;Avoid having multiple artifacts updating data on the same SQL table (PLI);;FALSE;
+1001014;Avoid having multiple artifacts inserting data on the same SQL table (PLC);;FALSE;
+1001016;Avoid having multiple artifacts deleting data on the same SQL table (PLC);;FALSE;
+1001018;Avoid having multiple artifacts updating data on the same SQL table (PLC);;FALSE;
+1001020;Avoid PLI Procedures & Functions with a High Fan-out (PL1);;FALSE;PLI
+1001022;Avoid PLC Procedures & Functions with a High Fan-out (PL1);;FALSE;PLC
+1001024;Avoid PLI Procedures & Functions with a High Fan-in (PL1);;FALSE;PLI
+1001026;Avoid PLC Procedures & Functions with a High Fan-in (PL1);;FALSE;PLC
+1001028;Avoid duplicated Main Procedures (PL1);;FALSE;PLI
+1001030;Avoid PLI Main Proc with High Cyclomatic Complexity (PL1);;FALSE;PLI
+1001032;Avoid PLC Copybook with High Cyclomatic Complexity (PL1);;FALSE;PLC
+1001034;Avoid PLI Procedures & Functions with High Cyclomatic Complexity (PL1);;FALSE;PLI
+1001036;Avoid PLC Procedures & Functions with High Cyclomatic Complexity (PL1);;FALSE;PLC
+1001038;Avoid PLI Functions and Procedures declared as RECURSIVE (PL1);;FALSE;PLI
+1001040;Avoid PLC Includes having recursive PLC procedures (PL1);;FALSE;PLC
+1001042;Avoid Functions and Procedures having  multiple statements on the same line (PL1);;FALSE;PLI
+1001044;Avoid Procedures using RETURN statements (PL1);;FALSE;PLI
+1001046;"Avoid Functions and Procedures using logical operators (or, and) in the ""WHEN"" clause of the SELECT statement (PL1)";;FALSE;PLI
+1001048;Avoid excessive number of successive nested Procedure calls  and limit it to two  (PL1);;FALSE;PLI
+1001050;Avoid Procedures and Functions using the ITERATE statement (PL1);;FALSE;PLI
+1001052;Avoid Programs having modules declared as external entries and unused (PL1);;FALSE;PLI
+1001054;Avoid unreferenced PLI Procedures & Functions (PL1);;FALSE;PLI
+1001056;Avoid unreferenced PLC Procedures & Functions (PL1);;FALSE;PLC
+1001058;Avoid unreferenced PLC Copybooks (PL1);;FALSE;PLC
+1001060;Avoid duplicate Programs in different files (PL1);;FALSE;PLI
+1001062;Avoid unreferenced Main procedures (PL1);;FALSE;PLI
+1001064;Avoid unreferenced DB2 tables (PL1);;FALSE;DB2 Server
+1001066;Avoid unreferenced PLC DB2 tables (PL1);;FALSE;PLC
+1001070;Avoid using Main Procedures not having the same name as the file name (PL1);;FALSE;PLI
+1001072;Avoid Functions and Procedures without naming convention (PL1);;FALSE;PLI
+1001074;Avoid Main Procedures having  in the same statement the combination of two words among : INDEX, SUBSTR, REPEAT, TRANSLATE (PL1);;FALSE;PLI
+1001078;Avoid having Copybooks with reserved prefix (PL1);;FALSE;PLI
+1001080;Avoid Functions and Procedures having qualified variables having spaces in the name (PL1);;FALSE;PLI
+1001082;Avoid Programs mixing usage of do-while or (and) do-until (PL1);;FALSE;PLI
+1001084;"Avoid Main Procedures having the FETCH statement not followed by the word ""TITLE"" (PL1)";;FALSE;PLI
+1001086;Avoid programs with SQL queries using old style join convention instead of ANSI-Standard joins;;FALSE;PLI
+1001088;Avoid undocumented PLI Programs (PL1);;FALSE;PLI
+1001090;Avoid undocumented PLC Copybook (PL1);;FALSE;PLC
+1001092;Avoid undocumented PLI Procedures and Functions (PL1);;FALSE;PLI
+1001094;Avoid undocumented PLC Procedures and Functions (PL1);;FALSE;PLC
+1001096;Avoid PLI Programs with a very low comment/code ratio (PL1);;FALSE;PLI
+1001098;Avoid PLC Copybook with a very low comment/code ratio (PL1);;FALSE;PLC
+1001100;Avoid PLC Procedures & Functions with a very low comment/code ratio (PL1);;FALSE;PLC
+1001102;Avoid PLI Procedures & Functions with a very low comment/code ratio (PL1);;FALSE;PLI
+1001104;Avoid PLI Main procedures using variables with ALLOCATE and without FREE  (PL1);;FALSE;PLI
+1001106;Avoid using PLI Main Procedures using FIXED variable type declaration  (PL1);;FALSE;PLI
+1001108;Avoid PLC Copybooks using variables with ALLOCATE and without FREE  (PL1);;FALSE;PLC
+1001110;Avoid  PLC Copybooks using FIXED variable type declaration (PL1);;FALSE;PLC
+1001112;Avoid Functions and Procedures not using the REORDER option (PL1);;FALSE;PLI
+1001114;Avoid Functions and Procedures using BLKSIZE or RECSIZE (PL1);;FALSE;PLI
+1001116;"Avoid Function and Procedures using Builtin Function ""String"" (PL1)";;FALSE;PLI
+1001118;Avoid Programs not using explicitly OPEN and CLOSE files (PL1);;FALSE;PLI
+1001120;Avoid Functions and Procedures having subscripts used in arrays or in do loops and not declared as BINARY FIXED(31) (PL1);;FALSE;PLI
+1001122;Avoid Functions and Procedures using BIN FIXED(15) instead of  BIN FIXED(31)  for all local variables (PL1);;FALSE;PLI
+1001124;Avoid Main Procedures having  SQL queries using  NOT IN (PL1);;TRUE;PLI
+1001126;Avoid Main Procedures having SQL queries using NOT EXISTS (PL1);;FALSE;PLI
+1001128;Avoid Main Procedures having queries with joins on more than 4 Tables (PL1);;FALSE;PLI
+1001130;Avoid Main Procedures with High Raw SQL Complexity (SQL complexity greater than X) (PL1);;FALSE;PLI
+1001132;Avoid Main Procedures having complex queries (PL1);;FALSE;PLI
+1001134;Avoid Main Procedures using GROUP BY statement (PL1);;FALSE;PLI
+1001136;"Avoid Main Procedures having ""SELECT * FROM ..."" clause (PL1)";;TRUE;PLI
+1001138;"Avoid Functions and Procedures having cursors  declared with ""FOR FETCH ONLY"" clause not having ""WITH ROWSET POSITIONING"" also specified (PL1)";;TRUE;PLI
+1001140;Avoid Functions and Procedures with DB2 SQL containing the builtin function UPPER, LOWER or SUBSTR in the WHERE clause (PL1);;TRUE;PLI
+1001142;"Avoid Functions and Procedures with DB2 SQL containing ""UNION"" clause without ""ALL"" option (PL1)";;FALSE;PLI
+1001144;"Avoid Functions and Procedures with ""OR"" logical operator in DB2 queries and in cursor definitions (PL1)";;FALSE;PLI
+1001146;"Avoid Programs having cursors that doesn't contain the ""FOR UPDATE"" clause and not containing the ""FOR READ ONLY"" or ""FOR FETCH ONLY"" clause (PL1)";;FALSE;PLI
+1001148;Avoid Main Procedures not having an ON ERROR clause (PL1);;TRUE;PLI
+1001150;Avoid Functions and Procedures having a SELECT without the default OTHERWISE clause (PL1);;FALSE;PLI
+1001152;Avoid Programs having files declared as RECORD INPUT or RECORD UPDATE and not having  the ON EOF or ON ENDFILE statement (PL1);;FALSE;PLI
+1001154;Avoid Programs having files declared and not having the ON UNDF or ON UNDEFINEDFILE statement except SYSPRINT and SYSIN (PL1);;FALSE;PLI
+1001156;Avoid PL1 Errors Blocks having ON ERROR SYSTEM blocks and not containing and displaying ONCODE and ONLOC (PL1);;FALSE;PLI
+1001158;Avoid Functions and Procedures not testing the SQLCODE return code after each SQL statement (PL1);;TRUE;PLI
+1001160;Avoid  PLI Main procedures, PL1 function and PL1 Procedures using GOTO statement (PL1);;TRUE;PLI
+1001162;Avoid PLC Copybook using GOTO statement  (PL1);;TRUE;PLC
+1001164;Avoid Main procedures using the DATE builtin function (PL1);;FALSE;PLI
+1001166;Avoid Main procedures using the DATE builtin Function via include PLC (PL1);;FALSE;PLI
+1001168;Avoid Functions and Procedures  not having variable declared on a separate line (PL1);;FALSE;PLI
+1001170;Avoid Main Procedures having LEAVE statement (PL1);;FALSE;PLI
+1001172;Avoid Programs overriding the *PROCESS statement (PL1);;FALSE;PLI
+1001174;Avoid Programs declaring STATIC variables (PL1);;FALSE;PLI
+1001176;"Avoid Programs having FIXED without BIN or BINARY or DEC or DECIMAL.The character ""(""  is mandatory. (PL1)";;FALSE;PLI
+1001178;Avoid PLI Programs with more then XX Procedures (PL1);;FALSE;PLI
+1001180;Avoid PLI Programs with more then 5 internal File structures (PL1);;FALSE;PLI
+1001182;Avoid PLI Programs with more then 500 LoC and less then 5 Procedures (PL1);;FALSE;PLI
+1001184;Avoid PLI Programs with more than XX lines of code (PL1);;FALSE;PLI
+1001186;Avoid PLC Copybook with more than XX lines of code (PL1);;FALSE;PLC
+1001188;Avoid PLI Procedures & Functions with more than 100 lines of code (PL1);;FALSE;PLI
+1001190;Avoid PLC Procedures & Functions with more than 100 lines of code (PL1);;FALSE;PLC
+1021000;Avoid Artifacts with High Cyclomatic Complexity (Python);;FALSE;Python
+1021002;Avoid using a web service with Python httplib HTTPConnection inside a loop;;TRUE;Python
+1021004;Avoid using a web service with Python requests inside a loop;;TRUE;Python
+1021006;Avoid using a web service with Python aiohttp ClientSession inside a loop;;TRUE;Python
+1021008;Avoid using a web service with Python urllib.request inside a loop;;TRUE;Python
+1021010;Avoid using a web service with Python urllib2 inside a loop;;TRUE;Python
+1021012;Avoid using a web service with Python httplib2 Http inside a loop;;TRUE;Python
+1021014;Avoid using yield and return with value inside a function;;FALSE;Python
+1021016;Avoid weak encryption algorithm (Python);;TRUE;Python
+1021018;Avoid catch-all except blocks with empty handlers;;TRUE;Python
+1021020;Avoid using wildcard (*) imports;;FALSE;Python
+1021022;'Initialize ancestors when overriding __init__';;FALSE;Python
+1021024;Avoid return statement in finally block;;FALSE;Python
+1021026;Avoid leaving open file resources (Python);;TRUE;Python
+1021028;Avoid empty finally block (Python);;TRUE;Python
+1021030;Avoid hardcoded network resource names (Python);;FALSE;Python
+1021032;Avoid disabling certificate check when requesting secured urls;;TRUE;Python
+1021034;Avoid inconsistent initialization when deriving a new exception;;FALSE;Python
+1021036;Avoid using eval (Python);;TRUE;Python
+1021038;Avoid using exec (Python);;TRUE;Python
+1021040;Avoid instance attributes only differing by capitalization;;FALSE;Python
+1021042;Avoid hardcoded passwords (Python);;TRUE;Python
+1021044;Avoid Python string interpolations to prevent SQL injections;;TRUE;Python
+1021046;Avoid Not ... Is;;FALSE;Python
+1021048;Protect sensitive data in config files from disclosure;;TRUE;Python
+1021050;Avoid using unsecured cookie (Python);;TRUE;Python
+1021052;Avoid too long lines;;FALSE;Python
+1021054;Avoid long docstring lines;;FALSE;Python
+1021056;Missing whitespace after comma;;FALSE;Python
+1021058;Avoid superfluous parenthesis;;FALSE;Python
+1021060;Avoid trailing whitespace;;FALSE;Python
+1021062;Respect variable naming conventions;;FALSE;Python
+1021064;Respect function naming conventions;;FALSE;Python
+1021066;Respect class naming conventions;;FALSE;Python
+1021068;Avoid using global statement;;FALSE;Python
+1021070;Avoid Superclass knowing Subclass (Python);;FALSE;Python
+1021072;Avoid shadowing class variables;;FALSE;Python
+1021074;Avoid manipulating a list while iterating over it;;FALSE;Python
+1020450;Ensure catching Javascript error in React components;;FALSE;HTML5
+1020452;Avoid empty componentDidCatch blocks;;TRUE;HTML5
+1020454;Avoid using React dangerouslySetInnerHTML;;TRUE;HTML5
+1020456;"Avoid using ""<script>"" tag in HTML template used by React.js components";;FALSE;HTML5
+1008014;Avoid Programs with High Fan-In  (RPG400);;FALSE;RPG400
+1008016;Avoid Subroutines with High Fan-In  (RPG400);;FALSE;RPG400
+1008018;Avoid Procedures with High Fan-In  (RPG400);;FALSE;RPG400
+1008020;Avoid Programs with High Fan-Out  (RPG400);;TRUE;RPG400
+1008022;Avoid Subroutines with High Fan-Out  (RPG400);;FALSE;RPG400
+1008024;Avoid Procedures with High Fan-Out  (RPG400);;FALSE;RPG400
+1008026;Avoid using internally described files  (RPG400);;FALSE;RPG400
+1008028;Avoid Programs with High Cyclomatic Complexity  (RPG400);;TRUE;RPG400
+1008030;Avoid Subroutines with High Cyclomatic Complexity  (RPG400);;FALSE;RPG400
+1008032;Avoid Procedures with High Cyclomatic Complexity  (RPG400);;FALSE;RPG400
+1008034;Avoid Subroutines with nested IF  statements  (RPG400);;FALSE;RPG400
+1008038;Avoid unreferenced Programs  (RPG400);;FALSE;RPG400
+1008040;Avoid unreferenced Subroutines  (RPG400);;FALSE;RPG400
+1008042;Avoid undocumented RPG400 Programs  (RPG400);;TRUE;RPG400
+1008048;Avoid Programs with a very low comment/code ratio  (RPG400);;FALSE;RPG400
+1008054;Avoid Programs with COUNT(*) statement  (RPG400);;FALSE;RPG400
+1008056;Avoid Programs With Queries on more than 4 Tables  (RPG400);;FALSE;RPG400
+1008058;Avoid Programs With Queries using GROUP BY  (RPG400);;FALSE;RPG400
+1008060;Avoid Programs with SELECT * statement  (RPG400);;FALSE;RPG400
+1008062;Avoid Programs with Subqueries  (RPG400);;FALSE;RPG400
+1008066;Avoid Programs with too many WHERE Clauses  (RPG400);;FALSE;RPG400
+1008068;Avoid using NOT EXISTS  (RPG400);;TRUE;RPG400
+1008070;Avoid using NOT IN  (RPG400);;TRUE;RPG400
+1008072;Avoid using dynamic SQL (EXECUTE IMMEDIATE)  (RPG400);;FALSE;RPG400
+1008074;Specify Error Subroutine for File Exception Handling  (RPG400);;FALSE;RPG400
+1008076;Specify Program Status Data Area  (RPG400);;FALSE;RPG400
+1008078;"Avoid using obsolete ""Arithmetic Operations"" Statement in RPG Programs (RPG-IV only)  (RPG400)";;FALSE;RPG400
+1008080;"Avoid using obsolete ""String Operations"" statements in RPG Programs (RPG-IV only)  (RPG400)";;FALSE;RPG400
+1008082;"Avoid using obsolete ""Assignment Operations"" statements in RPG Programs (RPG-IV only)  (RPG400)";;FALSE;RPG400
+1008084;"Avoid using obsolete ""Conditional Operations"" statements in RPG Subroutines (RPG-IV only)  (RPG400)";;FALSE;RPG400
+1008086;"Avoid using obsolete ""Date Operations"" statements in RPG Programs (RPG-IV only)  (RPG400)";;FALSE;RPG400
+1008088;"Avoid using obsolete ""Definition/Allocation/Array Operations"" statements in RPG Programs (RPG-IV only)  (RPG400)";;FALSE;RPG400
+1008090;"Avoid using obsolete ""Bit Operations"" statements in RPG Programs  (RPG400)";;FALSE;RPG400
+1008092;"Avoid using obsolete ""Call Operations"" statements in RPG Programs (RPG-IV only)  (RPG400)";;FALSE;RPG400
+1008096;Better to use QUALIFIED data structures  (RPG400);;FALSE;RPG400
+1008098;Avoid using plain END statement, use the explained END statement like ENDIF, ENDDO, etc  (RPG400);;FALSE;RPG400
+1008100;"Avoid using O-spec; use Printer Files instead  (RPG400)";;FALSE;RPG400
+1008102;Avoid using I-spec (RPG-IV only)  (RPG400);;FALSE;RPG400
+1008104;Avoid obsolete E-spec  (RPG400);;FALSE;RPG400
+1008106;Avoid obsolete L-spec  (RPG400);;FALSE;RPG400
+1008108;Avoid using GOTO statement in RPG Programs  (RPG400);;FALSE;RPG400
+1008110;Avoid Programs with more than X Subroutines  (RPG400);;FALSE;RPG400
+1008112;Avoid Programs with more than X LoC and no Subroutines  (RPG400);;FALSE;RPG400
+1008114;Avoid Programs with more than X Data Structures  (RPG400);;FALSE;RPG400
+1008118;Avoid Programs with more than X lines of code  (RPG400);;FALSE;RPG400
+1008120;Avoid Subroutines with more than X lines of code  (RPG400);;FALSE;RPG400
+1008122;Avoid Procedures with more than X lines of code  (RPG400);;FALSE;RPG400
+1008124;Avoid unreferenced Copy Members  (RPG400);;FALSE;RPG400
+1008126;"Avoid defining File Disk if not used  (RPG400)""";;FALSE;RPG400
+1009014;Avoid Programs with High Fan-In   (RPG300);;FALSE;RPG300
+1009016;Avoid Subroutines with High Fan-In  (RPG300);;FALSE;RPG300
+1009020;Avoid Programs with High Fan-Out  (RPG300);;TRUE;RPG300
+1009022;Avoid Subroutines with High Fan-Out  (RPG300);;FALSE;RPG300
+1009026;Avoid using internally described files  (RPG300);;FALSE;RPG300
+1009028;Avoid Programs with High Cyclomatic Complexity  (RPG300);;TRUE;RPG300
+1009030;Avoid Subroutines with High Cyclomatic Complexity  (RPG300);;FALSE;RPG300
+1009034;Avoid Subroutines with nested if Statements  (RPG300);;FALSE;RPG300
+1009038;Avoid unreferenced Programs  (RPG300);;FALSE;RPG300
+1009040;Avoid unreferenced Subroutines  (RPG300);;FALSE;RPG300
+1009042;Avoid undocumented RPG300 Programs  (RPG300);;TRUE;RPG300
+1009048;Avoid Programs with a very low comment/code ratio  (RPG300);;FALSE;RPG300
+1009054;Avoid Programs with COUNT(*) statement  (RPG300);;FALSE;RPG300
+1009056;Avoid Programs With Queries on more than 4 Tables  (RPG300);;FALSE;RPG300
+1009058;Avoid Programs With Queries using GROUP BY  (RPG300);;FALSE;RPG300
+1009060;Avoid Programs with SELECT * statement  (RPG300);;FALSE;RPG300
+1009062;Avoid Programs with Subqueries  (RPG300);;FALSE;RPG300
+1009066;Avoid Programs with too many WHERE Clauses  (RPG300);;FALSE;RPG300
+1009068;Avoid using NOT EXISTS  (RPG300);;TRUE;RPG300
+1009070;Avoid using NOT IN  (RPG300);;TRUE;RPG300
+1009072;Avoid using dynamic SQL (EXECUTE IMMEDIATE)  (RPG300);;FALSE;RPG300
+1009074;Specify Error Subroutine for File Exception Handling  (RPG300);;FALSE;RPG300
+1009090;"Avoid using obsolete ""Bit Operations"" statements in RPG Programs  (RPG300)";;FALSE;RPG300
+1009098;Avoid using plain END statement, use the explained END statement like ENDIF, ENDDO, etc  (RPG300);;FALSE;RPG300
+1009110;Avoid Programs with more than X Subroutines  (RPG300);;FALSE;RPG300
+1009112;Avoid Programs with more than X LoC and no Subroutines  (RPG300);;FALSE;RPG300
+1009118;Avoid Programs with more than X lines of code  (RPG300);;FALSE;RPG300
+1009120;Avoid Subroutines with more than X lines of code  (RPG300);;FALSE;RPG300
+1009124;Avoid unreferenced Copy Members  (RPG300);;FALSE;RPG300
+1009126;Avoid defining File Disk if not used  (RPG300);;FALSE;RPG300
+1011010;Avoid Logical File without associated Physical File  (DDS400);;FALSE;DDS400
+1011014;Avoid unreferenced Physical file  (DDS400);;FALSE;DDS400
+1011016;Avoid unreferenced Logical file  (DDS400);;FALSE;DDS400
+1011018;Avoid Logical Files using DYNSLT  (DDS400);;FALSE;DDS400
+1011022;Avoid Physical files with more than X associated LF  (DDS400);;FALSE;DDS400
+1011024;Avoid Physical files with more than X fields  (DDS400);;FALSE;DDS400
+1011026;Avoid unreferenced Display Files  (DDS400);;FALSE;DDS400
+1011028;Avoid unreferenced Printer Files  (DDS400);;FALSE;DDS400
+1011030;Avoid Physical files with fields defined locally  (DDS400);;FALSE;DDS400
+1012010;MONMSG command must be formated    (CL400);;FALSE;CL400
+1012012;Avoid Programs with High Cyclomatic Complexity    (CL400);;TRUE;CL400
+1012014;Avoid locking object by ALCOBJ command    (CL400);;FALSE;CL400
+1012016;Avoid unreferenced CL Programs  (CL400);;FALSE;CL400
+1012018;Avoid use of DLYJOB  (CL400);;FALSE;CL400
+1012020;Avoid use of RCLRSC  (CL400);;FALSE;CL400
+1012022;Avoid use of *NOMAX  (CL400);;TRUE;CL400
+1012024;Avoid use of OPNQRYF  (CL400);;FALSE;CL400
+1012026;Do not use MONMSG CPF0000 without EXEC  (CL400);;FALSE;CL400
+1006000;Avoid scripts using SQL static statements (Shell);;FALSE;Shell
+1006002;Avoid scripts and functions with SQL code in temporary files (Shell);;FALSE;Shell
+1006004;Avoid unreferenced Programs  (Shell);;FALSE;Shell
+1006006;Avoid unreferenced Functions  (Shell);;FALSE;Shell
+1006008;Avoid programs with low comment / code ratio  (Shell);;FALSE;Shell
+1006010;Avoid script without interpretor access path  (Shell);;FALSE;Shell
+1006012;Avoid functions without returning exit code  (Shell);;FALSE;Shell
+1006014;Function should not be named as UNIX commands  (Shell);;FALSE;Shell
+1520102;"SiebelReview: Custom BC Based On S_PARTY Table Missing the ""Inner Join Extension Table"" User Property";;TRUE;Siebel
+1520106;SiebelReview: Avoid bad BusComp configuration when using Standard 1:M Extension Tables;;FALSE;Siebel
+1520108;SiebelReview: Avoid bad Link configuration when using Standard 1:M Extension Tables;;FALSE;Siebel
+1520110;SiebelReview: Incorrect Join Specification To 1:1 Extension Table ROW_ID;;FALSE;Siebel
+1520112;SiebelReview: Missing Join Specification for Custom Joins;;FALSE;Siebel
+1520114;SiebelReview: Pick Maps Missing or Incorrectly Defined;;FALSE;Siebel
+1520124;Siebel: Don't associate Views to more than 1 Screen;;FALSE;Siebel
+1520126;SiebelReview: Duplicate Column Mappings;;FALSE;Siebel
+1520128;SiebelReview: PickList Not Defined;;FALSE;Siebel
+1520140;SiebelScriptingReview: Unilingual Error messages scripted;;FALSE;Siebel
+1520160;Siebel: Don't delete standard extension columns (ATTRIB_);;FALSE;Siebel
+1520162;Siebel: Do not add custom Fields to a Siebel Base table;;FALSE;Siebel
+1520180;Siebel eScript: Avoid Functions with High Cyclomatic Complexity;;FALSE;Siebel
+1520182;Siebel eScript: Avoid missing default Case handling in Switch Construct in Functions;;FALSE;Siebel
+1520220;Siebel eScript: Avoid empty Functions;;FALSE;Siebel
+1520322;Siebel eScript: Avoid setting Scripts to Inactive;;FALSE;Siebel
+1520324;Siebel: Avoid inactive elements in an Applet;;FALSE;Siebel
+1520326;Siebel: Avoid unreferenced Fields in Business Component;;FALSE;Siebel
+1520328;Siebel: Avoid unreferenced Columns in Tables;;FALSE;Siebel
+1520380;Siebel: Applet's name should contain the type;;FALSE;Siebel
+1520382;Siebel: View's name should have an initial capatilized word only and no special characters;;FALSE;Siebel
+1520384;Siebel: BusComp's name should have an initial capatilized word only and no special characters;;FALSE;Siebel
+1520386;Siebel: One-to-One Extension tables should be suffixed with _X;;FALSE;Siebel
+1520388;Siebel: One-to-Many Extension tables should be suffixed with _XM;;FALSE;Siebel
+1520390;Siebel: BC Field name should not end with a question mark;;FALSE;Siebel
+1520420;Siebel: Every Added Applet should have a title;;FALSE;Siebel
+1520422;Siebel: Applets from the same view cannot have the same title;;FALSE;Siebel
+1520440;Siebel eScript: Avoid undocumented Functions;;FALSE;Siebel
+1520442;Siebel eScript: Avoid Functions with a low comment/code ratio;;FALSE;Siebel
+1520460;Siebel eScript: Avoid exception handling on Loops in Functions;;FALSE;Siebel
+1520480;SiebelReview: Avoid BusComp using Sort specifications on non-indexed Fields;;TRUE;Siebel
+1520482;SiebelReview: Avoid PickList using Sort specifications on non-indexed Fields;;TRUE;Siebel
+1520484;SiebelReview: Avoid Link using Sort specifications on non-indexed Fields;;TRUE;Siebel
+1520486;SiebelReview: Avoid BusComp using Search specifications on non-indexed Fields;;TRUE;Siebel
+1520488;SiebelReview: Avoid PickList using Search specifications on non-indexed Fields;;TRUE;Siebel
+1520490;SiebelReview: Avoid Link using Search specifications on non-indexed Fields;;TRUE;Siebel
+1520492;SiebelReview: Avoid Applet using Search specifications on non-indexed Fields;;TRUE;Siebel
+1520494;Siebel eScript: Avoid complex PreGetFieldValue Functions;;FALSE;Siebel
+1520496;Siebel eScript: Avoid using ExecuteQuery() statement in Functions;;FALSE;Siebel
+1520498;SiebelReview: Force Active property Set to TRUE at BusComp level;;FALSE;Siebel
+1520500;SiebelReview: Force Active BusComp Field Property Set to TRUE;;FALSE;Siebel
+1520502;SiebelReview: Link Specification For BusComp Field Property Set To TRUE;;FALSE;Siebel
+1520508;SiebelReview: Nested MVFs;;FALSE;Siebel
+1520510;SiebelScriptingReview: Explicit Object Release;;FALSE;Siebel
+1520512;SiebelScriptingReview: Scripting The PreCanInvokeMethod Event For A Business Service;;FALSE;Siebel
+1520540;Siebel: Avoid too many MVG on list applet;;FALSE;Siebel
+1520544;Siebel: Don't overload Siebel Tables;;FALSE;Siebel
+1520548;SiebelReview: MVL Primary Configuration;;FALSE;Siebel
+1520550;SiebelReview: Check No Match Property Set to TRUE for MVLs;;FALSE;Siebel
+1520552;SiebelReview: Joins to XM Tables;;FALSE;Siebel
+1520554;SiebelReview: Using Extension Tables;;FALSE;Siebel
+1520580;Siebel eScript: Avoid Functions without Try, Catch and Finally block;;FALSE;Siebel
+1520582;Siebel eScript: Avoid Functions destroying variables outside of the finally clause;;FALSE;Siebel
+1520584;Siebel eScript: Avoid Functions having Return statement in the Finally clause;;FALSE;Siebel
+1520586;Siebel eScript: Prefer using GotoView in the Finally clause of a Function;;FALSE;Siebel
+1520588;Siebel Scripting Review: Using Error Code in scripts;;FALSE;Siebel
+1520680;SiebelReview: State Model on BusComps Not Based on CSSBCBase;;FALSE;Siebel
+1520720;Siebel: Defining Ancestry of Custom Applets;;FALSE;Siebel
+1520722;Siebel: Defining Ancestry of Custom Business Components;;FALSE;Siebel
+1520724;Siebel: Length of the Column should not exceed the length of the Field;;FALSE;Siebel
+1520726;Siebel eScript: Avoid putting all code in the Applet_PreInvokeMethod event;;FALSE;Siebel
+1520728;Siebel eScript: Avoid putting all code in the Service_PreInvokeMethod event;;FALSE;Siebel
+1520730;Siebel eScript: Prefer SWITCH over nested IF-THEN-ELSE in Functions;;FALSE;Siebel
+1520732;Siebel eScript: Use DeleteRecord Method only inside Loops located in Functions;;FALSE;Siebel
+1520734;Siebel eScript: Avoid using multiple conditions in IF constructions in Functions;;FALSE;Siebel
+1520736;Siebel: Business Component Field should have same type as related Table Column;;FALSE;Siebel
+1520738;Siebel eScript: Avoid Functions using compiler directives like define and if;;FALSE;Siebel
+1520742;Siebel Scripting Review: Use of the SetViewMode() method;;FALSE;Siebel
+1520760;SiebelReview: Adding System Columns as BusComp Field Objects Definitions;;FALSE;Siebel
+1520762;SiebelReview: Controls or List Columns Based on Non-Existent Fields;;FALSE;Siebel
+1520764;SiebelReview: Duplicate Item Identifiers;;FALSE;Siebel
+1520774;SiebelScriptReview: Setting field values using hardcoded values;;FALSE;Siebel
+1520822;SiebelReview: View Visibility Settings;;FALSE;Siebel
+1520824;SiebelReview: Incorrect Thread Applet, Title, or Field Properties;;FALSE;Siebel
+1520826;SiebelReview: Custom Business Component Contains No Required Fields;;FALSE;Siebel
+1520860;Siebel: Avoid Business Objects referencing too many Business Components;;FALSE;Siebel
+1520862;Siebel: Avoid Business Components referencing more than X tables;;FALSE;Siebel
+1520864;SiebelReview: Too Many Applets on a View;;FALSE;Siebel
+1520866;SiebelReview: Excessive Number of List Columns in a List Applet;;FALSE;Siebel
+1520868;Siebel eScript: Avoid Functions with more than X variables;;FALSE;Siebel
+1520880;Siebel eScript: Avoid Functions with more than X Lines of Code;;FALSE;Siebel
+1521000;Siebel: Don't delete Standard Tables;;FALSE;Siebel
+1521002;Siebel: Don't delete Standard Business Components;;FALSE;Siebel
+1521004;Siebel: Don't delete Standard Applets;;FALSE;Siebel
+1521006;Siebel: Don't delete Standard Views;;FALSE;Siebel
+1521008;Siebel: Don't delete Standard Screens;;FALSE;Siebel
+1521010;Siebel: Don't delete Standard Business Objects;;FALSE;Siebel
+1521012;Siebel: Don't delete Standard Business Services;;FALSE;Siebel
+1521500;Siebel: Avoid unreferenced Tables;;FALSE;Siebel
+1521502;Siebel: Avoid unreferenced Business Components;;FALSE;Siebel
+1521504;Siebel: Avoid unreferenced Applets;;FALSE;Siebel
+1521506;Siebel: Avoid unreferenced Views;;FALSE;Siebel
+1521508;Siebel: Avoid unreferenced Screens;;FALSE;Siebel
+1521510;Siebel: Avoid unreferenced Business Objects;;FALSE;Siebel
+1521512;Siebel: Avoid unreferenced Business Services;;FALSE;Siebel
+1521700;Siebel: Table's name should have a designated prefix like XX_LABEL;;FALSE;Siebel
+1521702;Siebel: Business Component's name should begin with Company prefix;;FALSE;Siebel
+1521704;Siebel: Applet's name should begin with Company prefix;;FALSE;Siebel
+1521706;Siebel: View's name should begin with Company prefix;;FALSE;Siebel
+1521708;Siebel: Screen's name should begin with Company prefix;;FALSE;Siebel
+1521710;Siebel: Business Object's name should begin with Company prefix;;FALSE;Siebel
+1521712;Siebel: Business Service's name should begin with Company prefix;;FALSE;Siebel
+1522000;Siebel: Avoid undocumented Tables;;FALSE;Siebel
+1522002;Siebel: Avoid undocumented Business Components;;FALSE;Siebel
+1522004;Siebel: Avoid undocumented Applets;;FALSE;Siebel
+1522006;Siebel: Avoid undocumented Views;;FALSE;Siebel
+1522008;Siebel: Avoid undocumented Screens;;FALSE;Siebel
+1522010;Siebel: Avoid undocumented Business Objects;;FALSE;Siebel
+1522012;Siebel: Avoid undocumented Business Services;;FALSE;Siebel
+1040002;Avoid disabling CSRF Protection (Spring Security);;TRUE;JEE
+1040006;Always set Content-Security-Policy for spring application;;TRUE;JEE
+1040008;Ensure declaring formLogin after requesting authorization and authentication;;TRUE;JEE
+1040010;Always delete the cookies during the logout;;TRUE;JEE
+1040012;HTTP user session must be invalidated during logout;;TRUE;JEE
+1040014;Avoid using Spring Security's debug mode;;FALSE;JEE
+1040016;PermitAll or user role should be specified to access URL(s) of the application;;TRUE;JEE
+1040018;Ensure the X-Frame-Options header is setup (Spring);;TRUE;JEE
+1040024;Spring Boot Shutdown Actuator Endpoint must be secured from unauthenticated access.;;TRUE;JEE
+1040026;Avoid not providing an explicit HTTP method in @RequestMapping methods;;TRUE;JEE
+1040030;Avoid Using Generic Authentication Exception Class;;FALSE;JEE
+1040032;Avoid Using ControllerAdvice And HandlerExceptionResolver simultaneously;;FALSE;JEE
+1040034;StrictHttpFirewall should be set as Http Firewall before Spring Security 5.0.1, 4.2.4, and 4.1.5;;TRUE;JEE
+1040036;Avoid using STOMP Spring messaging module before Spring 5.0.5 and 4.3.16;;TRUE;JEE
+1040038;Avoid using Spring Security Path Matching Inconsistency before Spring Framework 3.2.x, 4.0.x, 4.1.x, 4.2.x;;FALSE;JEE
+1040042;Avoid using Spring Security in combination with Spring Framework 5.0.5;;TRUE;JEE
+1040044;Avoid using UnZipTransformer of spring-integration-zip prior to version 1.0.1;;TRUE;JEE
+1101000;Never use SQL queries with a cartesian product (SQL);;FALSE;ALL TECHNOLOGIES
+1101002;Never use SQL queries with a cartesian product on XXL Tables (SQL);;TRUE;ALL TECHNOLOGIES
+1101004;Avoid non-indexed SQL queries;;FALSE;ALL TECHNOLOGIES
+1101006;Avoid non-indexed XXL SQL queries;;TRUE;ALL TECHNOLOGIES
+1101008;Avoid non-SARGable queries;;FALSE;ALL TECHNOLOGIES
+1101010;Avoid NATURAL JOIN queries;;FALSE;ALL TECHNOLOGIES
+1101012;Specify column names instead of column numbers in ORDER BY clauses;;FALSE;ALL TECHNOLOGIES
+1101014;Avoid queries using old style join convention instead of ANSI-Standard joins (SQL);;FALSE;ALL TECHNOLOGIES
+1101016;Avoid Artifacts with too many parameters (SQL);;FALSE;SQLAnalyzer
+1101018;Avoid using the GROUP BY clause;;FALSE;ABAP/SQLAnalyzer
+1101020;Avoid using quoted identifiers;;FALSE;SQLAnalyzer
+1101022;Avoid Tables without Primary Key (SQL);;TRUE;SQLAnalyzer
+1101024;Avoid using dynamic SQL in SQL Artifacts;;FALSE;ABAP/SQLAnalyzer
+1101026;Always define column names when inserting values;;FALSE;ALL TECHNOLOGIES
+1101028;Use MINUS or EXCEPT operator instead of NOT EXISTS and NOT IN subqueries;;FALSE;ALL TECHNOLOGIES
+1101030;Avoid Artifacts with queries on too many Tables and/or Views;;FALSE;ABAP/SQLAnalyzer
+1101032;Avoid exists and not exists independent clauses (SQL);;TRUE;ALL TECHNOLOGIES
+1101034;DISTINCT should not be used in SQL SELECT statements;;FALSE;ALL TECHNOLOGIES
+1101036;Use ANSI standard operators in SQL WHERE clauses;;FALSE;C/C#/C++/C/C++/Cobol/JEE/PowerBuilder/Python/VB.NET/Visual Basic
+1101038;Replace OR conditions testing equality on the same identifier in SQL WHERE clauses by an IN test condition;;FALSE;ALL TECHNOLOGIES
+1101040;Avoid empty catch blocks (SQL);;TRUE;SQLAnalyzer
+1101042;Table naming convention - character set control (SQL);;FALSE;SQLAnalyzer
+1101044;View naming convention - character set control (SQL);;FALSE;SQLAnalyzer
+1101046;Package naming convention - prefix control (SQL);;FALSE;SQLAnalyzer
+1101048;Package Function naming convention - prefix control (SQL);;FALSE;SQLAnalyzer
+1101050;Package Stored Procedure naming convention - prefix control (SQL);;FALSE;SQLAnalyzer
+1101052;Use WHEN OTHERS in exception management (SQL);;TRUE;SQLAnalyzer
+1101054;Never use WHEN OTHER THEN NULL;;TRUE;SQLAnalyzer
+1101056;Avoid large Tables - too many columns (SQL);;FALSE;SQLAnalyzer
+1101058;Do not mix ANSI and non-ANSI JOIN syntax in the same query;;FALSE;ALL TECHNOLOGIES
+1101060;LIKE operator should not start with a wildcard character;;FALSE;ALL TECHNOLOGIES
+1101062;Use at most one statement per line (SQL);;FALSE;ABAP/SQLAnalyzer
+1101064;Avoid cascading Triggers (SQL);;FALSE;SQLAnalyzer
+1101066;Avoid improperly written triangular joins with XXL tables;;FALSE;ALL TECHNOLOGIES
+1101068;Avoid synonym with both private and public definition;;FALSE;SQLAnalyzer
+1101070;Avoid explicit comparison with NULL;;FALSE;ALL TECHNOLOGIES
+1101072;Tables should be aliased;;FALSE;ALL TECHNOLOGIES
+1101074;Tables aliases should not end with a numeric suffix;;FALSE;ALL TECHNOLOGIES
+1101076;Column references should be qualified;;FALSE;ALL TECHNOLOGIES
+1101078;Prefer PRIVATE to PUBLIC synonym;;FALSE;SQLAnalyzer
+1101080;Avoid orphaned synonyms;;FALSE;SQLAnalyzer
+1101082;Avoid looping chain of synonyms;;FALSE;SQLAnalyzer
+1101084;Avoid Cursors inside a loop (SQL);;TRUE;SQLAnalyzer
+1101086;VARCHAR2 and NVARCHAR2 should be used;;FALSE;SQLAnalyzer
+1101088;LONG and LONG RAW datatypes should no longer be used;;FALSE;SQLAnalyzer
+1042004;Avoid Duplicate Struts validation forms with the same name;;FALSE;JEE
+1042008;Avoid using ActionForward with untrusted data source to prevent file path disclosure;;TRUE;JEE
+1042010;Avoid using ParametersInterceptor with class parameter for Struts 2.3.16 (and older);;TRUE;JEE
+1042012;Avoid Unused Validation Form in Struts 1.x;;FALSE;JEE
+1042016;Avoid Struts action Mapping with disabled validator ;;TRUE;JEE
+1042018;Avoid Missing Form Bean in Struts 1.x;;FALSE;JEE
+1042020;Avoid Struts Invalidated Action Form 1.x;;TRUE;JEE
+1042022;Avoid using CookieInterceptor with Struts 2.3.16 (and Older);;TRUE;JEE
+1042024;Avoid Unescaped User-controlled Input attribute in Struts 1.x and 2.x;;TRUE;JEE
+1042026;Avoid Action Mapping based on wildcards with Struts 2.3.14.2 and older;;TRUE;JEE
+1042028;Avoid activating alwaysSelectFullNamespace when actions configured without namespace or with a wildcard namespace for Struts pre 2.3.34 and pre 2.5.1;;TRUE;JEE
+1042030;Avoid using Default exclude patterns (excludeParams) for Struts 2.3.20 ( and older);;FALSE;JEE
+1042032;Avoid using setters with Struts 2;;TRUE;JEE
+1042036;Avoid Long request parameter names in Struts 2.0.0 - struts 2.3.4;;FALSE;JEE
+1042040;Avoid using Struts URLValidator with version before 2.5.13;;TRUE;JEE
+1042042;Avoid using Rest Plugin with XStream handler to deserialise XML requests in Struts 2.1.2 - Struts 2.3.33, Struts 2.5 - Struts 2.5.12;;TRUE;JEE
+1042046;Avoid Using Dynamic Method Invocation for Apache Struts 2.x;;TRUE;JEE
+1042050;Avoid using special top object in struts 2.0.0 - struts 2.3.24;;TRUE;JEE
+1042052;Avoid using JSON-lib library for Rest Plugin of Struts 2.5 to 2.5.14;;TRUE;JEE
+1055000;Avoid using unsecured cookie (Swift);;TRUE;Swift
+1055002;Avoid using the call of web service with iOS/Swift API inside a loop;;TRUE;Swift
+1055004;Avoid creating file without protection (Swift);;TRUE;Swift
+1055006;Avoid weak cryptographic hash (Swift);;TRUE;Swift
+1055008;Avoid weak encryption key size (Swift);;TRUE;Swift
+1055010;Avoid synchronizing the credentials with iCloud (Swift);;FALSE;Swift
+1055012;Avoid using deprecated SSL protocol (Swift);;TRUE;Swift
+1055014;Ensure that LAContext evaluatePolicy reply block is not empty (Swift);;FALSE;Swift
+1055016;Ensure that LAContext evaluatePolicy reply block success is checked (Swift);;FALSE;Swift
+1055018;Always use LAContext canEvaluatePolicy before using evaluatePolicy (Swift);;TRUE;Swift
+1055020;Avoid using kSecAttrAccessibleAlways attribute when storing data in the Keychain (Swift);;TRUE;Swift
+1055022;UIApplicationDelegate applicationDidEnterBackground must delete sensitive data (Swift);;TRUE;Swift
+1055026;Avoid Superclass knowing Subclass (Swift);;FALSE;Swift
+1055032;Avoid using NSPredicate(format:) (Swift);;FALSE;Swift
+1055034;Avoid empty generic catch blocks (Swift);;TRUE;Swift
+1055036;Avoid hard-coded passwords (Swift);;TRUE;Swift
+1060004;Avoid Empty Finally Block When Calling Resource;;TRUE;JEE
+1060012;Avoid SQL queries on XXL tables that no index can support for artifacts with high fan-in;;TRUE;SQLAnalyzer
+1060014;Avoid SQL queries that no index can support for artifacts with high fan-in;;TRUE;SQLAnalyzer
+1060018;Avoid String concatenation in loops for artifacts with high fan in;;TRUE;JEE
+1060020;Avoid empty catch blocks for methods with high fan-in;;TRUE;.NET (Legacy Analyzer)/ABAP/C#/JEE/VB.NET
+1060022;Avoid too many SQL calls for methods with high fan-in;;TRUE;C#/JEE/VB.NET
+1018100;Avoid using Get JMS Queue Message (TIBCO BW);;TRUE;TIBCO
+1018140;Avoid using Java Activities (TIBCO BW);;TRUE;TIBCO
+1018142;Avoid using External Command Activities (TIBCO BW);;TRUE;TIBCO
+1018144;Avoid hardcoded timeout in Process Activities (TIBCO BW);;TRUE;TIBCO
+1018304;Avoid unreferenced Processes (TIBCO BW);;FALSE;TIBCO
+1018530;Avoid undocumented processes (TIBCO BW);;FALSE;TIBCO
+1018540;Avoid JMS Synchronous Activities (TIBCO BW);;TRUE;TIBCO
+1018720;Avoid oversized processes Activities (1100x900)  (TIBCO BW);;FALSE;TIBCO
+1018760;Avoid AE Schema with Target namespace not defined (TIBCO BW);;FALSE;TIBCO
+1018764;Avoid Processes using JDBC SQL Direct  (TIBCO BW);;FALSE;TIBCO
+1018860;Avoid Process with too many Activities (TIBCO BW);;FALSE;TIBCO
+1018862;JDBC connection must use Global variable for username and password parametrization of database url (TIBCO BW);;TRUE;TIBCO
+1018864;Avoid JDBC Connections having password type as string (TIBCO BW);;TRUE;TIBCO
+1018866;"Avoid Activities with ""SELECT *"" queries (TIBCO BW)";;FALSE;TIBCO
+1018868;"Avoid Activities using ""UNION"" instead of ""Union all"" (TIBCO BW)";;FALSE;TIBCO
+1018870;"Avoid Activities using ""Group By"" statement (TIBCO BW)";;FALSE;TIBCO
+1018872;Avoid Activities using ROWNUM (TIBCO BW);;FALSE;TIBCO
+1018874;Avoid Activities With Queries on more than 4 Tables (TIBCO BW);;FALSE;TIBCO
+1018876;Avoid unreferenced Process Activities (TIBCO BW);;FALSE;TIBCO
+1018878;Avoid unreferenced Process Groups (TIBCO BW);;FALSE;TIBCO
+1020800;Avoid jump statements in finally ;;FALSE;HTML5
+1020802;Avoid having errors without throwing them ;;FALSE;HTML5
+1020804;Avoid using console logging ;;FALSE;HTML5
+1020806;Avoid using NaN in comparison ;;FALSE;HTML5
+1020808;Avoid using eval() (Typescript);;TRUE;HTML5
+1020810;Avoid bypassing angular security trust ;;TRUE;HTML5
+1020812;Avoid invoking super more than once in constructor ;;FALSE;HTML5
+1020814;Avoid using web service calls inside a loop;;TRUE;HTML5
+1020816;Avoid using output of the function that does not return anything;;FALSE;HTML5
+1020818;Avoid disabling xsrf check in HttpClientXsrfModule;;TRUE;HTML5
+1020820;Avoid hardcoded passwords (TypeScript);;TRUE;HTML5
+1020822;Always provide error callbacks when subscribing to HttpClient observables;;FALSE;HTML5
+1020824;Avoid Superclass knowing Subclass (Typescript);;FALSE;HTML5
+1020826;Avoid hardcoded network resource names (Typescript);;FALSE;HTML5
+1020828;Avoid String concatenation in loops (Typescript);;FALSE;HTML5
+1020830;Avoid using Angular ElementRef API to manipulate DOM;;FALSE;HTML5
+1020832;Avoid using javascript HTTP request in Angular Application;;TRUE;HTML5
+1020834;"Avoid using ""<script>"" tag into HTML template used by Angular Application";;FALSE;HTML5
+1020836;Avoid exporting namespaces;;FALSE;HTML5
+1020838;Avoid using Rx.observable.fromEvent without having a debouncetime set;;FALSE;HTML5
+1020840;Avoid using ngFor loop without TrackBy option;;FALSE;HTML5
+1020848;Always favour pipable operators in RxJS;;FALSE;HTML5
+1020850;Always handle errors when using ajax with RxJS;;FALSE;HTML5
+1020852;"Avoid using ""<script>"" tag in HTML template used by React.js components (Typescript)";;FALSE;HTML5
+1020854;Avoid using React dangerouslySetInnerHTML (Typescript);;TRUE;HTML5
+1020856;Ensure catching Typescript error in React components;;FALSE;HTML5
+1020858;Avoid empty componentDidCatch blocks (Typescript);;TRUE;HTML5
+1020862;Avoid having cookie with an overly broad domain (TypeScript);;TRUE;HTML5
+1020864;Avoid using unsecured cookie (TypeScript);;TRUE;HTML5
+1020866;Avoid creating cookie with overly broad path (TypeScript);;TRUE;HTML5
+1020868;Avoid creating cookie without setting httpOnly option (TypeScript);;TRUE;HTML5
+1020872;Always use JSON.parse & JSON.stringify with try/catch block (TypeScript);;FALSE;HTML5
+1020950;Avoid providing password in Web Service URL;;TRUE;ALL TECHNOLOGIES
