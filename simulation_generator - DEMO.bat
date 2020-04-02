@@ -36,7 +36,7 @@ SET CMD_APPFILTER=-applicationfilter "%APPFILTER%"
 :: Inputs CSV file containing the quality rules efforts (default is CAST_QualityRulesEffort.csv)
 ::SET EFFORTFILEPATH=C:/Temp/CAST_QualityRulesEffort.csv
 SET CMD_EFFORTFILEPATH=
-::SET CMD_EFFORTFILEPATH=-effortcsvfilepath %EFFORTFILEPATH%
+::SET CMD_EFFORTFILEPATH=-effortcsvfilepath "%EFFORTFILEPATH%"
 
 :: Max nbRows for the Rest API calls
 ::SET NBROWS=100000000

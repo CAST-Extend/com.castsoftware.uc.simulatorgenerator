@@ -67,7 +67,8 @@ class ExcelFormat:
     #const_color_tabs_interactive = 'blue'
     
     
-    const_color_green_dark = '#93C077'
+    const_color_green = '#C6EFCE'
+    const_color_red = '#FFC7CE'
     const_color_light_grey = '#B2B2B2'
     const_color_light_blue = '#5DD5F1'
     # header color= green
@@ -86,8 +87,8 @@ class ExcelFormat:
     format_int_thousands = None
     format_align_left = None
     
-    format_green_dark= None
-    format_green_dark_percentage = None
+    format_green_percentage = None
+    format_red_percentage = None
 
 ########################################################################
 # retrieve the connection depending on 
@@ -292,21 +293,27 @@ def format_table_bc_grades(workbook,worksheet,table,format):
     offset = 1 
 
     # the last 6 lines don't have this fomula 
-    row_to_format = len(table.index.values)+1 - 6
+    row_to_format = len(table.index.values)+1 - 9
     col_to_format = colnum_string(len(table.columns) + 1 + offset)    
 
-    # 3 empty line
-    row_to_format_for_summary = row_to_format + 3
+    # 3 empty line + 3 lines for application name, snapshot version and date
+    row_to_format_for_summary = row_to_format + 6
 
     start = "H2"
     #define the range to be formated in excel format
     range_to_format = "{}:{}{}".format(start,col_to_format,row_to_format)
     #print("range {}".format(range_to_format))
     
+    
     worksheet.conditional_format(range_to_format, {'type':     'cell',
                                         'criteria': '>',
                                         'value':    0,
-                                        'format':   format.format_green_dark_percentage})
+                                        'format':   format.format_green_percentage})
+    worksheet.conditional_format(range_to_format, {'type':     'cell',
+                                        'criteria': '<',
+                                        'value':    0,
+                                        'format':   format.format_red_percentage})
+
     worksheet.set_column('A:A', 20, None) # Application column
     worksheet.set_column('B:B', 30, format.format_align_left) # BC name
     worksheet.set_column('C:C', 10, format.format_align_left) # Metric Id
@@ -323,22 +330,25 @@ def format_table_bc_grades(workbook,worksheet,table,format):
         worksheet.write_formula(row_num, 5-1, '=IF(F%d=0,G%d,MIN(F%d,G%d))' % (row_num + 1, row_num + 1, row_num + 1, row_num + 1))
 
         #TODO fix this fomula
-        #worksheet.write_formula(row_num, 6-1, "=MINIFS('BC contributions'!G:G,'BC contributions'!B:B,'BC grades'!C%d,'BC contributions'!F:F,TRUE)" % (row_num + 1))
+        worksheet.write_formula(row_num, 6-1, "=_xlfn.MINIFS('BC contributions'!G:G,'BC contributions'!B:B,'BC grades'!C%d,'BC contributions'!F:F,TRUE)" % (row_num + 1))
         worksheet.write_formula(row_num, 7-1, "=SUMIF('BC contributions'!B:B,C%d,'BC contributions'!H:H)/SUMIF('BC contributions'!B:B,C%d,'BC contributions'!E:E)" % (row_num + 1, row_num + 1))
         worksheet.write_formula(row_num, 8-1, '=$E%d-$D%d' % (row_num + 1, row_num + 1), format.format_percentage)
 
 
     #number of violations
     worksheet.write_formula(row_to_format_for_summary, 3-1, "=SUM('Rules Grades'!M:M)")
-    #TODO fix this fomula
     #number of quality rules for action
-    #worksheet.write_formula(row_to_format_for_summary+1, 3-1, "=COUNTIF('Rules Grades'!M:M,"">0"")")
+    worksheet.write_formula(row_to_format_for_summary+1, 3-1, "=COUNTIF('Rules Grades'!M:M,\">0\")")
     #estimated effort m.d
     worksheet.write_formula(row_to_format_for_summary+2, 3-1, "=SUM('Rules Grades'!Q:Q)")
     header_format = workbook.add_format({'bold': True,'text_wrap': True,'valign': 'middle','fg_color': format.const_color_header_columns,'border': 1}) 
     # Write the column headers with the defined format.
     for col_num, value in enumerate(table.columns.values):
         worksheet.write(0, col_num, value, header_format)
+
+    # group and hide columns lowest critical grade and weighted average
+    worksheet.set_column('F:F', None, None, {'level': 1, 'hidden': True})
+    worksheet.set_column('G:G', None, None, {'level': 1, 'hidden': True})
 
 
 ########################################################################
@@ -368,8 +378,12 @@ def format_table_tc_grades(workbook,worksheet,table,format):
     worksheet.conditional_format(range_to_format, {'type':     'cell',
                                         'criteria': '>',
                                         'value':    0,
-                                        'format':   format.format_green_dark_percentage})
-        
+                                        'format':   format.format_green_percentage})
+    worksheet.conditional_format(range_to_format, {'type':     'cell',
+                                        'criteria': '<',
+                                        'value':    0,
+                                        'format':   format.format_red_percentage})
+            
     worksheet.set_column('A:A', 60, None) #  TC name
     worksheet.set_column('B:B', 8, format.format_align_left) # Id
     worksheet.set_column('C:C', 8, format.format_float_with_2decimals) # Grade
@@ -385,7 +399,7 @@ def format_table_tc_grades(workbook,worksheet,table,format):
         #simulation grade
         worksheet.write_formula(row_num, 4-1, "=IF(E%d=0,F%d,MIN(E%d,F%d))" % (row_num + 1, row_num + 1, row_num + 1, row_num + 1), format.format_float_with_2decimals)
         #lowest critical rule grade
-        #worksheet.write_formula(row_num, 5-1, "=MINIFS('TC contributions'!G:G,'TC contributions'!B:B,'TC grades'!B%d,'TC contributions'!F:F,TRUE)" % (row_num + 1), format.format_float_with_2decimals)
+        worksheet.write_formula(row_num, 5-1, "=_xlfn.MINIFS('TC contributions'!G:G,'TC contributions'!B:B,'TC grades'!B%d,'TC contributions'!F:F,TRUE)" % (row_num + 1), format.format_float_with_2decimals)
         #weighted av
         worksheet.write_formula(row_num, 6-1, "=SUMIF('TC contributions'!B:B,'TC grades'!B%d,'TC contributions'!H:H)/SUMIF('TC contributions'!B:B,'TC grades'!B%d,'TC contributions'!E:E)" % (row_num + 1, row_num + 1), format.format_float_with_2decimals)
         #delta %
@@ -395,6 +409,10 @@ def format_table_tc_grades(workbook,worksheet,table,format):
     # Write the column headers with the defined format.
     for col_num, value in enumerate(table.columns.values):
         worksheet.write(0, col_num, value, header_format) 
+ 
+    # group and hide columns lowest critical grade and weighted average
+    worksheet.set_column('E:E', None, None, {'level': 1, 'hidden': True})
+    worksheet.set_column('F:F', None, None, {'level': 1, 'hidden': True})
  
 ########################################################################
 
@@ -476,6 +494,15 @@ def format_table_rules_grades(workbook,worksheet,table,format):
         for col_num, value in enumerate(table.columns.values):
             worksheet.write(0, col_num, value, header_format)
 
+    # group and hide the thresholds
+    worksheet.set_column('U:U', None, None, {'level': 1, 'hidden': True})
+    worksheet.set_column('V:V', None, None, {'level': 1, 'hidden': True})
+    worksheet.set_column('W:W', None, None, {'level': 1, 'hidden': True})
+    worksheet.set_column('X:X', None, None, {'level': 1, 'hidden': True})
+
+    # zoom to 85%
+    worksheet.set_zoom(85)
+
 ########################################################################
 
 
@@ -512,13 +539,6 @@ def format_table_tc_contribution(workbook,worksheet,table,format):
 
     row_to_format = len(table.index.values)+1
     col_to_format = colnum_string(len(table.columns) + 1 + offset)    
-    
-    #start = "H2"
-    #define the range to be formated in excel format
-    #range_to_format = "{}:{}{}".format(start,col_to_format,row_to_format)
-    #print("range {}".format(range_to_format))
-    
-    #worksheet.conditional_format(range_to_format, {'type': 'cell', 'criteria': '>', 'value':    0, 'format':   format.format_green_dark})
     
     worksheet.set_column('A:A', 45, None) #  
     worksheet.set_column('B:B', 13, format.format_align_left)  
@@ -571,12 +591,6 @@ def generate_excelfile(logger, filepath, appName, snapshotversion, snapshotdate,
     str_readme_content += "TC Contributions;Technical Criteria contributors (Quality metrics);\n"
     str_readme_content += "Remediation effort;Quality rules unit remediation effort;\n"
     
-    emptyline = ";;\n"
-    str_readme_content += emptyline+emptyline+emptyline    
-    str_readme_content += "Application name;" + appName + ";\n"
-    str_readme_content += "Version;" + snapshotversion + ";\n"
-    str_readme_content += "Date;" + snapshotdate + ";\n"
-    
     df_readme = pd.read_csv(StringIO(str_readme_content), sep=";",engine='python')
     
     ###############################################################################
@@ -587,9 +601,14 @@ def generate_excelfile(logger, filepath, appName, snapshotversion, snapshotdate,
         if bc.applicationName == appName:
             str_df_bc_grades += appName + ";" + bc.name + ";" + bc.id + ";" + str(bc.grade) + ";;;;"
             str_df_bc_grades += '\n'
-    # Summary
+    
+    
     emptyline = ";;;;;;;\n"
+    # Summary
     str_df_bc_grades += emptyline+emptyline+emptyline
+    str_df_bc_grades += ";Application name;" + appName + "\n"
+    str_df_bc_grades += ";Version;" + snapshotversion + "\n"
+    str_df_bc_grades += ";Date;" + snapshotdate + "\n"    
     str_df_bc_grades += ';Number of violations for action\n'
     str_df_bc_grades += ';Number of quality rules for action\n'
     str_df_bc_grades += ';Estimated effort (man.days)\n'
@@ -720,8 +739,8 @@ def generate_excelfile(logger, filepath, appName, snapshotversion, snapshotdate,
         format.format_float_with_2decimals = workbook.add_format({'num_format': format.const_float_with_2decimals})
         #define the colors
 
-        format.format_green_dark= workbook.add_format({'bg_color': format.const_color_green_dark,'num_format': format.const_float_with_2decimals})
-        format.format_green_dark_percentage= workbook.add_format({'bg_color': format.const_color_green_dark,'num_format': format.const_format_percentage})
+        format.format_green_percentage= workbook.add_format({'bg_color': format.const_color_green,'num_format': format.const_format_percentage})
+        format.format_red_percentage= workbook.add_format({'bg_color': format.const_color_red,'num_format': format.const_format_percentage})
 
         format.format_align_left = workbook.add_format({'align': format.const_format_align_left})
     
@@ -745,6 +764,9 @@ def generate_excelfile(logger, filepath, appName, snapshotversion, snapshotdate,
 
         worksheet = writer.sheets[format.const_TAB_REMEDIATION_EFFORT]        
         format_table_remediation_effort(workbook,worksheet,df_remediationeffort,format)  
+        
+        worksheet = writer.sheets[format.const_TAB_BC_GRADES]
+        worksheet.activate()
         
         writer.save()
     
@@ -877,6 +899,9 @@ if __name__ == '__main__':
         logger.info('effortcsvfilepath='+str(effortcsvfilepath))
         logger.info('loaddata='+str(loaddata))
         logger.info('********************************************')
+        progressmsg = 'Initialization'
+        print(progressmsg)
+        logger.info(progressmsg)
         connection = open_connection(logger, url, user, password)   
         # few checks on the server 
         json_server = get_server(logger, url, user, password, apikey)
@@ -908,7 +933,9 @@ if __name__ == '__main__':
                 except KeyError:
                     pass
                 
-                logger.info("Domain " + domain + " | progress:" + str(idomain) + "/" + str(len(json_domains))) 
+                msg = "Domain " + domain + " | progress:" + str(idomain) + "/" + str(len(json_domains))
+                logger.info(msg)
+                print(msg) 
                 # only engineering domains, or AAD domain only in case there is no engineering domain, we prefer to have engineering domains containing of action plan summary
                 if domain == 'AAD' and bAEDdomainFound:
                     logger.info("  Skipping domain " + domain + ", because we process in priority Engineering domains")
@@ -1043,18 +1070,30 @@ if __name__ == '__main__':
                                                     dictapsummary.update({qrid:numberofactions})
                                             json_apsummary = None 
                                         except:
-                                            logger.warning('Not able to extract the action plan summary')
+                                            msg='** Not able to extract the action plan summary ***'
+                                            print(msg)
+                                            logger.warning('** Not able to extract the action plan summary ***')
                                         
                                         logger.info('Extracting the quality metrics results and the quality rules thresholds')
                                         json_qr_results = get_qualityindicator_results(logger, url, user, password, apikey, domain, applicationid, False, nbrows)
                                         if json_qr_results != None:
                                             for res in json_qr_results:
                                                 iCount = 0
+                                                lastProgressReported = None
                                                 for res2 in res['applicationResults']:
                                                     iCount += 1
+                                                    metricssize = len(res['applicationResults'])
+                                                    imetricprogress = int(100 * (iCount / metricssize))
+                                                    if imetricprogress in (9,19,29,39,49,59,69,79,89,99) : 
+                                                        if lastProgressReported == None or lastProgressReported != imetricprogress:
+                                                            progressmsg = ' ' + str(imetricprogress+1) + '% of the metrics processed'
+                                                            logger.info(progressmsg)
+                                                            print(progressmsg)
+                                                            lastProgressReported = imetricprogress
                                                     # for testing purpose, limit to the 10 first to optimize the time
                                                     if iCount > 30:
                                                         None#break
+                                                        
                                                     metric = Metric()
                                                     try:
                                                         metric.type = res2['type']
@@ -1173,3 +1212,7 @@ if __name__ == '__main__':
         tb = traceback.format_exc()
         #e = sys.exc_info()[0]
         logging.error('  Error during the processing %s' % tb)
+
+    msg = 'Done !'
+    print (msg)
+    logger.info(msg)
