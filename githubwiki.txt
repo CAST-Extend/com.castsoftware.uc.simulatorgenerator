@@ -1,0 +1,85 @@
+Welcome to the com.castsoftware.uc.simulatorgenerator wiki!
+>Warning: The Extension described in this document is delivered as-is. This Extension is made available by CAST User Community and governed by Open Source License. Please consider all necessary steps to validate and to test the Extension in your environment before using it in production.        
+
+The extension is published under GNU LGPL v3 open source license
+
+# Table of content
+- [Introduction](#introduction)
+- [In what situation should you install this extension?](#situation)
+- [CAST AIP versions compatibility](#aipcompatibility)
+- [Supported DBMS servers](#supporteddbms)
+- [Configuration instructions](#configuration)
+- [Operation instructions](#Operation)
+   - [Source preparation and analysis configuration instructions](#preparation)
+   - [Analysis processing](#analysis)
+   - [Checks to be performed upon analysis](#checks)
+- [What results can you expect?](#expect)
+   - [List of custom objects](#objects)
+   - [List of links between custom objects](#links)
+   - [Sample graphical view in Enlighten](#graphical)
+   - [List of quality rules](#rules)
+- [Known issues](#KnownIssues)
+- [Limitations and potential enhancements](#limitations)
+- [Release Notes](#rn)
+
+<a name="introduction"></a>
+# Introduction 
+This extension generates an Excel file that allows to simulate the grade impact and effort to fix a number of violations for a set of quality rules.    
+
+<a name="situation"></a>
+# In what situation should you install this extension?  
+When you want to do a grade / effort simulation  
+When you don't have access to the Cast environment, or only access trough the Engineering dashboard REST API, and not able to use Action Plan Optimizer.      
+    
+Not when you want to inititialize/inject an action plan in then Engineering dashboard
+Not when you want to select a specific list of violations     
+Not when you want to prioritize violations on the TRI, PRI, ...    
+
+<a name="aipcompatibility"></a>
+# CAST AIP versions compatibility
+
+This extension is compatible with all AIP versions 8.3.x  
+<a name="supporteddbms"></a>
+# Supported DBMS servers
+N/A
+
+<a name="configuration"></a>
+# Configuration instructions
+You need to configure either the batch file provided, or the command line running the python script.
+You need to provide the CAST Engineering Dashboard URL and credentials.
+<a name="operation"></a>
+# Operation instructions
+Requires a Python runtime 3.6 and 3 python libraries (that are installed by pip as the first step of the batch)
+Run the batch file or the command line running the python script to generate the Excel file
+
+<a name="expect"></a>
+# What results can you expect?
+For each application, and only for the last snapshot : 
+1 Excel file named <Application name>_simulation.xlsx is generated
+The remediation efforts are pre-loaded from CAST_QualityRulesEffort.csv file into the Excel, but can be modified in the Excel file.
+
+You can change the number of violations that will be fixed and you will have the grade and efforts simulations computed in the Excel file. 
+
+Parameter available :   
+- Application name (regexp) : -applicationfilter, if Empty all the application that are configured in the different engineering domains will be processed  
+- Log level -loglevel INFO/DEBUG, default INFO  
+- Maximum number of rows -nbrows int value, default 1000000000 (has a high impact of performance, but is truncating the data)  
+
+<a name="links"></a>
+## Links
+N/A
+<a name="rules"></a>
+## List of quality rules
+N/A
+
+<a name="knownIssues"></a>
+# Known issues
+- Some quality rules information or source code snipplet might contain unicode characters that provokes the script to abort, except for a set unicode characters already identified   
+
+<a name="limitations"></a>
+- Only the last snapshot data are exported in the Excel file  
+- Only the Full application mode is covered. The legacy consolidation mode like Aggregation by Number of Artifacts, ... is not managed  
+<a name="rn"></a>
+# Release Notes
+## Version 1.0.0
+* Initial version published  
