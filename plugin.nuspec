@@ -9,11 +9,14 @@
     <projectUrl>https://github.com/CAST-Extend/com.castsoftware.uc.simulatorgenerator/wiki</projectUrl>
     <iconUrl>https://raw.githubusercontent.com/CAST-Extend/com.castsoftware.uc.simulatorgenerator/master/256px-Office-ms-excel.svg.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>This extension generates an Excel file that allows to simulation the grade and effort to fix a number of violations for a set of quality rules</description>
+    <description>This extension generates an Excel file that allows to simulate the grade impact and effort to fix a number of violations for a set of quality rules</description>
     <releaseNotes>https://github.com/CAST-Extend/com.castsoftware.uc.simulatorgenerator/wiki#version-100</releaseNotes>
     <tags>CASTUserCommunity Quality</tags>
     <dependencies>
       <dependency id="CAIP" version="8.3" />
     </dependencies>
   </metadata>
+	<files>
+	  <file src="**\*simulator_generator.py;**\*.csv;simulation_generator - DEMO.bat" exclude="**\*CASTInternal*.csv;**\tests*;**\*.log;**\*.gitignore;**\*.xml;**githubwiki**\*.txt;**TEF**\*.*" target="./"/> 
+	</files>  
 </package>
