@@ -47,6 +47,24 @@ class Metric:
     removedviolations = None
     applicationName = None
 
+# violation class
+class Violation:
+    id = None
+    qrid = None
+    qrname = None
+    critical = None
+    componentid = None
+    componentShortName = None
+    componentNameLocation = None
+    hasActionPlan = False
+    actionplanstatus = ''
+    actionplantag = ''
+    actionplancomment = ''
+    hasExclusionRequest = False
+    url = None
+    violationstatus = None
+    componentstatus = None
+    
 # contribution class (technical criteria contributions to business criteria, or quality metrics to technical criteria) 
 class Contribution:
     parentmetricid = None
@@ -80,6 +98,7 @@ class ExcelFormat:
     const_TAB_BC_GRADES = 'BC Grades'
     const_TAB_TC_GRADES = 'TC Grades'
     const_TAB_RULES_GRADES = 'Rules Grades'
+    const_TAB_VIOLATIONS = 'Violations'
     const_TAB_BC_CONTRIBUTIONS = 'BC contributions'    
     const_TAB_TC_CONTRIBUTIONS = 'TC contributions'
     const_TAB_REMEDIATION_EFFORT = 'Remediation effort'
@@ -254,24 +273,63 @@ def get_rule_pattern(logger, url, user, password, apikey, rulepatternHref):
 
 ########################################################################
 
+# extract the all quality rules and their contributions to technical criterias
+def get_snapshot_tqi_quality_model (logger, connection, warname, user, password, apikey, domain, snapshotid):
+    logger.info("Extracting the snapshot quality model")   
+    request = domain + "/quality-indicators/60017/snapshots/" + snapshotid + "/base-quality-indicators" 
+    return execute_request(logger, connection, 'GET', request, warname, user, password, apikey, None)
+
+########################################################################
+
 def get_snapshot_bc_tc_mapping(logger, url, user, password, apikey, domain, snapshotid, bcid):
     logger.info("Extracting the snapshot business criterion " + bcid +  " => technical criteria mapping")  
     request = domain + "/quality-indicators/" + str(bcid) + "/snapshots/" + snapshotid
     return execute_request(logger, url, request, user, password, apikey)
     
 ########################################################################
+def get_snapshot_violations(logger, connection, warname, user, password, apikey, domain, applicationid, snapshotid, criticalonly, violationStatus, businesscriterionfilter, technoFilter, nbrows):
+    logger.info("Extracting the snapshot violations")
+    request = domain + "/applications/" + applicationid + "/snapshots/" + snapshotid + '/violations'
+    request += '?startRow=1'
+    request += '&nbRows=' + str(nbrows)
+    if criticalonly != None and criticalonly:         
+        request += '&rule-pattern=critical-rules'
+    if violationStatus != None:
+        request += '&status=' + violationStatus
+    if businesscriterionfilter == None:
+        businesscriterionfilter = "60017"
+    if businesscriterionfilter != None:
+        strbusinesscriterionfilter = str(businesscriterionfilter)        
+        # we can have multiple value separated with a comma
+        if ',' not in strbusinesscriterionfilter:
+            request += '&business-criterion=' + strbusinesscriterionfilter
+        request += '&rule-pattern=('
+        for item in strbusinesscriterionfilter.split(sep=','):
+            request += 'cc:' + item + ','
+            if criticalonly == None or not criticalonly:   
+                request += 'nc:' + item + ','
+        request = request[:-1]
+        request += ')'
+        
+    if technoFilter != None:
+        request += '&technologies=' + technoFilter
+        
+    return execute_request(logger, restapiurl, request, user, password, apikey)
 
+########################################################################
 def init_parse_argument():
     # get arguments
     parser = argparse.ArgumentParser(add_help=False)
     requiredNamed = parser.add_argument_group('Required named arguments')
-    requiredNamed.add_argument('-url', required=True, dest='url', help='URL format http://demo-eu.castsoftware.com/Engineering')
+    requiredNamed.add_argument('-restapiurl', required=True, dest='restapiurl', help='Rest API URL using format https://demo-eu.castsoftware.com/CAST-RESTAPI or http://demo-eu.castsoftware.com/Engineering')
+    requiredNamed.add_argument('-edurl', required=False, dest='edurl', help='Engineering dashboard URL using format http://demo-eu.castsoftware.com/Engineering, if empty will be same as restapiurl')
     requiredNamed.add_argument('-user', required=False, dest='user', help='Username')    
     requiredNamed.add_argument('-password', required=False, dest='password', help='Password')
     requiredNamed.add_argument('-apikey', required=False, dest='apikey', help='Api key')
     requiredNamed.add_argument('-log', required=True, dest='log', help='log file')
     requiredNamed.add_argument('-of', required=False, dest='outputfolder', help='output folder')    
     requiredNamed.add_argument('-effortcsvfilepath', required=False, dest='effortcsvfilepath', help='Inputs quality rules effort csv file path (default=CAST_QualityRulesEffort.csv)')    
+    requiredNamed.add_argument('-loadviolations', required=False, dest='loadviolations', help='Load the violations true/false default=false')
     
     requiredNamed.add_argument('-applicationfilter', required=False, dest='applicationfilter', help='Application name regexp filter')
     requiredNamed.add_argument('-loglevel', required=False, dest='loglevel', help='Log level (INFO|DEBUG) default = INFO')
@@ -293,6 +351,8 @@ def format_table_readme(workbook,worksheet,table,format):
         worksheet.write(0, col_num, value, header_format)
 
 ########################################################################
+
+
 
 def round_grades(broundgrades, formula):
     if broundgrades:
@@ -549,7 +609,7 @@ def format_table_rules_grades(workbook,worksheet,table,format):
             #remaining violations
             worksheet.write_formula(row_num, 14-1, '=$L%d-$M%d' % (row_num + 1, row_num + 1))
             #unit effort
-            worksheet.write_formula(row_num, 15-1, "=VLOOKUP(E%d,'Remediation effort'!A:C,3,FALSE)" % (row_num + 1))        
+            worksheet.write_formula(row_num, 15-1, "=(VLOOKUP(E%d,'Remediation effort'!A:C,3,FALSE))/60" % (row_num + 1))        
             #total effort (mh)
             worksheet.write_formula(row_num, 16-1, "=O%d*M%d" % (row_num + 1, row_num + 1))
             #total effort (md)
@@ -581,6 +641,30 @@ def format_table_rules_grades(workbook,worksheet,table,format):
 
 ########################################################################
 
+
+def format_table_violations(workbook,worksheet,table,format):
+    worksheet.set_tab_color(format.const_color_light_blue)
+    header_format = workbook.add_format({'bold': True,'text_wrap': True,'valign': 'middle','fg_color': format.const_color_header_columns,'border': 1})
+    worksheet.set_zoom(70)
+    worksheet.freeze_panes(1, 0)  # Freeze the first row. 
+    worksheet.autofilter('A1:M10000')
+   
+    worksheet.set_column('A:A', 11, None) #  QR Id
+    worksheet.set_column('B:B', 60, format.format_align_left) #  QR Name 
+    worksheet.set_column('C:C', 11, format.format_align_left) # Critical
+    worksheet.set_column('D:D', 60, None) # Fullname
+    worksheet.set_column('E:E', 11, None) # Action plan
+    worksheet.set_column('F:F', 11, None) # For action
+    worksheet.set_column('G:G', 11, None) # AP status
+    worksheet.set_column('H:H', 11, None) #   
+    worksheet.set_column('I:I', 11, None) #    
+    worksheet.set_column('J:J', 11, None) #     
+   
+    # Write the column headers with the defined format.
+    for col_num, value in enumerate(table.columns.values):
+        worksheet.write(0, col_num, value, header_format)   
+   
+########################################################################
 
 def format_table_bc_contribution(workbook,worksheet,table, format):
     worksheet.set_tab_color(format.const_color_light_grey)
@@ -659,7 +743,7 @@ def format_table_remediation_effort(workbook,worksheet,table,format):
 
 ########################################################################
 
-def generate_excelfile(logger, filepath, appName, snapshotversion, snapshotdate, listbusinesscriteria, listtechnicalcriteria, listbccontributions, listtccontributions, listmetrics, dictapsummary, dicremediationabacus, broundgrades):
+def generate_excelfile(logger, filepath, appName, snapshotversion, snapshotdate, listbusinesscriteria, listtechnicalcriteria, listbccontributions, listtccontributions, listmetrics, dictapsummary, dicremediationabacus, listviolations, broundgrades):
     format = ExcelFormat()
     pd.options.display.float_format = format.const_float_format.format
     
@@ -839,6 +923,20 @@ def generate_excelfile(logger, filepath, appName, snapshotversion, snapshotdate,
         msg = '###### csv.Error: unexpected end of data : df_remediationeffort %s ' % str_df_remediationeffort
         print(msg)
         logger.error(msg)
+    ###############################################################################
+    # Data for the Violations Tab
+    str_df_violations = 'Quality rule Id;Quality rule name;Critical;Component name location;Selected for action;In action plan;Action plan status;Action plan tag;Has exclusion request;Violation status;Component status;URL;Violation id\n'
+    for objviol in listviolations:
+        str_df_violations += str(objviol.qrid) + ';' + str(objviol.qrname) + ';' + str(objviol.critical) + ';' + str(objviol.componentNameLocation) + ';'+ str(objviol.hasActionPlan) + ';' + str(objviol.hasActionPlan) + ';' + str(objviol.actionplanstatus) + ';' + str(objviol.actionplantag) 
+        str_df_violations +=  ';'+ str(objviol.hasExclusionRequest) + ';'+ str(objviol.violationstatus) + ';'+ str(objviol.componentstatus)  + ';'+ str(objviol.url) + ';'+ str(objviol.id) 
+        str_df_violations += '\n'
+    try: 
+        str_df_violations = remove_unicode_characters(str_df_violations)
+        df_violations = pd.read_csv(StringIO(str_df_violations), sep=";",engine='python',quoting=csv.QUOTE_NONE) 
+    except: 
+        msg = '###### csv.Error: unexpected end of data : df_violations %s ' % str_df_violations
+        print(msg)
+        logger.error(msg)        
         
     ###############################################################################
     file = open(filepath, 'w')
@@ -847,8 +945,10 @@ def generate_excelfile(logger, filepath, appName, snapshotversion, snapshotdate,
         df_bc_grades.to_excel(writer, sheet_name=format.const_TAB_BC_GRADES, index=False)
         df_tc_grades.to_excel(writer, sheet_name=format.const_TAB_TC_GRADES, index=False)
         df_rules_grades.to_excel(writer, sheet_name=format.const_TAB_RULES_GRADES, index=False)
+        if listviolations != None and len(listviolations) > 0:
+            df_violations.to_excel(writer, sheet_name=format.const_TAB_VIOLATIONS, index=False)        
         df_bc_contribution.to_excel(writer, sheet_name=format.const_TAB_BC_CONTRIBUTIONS, index=False) 
-        df_tc_contribution.to_excel(writer, sheet_name=format.const_TAB_TC_CONTRIBUTIONS, index=False) 
+        df_tc_contribution.to_excel(writer, sheet_name=format.const_TAB_TC_CONTRIBUTIONS, index=False)
         df_remediationeffort.to_excel(writer, sheet_name=format.const_TAB_REMEDIATION_EFFORT, index=False) 
 
         workbook = writer.book
@@ -878,6 +978,9 @@ def generate_excelfile(logger, filepath, appName, snapshotversion, snapshotdate,
     
         worksheet = writer.sheets[format.const_TAB_RULES_GRADES]
         format_table_rules_grades(workbook,worksheet,df_rules_grades,format)  
+    
+        worksheet = writer.sheets[format.const_TAB_VIOLATIONS]
+        format_table_violations(workbook,worksheet,df_violations,format)      
     
         worksheet = writer.sheets[format.const_TAB_BC_CONTRIBUTIONS]
         format_table_bc_contribution(workbook,worksheet,df_bc_contribution,format)     
@@ -956,7 +1059,11 @@ if __name__ == '__main__':
 
     parser = init_parse_argument()
     args = parser.parse_args()
-    url = args.url
+    restapiurl = args.restapiurl
+    edurl = restapiurl 
+    # the engineering dashboard url can be different from the rest api url, but if not specified we will take the same value are rest api url
+    if args.edurl != None:
+        edurl = args.edurl
     user = 'N/A'
     if args.user != None: 
         user = args.user 
@@ -971,6 +1078,10 @@ if __name__ == '__main__':
     effortcsvfilepath = "CAST_QualityRulesEffort.csv"
     if args.effortcsvfilepath != None:
         effortcsvfilepath = args.effortcsvfilepath 
+
+    loadviolations = False
+    if args.loadviolations != None and args.loadviolations in ('True','true'):
+        loadviolations = True                                  
 
     # new params
     applicationfilter = args.applicationfilter
@@ -1004,7 +1115,7 @@ if __name__ == '__main__':
         
         # split the URL to extract the warname, host, protocol ... 
         rexURL = "(([hH][tT][tT][pP][sS]*)[:][/][/]([A-Za-z0-9_:\.-]+)([/]([A-Za-z0-9_\.-]+))*[/]*)"
-        m0 = re.search(rexURL, url)
+        m0 = re.search(rexURL, restapiurl)
         if m0:
             protocol = m0.group(2)
             host = m0.group(3)
@@ -1014,7 +1125,8 @@ if __name__ == '__main__':
         logger.info('********************************************')
         logger.info('script_version='+script_version)
         logger.info('****************** params ******************')
-        logger.info('url='+url)
+        logger.info('restapiurl='+restapiurl)
+        logger.info('edurl='+edurl)        
         logger.info('host='+host)
         logger.info('protocol='+protocol)
         logger.info('warname='+str(warname))
@@ -1031,9 +1143,11 @@ if __name__ == '__main__':
         progressmsg = 'Initialization'
         print(progressmsg)
         logger.info(progressmsg)
-        connection = open_connection(logger, url, user, password)   
+        
+        connection = open_connection(logger, restapiurl, user, password)   
+        
         # few checks on the server 
-        json_server = get_server(logger, url, user, password, apikey)
+        json_server = get_server(logger, restapiurl, user, password, apikey)
         if json_server != None:
             logger.info('server status=' + json_server['status'])    
             servversion = json_server['version']
@@ -1045,7 +1159,7 @@ if __name__ == '__main__':
             logger.info('********************************************')    
         
         # retrieve the domains & the applications in those domains 
-        json_domains = get_domains(logger, url, user, password, apikey)
+        json_domains = get_domains(logger, restapiurl, user, password, apikey)
         if json_domains != None:
             bAEDdomainFound = False
             for item in json_domains:
@@ -1071,7 +1185,7 @@ if __name__ == '__main__':
                     continue
                 
                 if domain != 'AAD' or not bAEDdomainFound:
-                    json_apps = get_applications(logger, url, user, password, apikey,domain)
+                    json_apps = get_applications(logger, restapiurl, user, password, apikey,domain)
                     applicationid = -1
                     appHref = ''
                     appName = ''
@@ -1119,7 +1233,7 @@ if __name__ == '__main__':
                             # applications health factors for last snapshot
                             if (loaddata):
                                 logger.info('Extracting the applications business criteria grades for last snapshot')
-                                json_bc_grades = get_businesscriteria_grades(logger, url, user, password, apikey,domain)
+                                json_bc_grades = get_businesscriteria_grades(logger, restapiurl, user, password, apikey,domain)
                                 if json_bc_grades != None:
                                     for res in json_bc_grades:
                                         for bc in res['applicationResults']:
@@ -1156,7 +1270,7 @@ if __name__ == '__main__':
                                             dicremediationabacus.update({row[0]:{"id":row[0],"name":effortqrname,"uniteffortinhours":row[2]}})
                             # snapshot list
                             logger.info('Loading the application snapshot')
-                            json_snapshots = get_application_snapshots(logger, url, user, password, apikey,domain, applicationid)
+                            json_snapshots = get_application_snapshots(logger, restapiurl, user, password, apikey,domain, applicationid)
                             if json_snapshots != None:
                                 for snap in json_snapshots:
                                     snapHref = ''
@@ -1184,7 +1298,7 @@ if __name__ == '__main__':
                                     if loaddata:
                                         logger.info("Extracting the action plan summary")
                                         try:
-                                            json_apsummary = get_actionplan_summary(logger, url, user, password, apikey, domain, applicationid, snapshotid)
+                                            json_apsummary = get_actionplan_summary(logger, restapiurl, user, password, apikey, domain, applicationid, snapshotid)
                                             if json_apsummary != None:
                                                 for qrap in json_apsummary:
                                                     qrhref = qrap['rulePattern']['href']
@@ -1212,7 +1326,7 @@ if __name__ == '__main__':
                                             logger.warning('** Not able to extract the action plan summary ***')
                                         
                                         logger.info('Extracting the quality metrics results and the quality rules thresholds')
-                                        json_qr_results = get_qualityindicator_results(logger, url, user, password, apikey, domain, applicationid, False, nbrows)
+                                        json_qr_results = get_qualityindicator_results(logger, restapiurl, user, password, apikey, domain, applicationid, False, nbrows)
                                         if json_qr_results != None:
                                             for res in json_qr_results:
                                                 iCount = 0
@@ -1282,7 +1396,7 @@ if __name__ == '__main__':
                                                         else:
                                                             listmetrics.append(metric)
                                                             if metric.type == "quality-rules":
-                                                                json_thresholds = get_qualityrules_thresholds(logger, url, user, password, apikey, domain, snapshotid, metric.id)   
+                                                                json_thresholds = get_qualityrules_thresholds(logger, restapiurl, user, password, apikey, domain, snapshotid, metric.id)   
                                                                 if json_thresholds != None and json_thresholds['thresholds'] != None:
                                                                     icount = 0
                                                                     for thres in json_thresholds['thresholds']:
@@ -1301,7 +1415,7 @@ if __name__ == '__main__':
                                                     metric = None
                                             logger.info('Extracting the technical criteria contributors')
                                             for tciterator in listtechnicalcriteria:
-                                                json_metriccontributions = get_metric_contributions(logger, url, user, password, apikey, domain, tciterator.id, snapshotid)
+                                                json_metriccontributions = get_metric_contributions(logger, restapiurl, user, password, apikey, domain, tciterator.id, snapshotid)
                                                 for contr in json_metriccontributions['gradeContributors']:
                                                     tccontribution = Contribution()
                                                     tccontribution.parentmetricname = json_metriccontributions['name']
@@ -1316,7 +1430,7 @@ if __name__ == '__main__':
                                                 json_metriccontributions = None
                                             logger.info('Extracting the business criteria contributors')
                                             for bcid in bcids:
-                                                json_metriccontributions = get_metric_contributions(logger, url, user, password, apikey, domain, bcid, snapshotid)
+                                                json_metriccontributions = get_metric_contributions(logger, restapiurl, user, password, apikey, domain, bcid, snapshotid)
                                                 for contr in json_metriccontributions['gradeContributors']:
                                                     bccontribution = Contribution()
                                                     bccontribution.parentmetricname = json_metriccontributions['name']
@@ -1334,11 +1448,173 @@ if __name__ == '__main__':
                                                     if bfound:
                                                         listbccontributions.append(bccontribution)
                                                 json_metriccontributions = None
-                                    
+                                        
+                                        json_violations = None
+                                        listviolations = []
+                                        if loaddata and loadviolations: 
+                                            progressmsg = 'Extracting violations'
+                                            print(progressmsg)
+                                            logger.info(progressmsg)
+                                            progressmsg = 'Loading violations & components data from the REST API'
+                                            print(progressmsg)
+                                            logger.info(progressmsg)                                    
+                                            #json_violations = get_snapshot_violations(logger, connection, warname, user, password, apikey,domain, applicationid, snapshotid,  criticalrulesonlyfilter, violationstatusfilter, businesscriterionfilter, technofilter,nbrows)
+                                            json_violations = get_snapshot_violations(logger, connection, warname, user, password, apikey,domain, applicationid, snapshotid, True, None, None, None, nbrows)                                            
+                                        if json_violations != None:
+                                            iCouterRestAPIViolations = 0
+                                            lastProgressReported = None
+                                            for violation in json_violations:
+                                                objviol = Violation()
+                                                iCouterRestAPIViolations += 1
+                                                currentviolurl = ''
+                                                violations_size = len(json_violations)
+                                                imetricprogress = int(100 * (iCouterRestAPIViolations / violations_size))
+                                                if iCouterRestAPIViolations==1 or iCouterRestAPIViolations==violations_size or iCouterRestAPIViolations%500 == 0:
+                                                    msg = "processing violation " + str(iCouterRestAPIViolations) + "/" + str(violations_size)  + ' (' + str(imetricprogress) + '%)'
+                                                    print(msg)
+                                                    logger.info(msg)
+                                                try:
+                                                    objviol.qrname = violation['rulePattern']['name']
+                                                except KeyError:
+                                                    qrname = None    
+                                                objviol.critical = '<Not extracted>'
+                                                try:
+                                                    objviol.qrcritical = str(violation['rulePattern']['critical'])
+                                                except KeyError:
+                                                    # in earlier versions of the rest API this information was not available, taking the value from another location when possible
+                                                    #if tqiqm != None and tqiqm[qrid] != None and tqiqm[qrid].get("critical") != None:
+                                                    #    qrcritical = str(tqiqm[qrid].get("critical"))
+                                                    None                                                    
+                                                try:                                    
+                                                    qrrulepatternhref = violation['rulePattern']['href']
+                                                except KeyError:
+                                                    qrrulepatternhref = None
+                                                
+                                                qrrulepatternsplit = qrrulepatternhref.split('/')
+                                                for elem in qrrulepatternsplit:
+                                                    # the last element is the id
+                                                    objviol.qrid = elem
+                                                    
+                                                '''
+                                                # filter on quality rule id or name, if the filter match
+                                                if qridfilter != None and not re.match(qridfilter, str(qrid)):
+                                                    continue
+                                                if qrnamefilter != None and not re.match(qrnamefilter, qrname):
+                                                    continue
+                                                ''' 
+                                                actionPlan = violation['remedialAction']
+                                                try:               
+                                                    objviol.hasActionPlan = actionPlan != None
+                                                except KeyError:
+                                                    logger.warning('Not able to extract the action plan')
+                                                if objviol.hasActionPlan:
+                                                    try:               
+                                                        objviol.actionplanstatus = actionPlan['status']
+                                                        objviol.actionplantag = actionPlan['tag']
+                                                        objviol.actionplancomment = actionPlan['comment']
+                                                    except KeyError:
+                                                        logger.warning('Not able to extract the action plan details')
+                                                '''
+                                                # filter the violations already in the action plan 
+                                                if actionplanfilter != None and actionplanfilter == 'WithActionPlan' and actionPlan == None:
+                                                    continue
+                                                # filter the violations not in the action plan 
+                                                if actionplanfilter != None and actionplanfilter == 'WithoutActionPlan' and actionPlan != None:
+                                                    continue
+                                                '''    
+                                                try:                                    
+                                                    objviol.hasExclusionRequest = violation['exclusionRequest'] != None
+                                                except KeyError:
+                                                    logger.warning('Not able to extract the exclusion request')
+                                                # filter the violations already in the exclusion list 
+                                                '''if exclusionrequestfilter != None and exclusionrequestfilter == 'Excluded' and exclusionRequest != None:
+                                                    continue
+                                                # filter the violations not in the exclusion list 
+                                                if exclusionrequestfilter != None and exclusionrequestfilter == 'NotExcluded' and exclusionRequest == None:
+                                                    continue
+                                                '''    
+                                                try:                                    
+                                                    objviol.violationstatus = violation['diagnosis']['status']
+                                                except KeyError:
+                                                    logger.warning('Not able to extract the violation status')
+                                                try:
+                                                    componentHref = violation['component']['href']
+                                                except KeyError:
+                                                    componentHref = None
+    
+                                                objviol.componentid = ''
+                                                rexcompid = "/components/([0-9]+)/snapshots/"
+                                                m0 = re.search(rexcompid, componentHref)
+                                                if m0: 
+                                                    objviol.componentid = m0.group(1)
+                                                '''
+                                                # filter the components that are not in the list if a list of component href is provided
+                                                if componentsfilter != None and componentHref not in componentsfilter:
+                                                    # example DOMAIN08/components/165586,DOMAIN08/components/166686
+                                                    continue
+            
+                                                # filter the violations that are not in the list if a list of violations href is provided
+                                                if violationsfilter != None and qrrulepatternhref+'#'+componentHref not in violationsfilter: 
+                                                    # example : DOMAIN08/rule-patterns/7778#DOMAIN08/components/137407/snapshots/21,DOMAIN08/rule-patterns/7776#DOMAIN08/components/13766/snapshots/21                                          
+                                                    continue
+                                                '''
+                                                if qrrulepatternhref != None and componentHref != None:
+                                                    objviol.id = qrrulepatternhref+'#'+componentHref
+                                                    
+                                                try:
+                                                    objviol.componentShortName = violation['component']['shortName']
+                                                except KeyError:
+                                                    logger.warning('Not able to extract the componentShortName')                                     
+                                                try:
+                                                    objviol.componentNameLocation = violation['component']['name']
+                                                except KeyError:
+                                                    logger.warning('Not able to extract the componentNameLocation')
+                                                # filter on component name location
+                                                '''
+                                                if componentnamelocationfilter != None and not re.match(componentnamelocationfilter, componentNameLocation):
+                                                    continue
+                                                ''' 
+                                                try:
+                                                    objviol.componentstatus = violation['component']['status']
+                                                except KeyError:
+                                                    componentStatus = None                                            
+                                                
+                                                # filter on component status
+                                                '''
+                                                if componentstatusfilter != None and componentStatus != None and componentstatusfilter != componentStatus:
+                                                    continue
+                                                '''
+                                                try:
+                                                    findingsHref = violation['diagnosis']['findings']['href']
+                                                except KeyError:
+                                                    findingsHref = None                                            
+                                                try:
+                                                    componentTreeNodeHref = violation['component']['treeNodes']['href']
+                                                except KeyError:
+                                                    componentTreeNodeHref = None                                        
+                                                try:
+                                                    sourceCodesHref = violation['component']['sourceCodes']['href']
+                                                except KeyError:
+                                                    sourceCodesHref = None
+                                                
+                                                try:
+                                                    propagationRiskIndex = violation['component']['propagationRiskIndex']
+                                                except KeyError:
+                                                    propagationRiskIndex = None                                            
+                                        
+                                                #TODO get the first technical criterion found for this rule#
+                                                firsttechnicalcriterionid = '#TODO#'
+                                                currentviolfullurl = edurl + '/engineering/index.html#' + snapHref 
+                                                currentviolfullurl += '/business/60017/qualityInvestigation/0/60017/' 
+                                                currentviolfullurl += firsttechnicalcriterionid + '/' + objviol.qrid + '/' + objviol.componentid
+                                                objviol.url = currentviolfullurl
+                                        
+                                                listviolations.append(objviol)
+                                        
                                     # generated csv file if required                                    
                                     fpath = get_excelfilepath(outputfolder, appName)
                                     logger.info("Generating xlsx file " + fpath)
-                                    generate_excelfile(logger, fpath, appName, snapshotversion, snapshotdate, listbusinesscriteria, listtechnicalcriteria, listbccontributions, listtccontributions, listmetrics, dictapsummary, dicremediationabacus, broundgrades)
+                                    generate_excelfile(logger, fpath, appName, snapshotversion, snapshotdate, listbusinesscriteria, listtechnicalcriteria, listbccontributions, listtccontributions, listmetrics, dictapsummary, dicremediationabacus, listviolations, broundgrades)
                                     
                                     json_qr_results = None
                                     # keep only last snapshot
