@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>com.castsoftware.uc.simulatorgenerator</id>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <title>Grade and effort simulation generator</title>
     <authors>User Community</authors>
     <owners>CAST</owners>
@@ -17,6 +17,10 @@
     </dependencies>
   </metadata>
 	<files>
-	  <file src="**\*simulator_generator.py;**\*.csv;simulation_generator - DEMO.bat" exclude="**\*CASTInternal*.csv;**\tests*;**\*.log;**\*.gitignore;**\*.xml;**githubwiki**\*.txt;**TEF**\*.*" target="./"/> 
+	  <!-- file src="**\*simulator_generator.py" exclude="**\tests*;**\*.log;**\*.gitignore;**\*.xml;**githubwiki**\*.txt;**TEF**\*.*" target="./ "/ -->
+	  <file src="**\*simulator_generator.py" target="./ "/>
+	  <file src="simulation_generator - DEMO.bat" target="./" />
+	  <file src="**\*.csv" exclude="**\*CASTInternal*.csv" />
+	  **\*.py
 	</files>  
 </package>

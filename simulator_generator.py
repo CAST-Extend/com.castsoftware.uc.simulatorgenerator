@@ -63,6 +63,7 @@ class ExcelFormat:
     const_float_with_2decimals = '#,##0.00'
     const_float_with_1decimal = '#,##0.0'
     const_format_align_left = 'left'
+    const_format_int = '### ### ### ### ### ##0'
 
     #const_color_tabs_interactive = 'blue'
     
@@ -89,6 +90,10 @@ class ExcelFormat:
     
     format_green_percentage = None
     format_red_percentage = None
+    format_grey_float_1decimal = None
+    format_green_int = None
+    format_red_int = None
+    format_green_int = None
 
 ########################################################################
 # retrieve the connection depending on 
@@ -277,22 +282,38 @@ def init_parse_argument():
 
 def format_table_readme(workbook,worksheet,table,format):
     worksheet.set_tab_color(format.const_color_light_grey)
+    header_format = workbook.add_format({'bold': True,'text_wrap': True,'valign': 'middle','fg_color': format.const_color_header_columns,'border': 1}) 
+    
     worksheet.set_column('A:A', 25, None) # Page 
     worksheet.set_column('B:B', 60, None) # Content  
     worksheet.set_column('C:C', 110, None) # Comments  
 
-    header_format = workbook.add_format({'bold': True,'text_wrap': True,'valign': 'middle','fg_color': format.const_color_header_columns,'border': 1}) 
     # Write the column headers with the defined format.
     for col_num, value in enumerate(table.columns.values):
         worksheet.write(0, col_num, value, header_format)
 
 ########################################################################
 
+def round_grades(broundgrades, formula):
+    if broundgrades:
+        # if we round we do it with 2 decimals
+        return excel_round(formula, 2)
+    else:
+        return formula
+
+########################################################################
+
+def excel_round(formula,decimals):
+    return 'ROUND(' + formula[1:] +  ',' + decimals + ')'
+
+########################################################################
+
 def format_table_bc_grades(workbook,worksheet,table,format):
     worksheet.set_tab_color(format.const_color_light_blue)
-    offset = 1 
+    header_format = workbook.add_format({'bold': True,'text_wrap': True,'valign': 'middle','fg_color': format.const_color_header_columns,'border': 1}) 
 
     # the last 6 lines don't have this fomula 
+    offset = 1
     row_to_format = len(table.index.values)+1 - 9
     col_to_format = colnum_string(len(table.columns) + 1 + offset)    
 
@@ -317,39 +338,37 @@ def format_table_bc_grades(workbook,worksheet,table,format):
     worksheet.set_column('A:A', 20, None) # Application column
     worksheet.set_column('B:B', 30, format.format_align_left) # BC name
     worksheet.set_column('C:C', 10, format.format_align_left) # Metric Id
-    worksheet.set_column('D:D', 12, format.format_float_with_2decimals) # Grade 
-    worksheet.set_column('E:E', 20, format.format_float_with_2decimals) # Simulated grade 
-    worksheet.set_column('F:F', 20, format.format_float_with_2decimals) #  
-    worksheet.set_column('G:G', 35, format.format_float_with_2decimals) #  
-    worksheet.set_column('H:H', 20, format.format_percentage) # delta %  
+    worksheet.set_column('D:D', 15, format.format_float_with_2decimals) # Grade 
+    worksheet.set_column('E:E', 15, format.format_float_with_2decimals) # Simulated grade 
+    worksheet.set_column('F:F', 15, format.format_float_with_2decimals) #  
+    worksheet.set_column('G:G', 20, format.format_float_with_2decimals) #  
+    worksheet.set_column('H:H', 15, format.format_percentage) # delta %  
     
     worksheet.autofilter('A1:H10000')
     
     # Create a for loop to start writing the formulas to each row
     for row_num in range(1,row_to_format):
-        worksheet.write_formula(row_num, 5-1, '=IF(F%d=0,G%d,MIN(F%d,G%d))' % (row_num + 1, row_num + 1, row_num + 1, row_num + 1))
-
-        #TODO fix this fomula
-        worksheet.write_formula(row_num, 6-1, "=_xlfn.MINIFS('BC contributions'!G:G,'BC contributions'!B:B,'BC grades'!C%d,'BC contributions'!F:F,TRUE)" % (row_num + 1))
-        worksheet.write_formula(row_num, 7-1, "=SUMIF('BC contributions'!B:B,C%d,'BC contributions'!H:H)/SUMIF('BC contributions'!B:B,C%d,'BC contributions'!E:E)" % (row_num + 1, row_num + 1))
+        # simulation grade
+        worksheet.write_formula(row_num, 5-1, round_grades(broundgrades,'=IF(F%d=0,G%d,MIN(F%d,G%d))') % (row_num + 1, row_num + 1, row_num + 1, row_num + 1))
+        # lowest critical
+        worksheet.write_formula(row_num, 6-1,  round_grades(broundgrades,"=_xlfn.MINIFS('BC contributions'!G:G,'BC contributions'!B:B,'BC grades'!C%d,'BC contributions'!F:F,TRUE)") % (row_num + 1))
+        # weighted average
+        worksheet.write_formula(row_num, 7-1, round_grades(broundgrades,"=SUMIF('BC contributions'!B:B,C%d,'BC contributions'!H:H)/SUMIF('BC contributions'!B:B,C%d,'BC contributions'!E:E)") % (row_num + 1, row_num + 1))
+        # Delta %
         worksheet.write_formula(row_num, 8-1, '=$E%d-$D%d' % (row_num + 1, row_num + 1), format.format_percentage)
-
-
     #number of violations
     worksheet.write_formula(row_to_format_for_summary, 3-1, "=SUM('Rules Grades'!M:M)")
     #number of quality rules for action
     worksheet.write_formula(row_to_format_for_summary+1, 3-1, "=COUNTIF('Rules Grades'!M:M,\">0\")")
     #estimated effort m.d
     worksheet.write_formula(row_to_format_for_summary+2, 3-1, "=SUM('Rules Grades'!Q:Q)")
-    header_format = workbook.add_format({'bold': True,'text_wrap': True,'valign': 'middle','fg_color': format.const_color_header_columns,'border': 1}) 
     # Write the column headers with the defined format.
     for col_num, value in enumerate(table.columns.values):
         worksheet.write(0, col_num, value, header_format)
 
     # group and hide columns lowest critical grade and weighted average
-    worksheet.set_column('F:F', None, None, {'level': 1, 'hidden': True})
-    worksheet.set_column('G:G', None, None, {'level': 1, 'hidden': True})
-
+    worksheet.set_column('F:F', None, None, {'level': 1, 'collapsed': True})
+    worksheet.set_column('G:G', None, None, {'level': 1, 'collapsed': True})    
 
 ########################################################################
   
@@ -364,8 +383,9 @@ def colnum_string(n):
     
 def format_table_tc_grades(workbook,worksheet,table,format):
     worksheet.set_tab_color(format.const_color_light_grey)
-    offset = 1 
+    header_format = workbook.add_format({'bold': True,'text_wrap': True,'valign': 'middle','fg_color': format.const_color_header_columns,'border': 1}) 
 
+    offset = 1 
     row_to_format = len(table.index.values)+1
     col_to_format = colnum_string(len(table.columns) + 1 + offset)    
     
@@ -373,7 +393,7 @@ def format_table_tc_grades(workbook,worksheet,table,format):
     #define the range to be formated in excel format
     range_to_format = "{}:{}{}".format(start,col_to_format,row_to_format)
     #print("range {}".format(range_to_format))
-
+    #print("col_to_format " + str(col_to_format))
     
     worksheet.conditional_format(range_to_format, {'type':     'cell',
                                         'criteria': '>',
@@ -383,6 +403,8 @@ def format_table_tc_grades(workbook,worksheet,table,format):
                                         'criteria': '<',
                                         'value':    0,
                                         'format':   format.format_red_percentage})
+            
+         
             
     worksheet.set_column('A:A', 60, None) #  TC name
     worksheet.set_column('B:B', 8, format.format_align_left) # Id
@@ -397,31 +419,92 @@ def format_table_tc_grades(workbook,worksheet,table,format):
     # Create a for loop to start writing the formulas to each row
     for row_num in range(1,row_to_format):
         #simulation grade
-        worksheet.write_formula(row_num, 4-1, "=IF(E%d=0,F%d,MIN(E%d,F%d))" % (row_num + 1, row_num + 1, row_num + 1, row_num + 1), format.format_float_with_2decimals)
+        worksheet.write_formula(row_num, 4-1, round_grades(broundgrades,"=IF(E%d=0,F%d,MIN(E%d,F%d))") % (row_num + 1, row_num + 1, row_num + 1, row_num + 1), format.format_float_with_2decimals)
         #lowest critical rule grade
-        worksheet.write_formula(row_num, 5-1, "=_xlfn.MINIFS('TC contributions'!G:G,'TC contributions'!B:B,'TC grades'!B%d,'TC contributions'!F:F,TRUE)" % (row_num + 1), format.format_float_with_2decimals)
+        worksheet.write_formula(row_num, 5-1, round_grades(broundgrades,"=_xlfn.MINIFS('TC contributions'!G:G,'TC contributions'!B:B,'TC grades'!B%d,'TC contributions'!F:F,TRUE)") % (row_num + 1), format.format_float_with_2decimals)
         #weighted av
-        worksheet.write_formula(row_num, 6-1, "=SUMIF('TC contributions'!B:B,'TC grades'!B%d,'TC contributions'!H:H)/SUMIF('TC contributions'!B:B,'TC grades'!B%d,'TC contributions'!E:E)" % (row_num + 1, row_num + 1), format.format_float_with_2decimals)
+        worksheet.write_formula(row_num, 6-1, round_grades(broundgrades,"=SUMIF('TC contributions'!B:B,'TC grades'!B%d,'TC contributions'!H:H)/SUMIF('TC contributions'!B:B,'TC grades'!B%d,'TC contributions'!E:E)") % (row_num + 1, row_num + 1), format.format_float_with_2decimals)
         #delta %
         worksheet.write_formula(row_num, 7-1, "=$D%d-$C%d" % (row_num + 1, row_num + 1), format.format_percentage)
- 
-    header_format = workbook.add_format({'bold': True,'text_wrap': True,'valign': 'middle','fg_color': format.const_color_header_columns,'border': 1}) 
     # Write the column headers with the defined format.
     for col_num, value in enumerate(table.columns.values):
         worksheet.write(0, col_num, value, header_format) 
  
     # group and hide columns lowest critical grade and weighted average
-    worksheet.set_column('E:E', None, None, {'level': 1, 'hidden': True})
-    worksheet.set_column('F:F', None, None, {'level': 1, 'hidden': True})
+    worksheet.set_column('E:E', None, None, {'level': 1, 'collapsed': True})
+    worksheet.set_column('F:F', None, None, {'level': 1, 'collapsed': True})
+    
+    worksheet.freeze_panes(1, 0)  # Freeze the first row.
+
+    # Add a header format.
+    header_format = workbook.add_format({'bold': True,'text_wrap': True,'valign': 'middle','fg_color': format.const_color_header_columns,'border': 1})
  
 ########################################################################
 
 
 def format_table_rules_grades(workbook,worksheet,table,format):
     worksheet.set_tab_color(format.const_color_light_blue)
-    offset = 1 
-
+    header_format = workbook.add_format({'bold': True,'text_wrap': True,'valign': 'middle','fg_color': format.const_color_header_columns,'border': 1})
+    worksheet.set_zoom(85)
+    worksheet.freeze_panes(1, 0)  # Freeze the first row.    
+    
     row_to_format = len(table.index.values)+1 
+    # conditional formating for the Grade delta column (red and green)
+    col_to_format = 'K'    
+    start = col_to_format + '2'
+    #define the range to be formated in excel format
+    range_to_format = "{}:{}{}".format(start,col_to_format,row_to_format)
+    worksheet.conditional_format(range_to_format, {'type':     'cell',
+                                        'criteria': '>',
+                                        'value':    0,
+                                        'format':   format.format_green_percentage})
+    worksheet.conditional_format(range_to_format, {'type':     'cell',
+                                        'criteria': '<',
+                                        'value':    0,
+                                        'format':   format.format_red_percentage})   
+
+    # conditional formating for the number of violations for action
+    col_to_format = 'M'    
+    start = col_to_format + '2'
+    #define the range to be formated in excel format
+    range_to_format = "{}:{}{}".format(start,col_to_format,row_to_format)
+    worksheet.conditional_format(range_to_format, {'type':     'cell',
+                                        'criteria': '>',
+                                        'value':    0,
+                                        'format':   format.format_green_int})
+    worksheet.conditional_format(range_to_format, {'type':     'cell',
+                                        'criteria': '<',
+                                        'value':    0,
+                                        'format':   format.format_red_int})   
+
+    # conditional formating for the unit effort column
+    col_to_format = 'O'    
+    start = col_to_format + '2'
+    #define the range to be formated in excel format
+    range_to_format = "{}:{}{}".format(start,col_to_format,row_to_format)
+    worksheet.conditional_format(range_to_format, {'type':     'cell',
+                                        'criteria': '=',
+                                        'value':    0,
+                                        'format':   format.format_grey_float_1decimal})
+    # conditional formating for the total effort column in hours
+    col_to_format = 'P'    
+    start = col_to_format + '2'
+    #define the range to be formated in excel format
+    range_to_format = "{}:{}{}".format(start,col_to_format,row_to_format)
+    worksheet.conditional_format(range_to_format, {'type':     'cell',
+                                        'criteria': '=',
+                                        'value':    0,
+                                        'format':   format.format_grey_float_1decimal})
+    # conditional formating for the total effort column in days
+    col_to_format = 'Q'    
+    start = col_to_format + '2'
+    #define the range to be formated in excel format
+    range_to_format = "{}:{}{}".format(start,col_to_format,row_to_format)
+    worksheet.conditional_format(range_to_format, {'type':     'cell',
+                                        'criteria': '=',
+                                        'value':    0,
+                                        'format':   format.format_grey_float_1decimal})
+
 
     worksheet.set_column('A:A', 25, None) #  Application name
     worksheet.set_column('B:B', 12, format.format_align_left) # Application column 
@@ -435,15 +518,15 @@ def format_table_rules_grades(workbook,worksheet,table,format):
     worksheet.set_column('J:J', 8, format.format_float_with_2decimals) #    
     worksheet.set_column('K:K', 8, format.format_percentage) # % 
     worksheet.set_column('L:L', 10, None) #
-    worksheet.set_column('M:M', 10, None) #
+    worksheet.set_column('M:M', 11, None) #
     
     worksheet.set_column('N:N', 10, None) #
     worksheet.set_column('O:O', 11, format.format_float_with_2decimals) #
     worksheet.set_column('P:P', 11, format.format_float_with_2decimals) #
     worksheet.set_column('Q:Q', 11, format.format_float_with_2decimals) #
-    worksheet.set_column('R:R', 7, None) #
+    worksheet.set_column('R:R', 11, format.format_int_thousands) #
     worksheet.set_column('S:S', 11, format.format_percentage) # %
-    worksheet.set_column('T:T', 15, format.format_percentage) # %
+    worksheet.set_column('T:T', 11, format.format_percentage) # %
     worksheet.set_column('U:U', 6.5, None) #    
     worksheet.set_column('V:V', 6.5, None) #
     worksheet.set_column('W:W', 6.5, None) #
@@ -454,18 +537,11 @@ def format_table_rules_grades(workbook,worksheet,table,format):
     # Create a for loop to start writing the formulas to each row
     for row_num in range(1,row_to_format):
         metrictype = str(table.loc[row_num-1, 'Metric Type'])
-
-        #print( " -> " + str(row_num))
-        #if row_num <= 10: 
-        #    print('rownum-1 ' + str(row_num-1) + "=>" + str(table.loc[row_num-1, 'Metric Id']) + '/'+ str(table.loc[row_num-1, 'Metric Type']))
-        #    print('rownum ' + str(row_num) + "=>" + str(table.loc[row_num, 'Metric Id']) + '/'+ str(table.loc[row_num, 'Metric Type']))
-
         # formulas applicable only for quality-rules, not for quality-measures and quality-distributions 
-        if table.loc[row_num-1, 'Metric Type'] == 'quality-rules':
+        if metrictype == 'quality-rules':
             #simulation grade
-            formula = '=IF(T%d=0,H%d,IF(T%d<=U%d/100,1,IF(T%d<V%d/100,(T%d*100-U%d)/(V%d-U%d)+1,IF(T%d<W%d/100,(T%d*100-V%d)/(W%d-V%d)+2,IF(T%d<X%d/100,(T%d*100-W%d)/(X%d-W%d)+3,4)))))' % (row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1)
-            #print(formula)
-            worksheet.write_formula(row_num, 9-1, formula) 
+            formula = round_grades(broundgrades,'=IF(T%d=0,H%d,IF(T%d<=U%d/100,1,IF(T%d<V%d/100,(T%d*100-U%d)/(V%d-U%d)+1,IF(T%d<W%d/100,(T%d*100-V%d)/(W%d-V%d)+2,IF(T%d<X%d/100,(T%d*100-W%d)/(X%d-W%d)+3,4)))))') % (row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1)
+            worksheet.write_formula(row_num, 9-1, formula)
             #grade delta
             worksheet.write_formula(row_num, 10-1, '=$I%d-$H%d' % (row_num + 1, row_num + 1))
             #grade delta %
@@ -488,28 +564,30 @@ def format_table_rules_grades(workbook,worksheet,table,format):
             # grade delta % 
             worksheet.write_formula(row_num, 11-1, '=0')
 
-        # Add a header format.
-        header_format = workbook.add_format({'bold': True,'text_wrap': True,'valign': 'middle','fg_color': format.const_color_header_columns,'border': 1})
         # Write the column headers with the defined format.
         for col_num, value in enumerate(table.columns.values):
             worksheet.write(0, col_num, value, header_format)
 
-    # group and hide the thresholds
-    worksheet.set_column('U:U', None, None, {'level': 1, 'hidden': True})
-    worksheet.set_column('V:V', None, None, {'level': 1, 'hidden': True})
-    worksheet.set_column('W:W', None, None, {'level': 1, 'hidden': True})
-    worksheet.set_column('X:X', None, None, {'level': 1, 'hidden': True})
+    # group and hide the context
+    worksheet.set_column('A:A', None, None, {'level': 1, 'hidden': True})
+    worksheet.set_column('B:B', None, None, {'level': 1, 'hidden': True})
+    worksheet.set_column('C:C', None, None, {'level': 1, 'hidden': True})
 
-    # zoom to 85%
-    worksheet.set_zoom(85)
+    # group and hide the thresholds
+    worksheet.set_column('U:U', None, None, {'level': 2, 'hidden': True})
+    worksheet.set_column('V:V', None, None, {'level': 2, 'hidden': True})
+    worksheet.set_column('W:W', None, None, {'level': 2, 'hidden': True})
+    worksheet.set_column('X:X', None, None, {'level': 2, 'hidden': True})
 
 ########################################################################
 
 
 def format_table_bc_contribution(workbook,worksheet,table, format):
     worksheet.set_tab_color(format.const_color_light_grey)
-    row_to_format = len(table.index.values)+1  
+    header_format = workbook.add_format({'bold': True,'text_wrap': True,'valign': 'middle','fg_color': format.const_color_header_columns,'border': 1})
+    worksheet.freeze_panes(1, 0)  # Freeze the first row.
     
+    row_to_format = len(table.index.values)+1  
     worksheet.set_column('A:A', 25, None) #  
     worksheet.set_column('B:B', 13, format.format_align_left) # Application column 
     worksheet.set_column('C:C', 60, format.format_align_left) # BC column 
@@ -526,7 +604,6 @@ def format_table_bc_contribution(workbook,worksheet,table, format):
         worksheet.write_formula(row_num, 7 - 1, "=VLOOKUP(D%d,'TC grades'!B:D,3,FALSE)" % (row_num + 1))
         worksheet.write_formula(row_num, 8 - 1, '=$G%d*$E%d' % (row_num + 1, row_num + 1))
 
-    header_format = workbook.add_format({'bold': True,'text_wrap': True,'valign': 'middle','fg_color': format.const_color_header_columns,'border': 1}) 
     # Write the column headers with the defined format.
     for col_num, value in enumerate(table.columns.values):
         worksheet.write(0, col_num, value, header_format)
@@ -535,8 +612,10 @@ def format_table_bc_contribution(workbook,worksheet,table, format):
 
 def format_table_tc_contribution(workbook,worksheet,table,format):
     worksheet.set_tab_color(format.const_color_light_grey)
+    header_format = workbook.add_format({'bold': True,'text_wrap': True,'valign': 'middle','fg_color': format.const_color_header_columns,'border': 1}) 
+    worksheet.freeze_panes(1, 0)  # Freeze the first row.
+    
     offset = 1 
-
     row_to_format = len(table.index.values)+1
     col_to_format = colnum_string(len(table.columns) + 1 + offset)    
     
@@ -556,28 +635,31 @@ def format_table_tc_contribution(workbook,worksheet,table,format):
         worksheet.write_formula(row_num, 7 - 1, "=VLOOKUP(D%d,'Rules Grades'!E:I,5,FALSE)" % (row_num + 1))
         worksheet.write_formula(row_num, 8 - 1, '=$G%d*$E%d' % (row_num + 1, row_num + 1))
 
-    header_format = workbook.add_format({'bold': True,'text_wrap': True,'valign': 'middle','fg_color': format.const_color_header_columns,'border': 1}) 
     # Write the column headers with the defined format.
     for col_num, value in enumerate(table.columns.values):
         worksheet.write(0, col_num, value, header_format)
+
 ########################################################################
 
 def format_table_remediation_effort(workbook,worksheet,table,format):
     worksheet.set_tab_color(format.const_color_light_grey)
+    header_format = workbook.add_format({'bold': True,'text_wrap': True,'valign': 'middle','fg_color': format.const_color_header_columns,'border': 1}) 
+    worksheet.set_zoom(85)
+    worksheet.freeze_panes(1, 0)  # Freeze the first row.
+    
     worksheet.set_column('A:A', 15, None) # QR Id
     worksheet.set_column('B:B', 100, None) # QR Name 
     worksheet.set_column('C:C', 50, None) # Remediation effort 
     
     worksheet.autofilter('A1:C10000')
 
-    header_format = workbook.add_format({'bold': True,'text_wrap': True,'valign': 'middle','fg_color': format.const_color_header_columns,'border': 1}) 
     # Write the column headers with the defined format.
     for col_num, value in enumerate(table.columns.values):
         worksheet.write(0, col_num, value, header_format)
 
 ########################################################################
 
-def generate_excelfile(logger, filepath, appName, snapshotversion, snapshotdate, listbusinesscriteria, listtechnicalcriteria, listbccontributions, listtccontributions, listmetrics, dictapsummary, dicremediationabacus):
+def generate_excelfile(logger, filepath, appName, snapshotversion, snapshotdate, listbusinesscriteria, listtechnicalcriteria, listbccontributions, listtccontributions, listmetrics, dictapsummary, dicremediationabacus, broundgrades):
     format = ExcelFormat()
     pd.options.display.float_format = format.const_float_format.format
     
@@ -591,7 +673,12 @@ def generate_excelfile(logger, filepath, appName, snapshotversion, snapshotdate,
     str_readme_content += "TC Contributions;Technical Criteria contributors (Quality metrics);\n"
     str_readme_content += "Remediation effort;Quality rules unit remediation effort;\n"
     
-    df_readme = pd.read_csv(StringIO(str_readme_content), sep=";",engine='python')
+    try: 
+        df_readme = pd.read_csv(StringIO(remove_unicode_characters(str_readme_content)), sep=";",engine='python',quoting=csv.QUOTE_NONE)
+    except: 
+        msg='###### csv.Error: unexpected end of data : readme'
+        print(msg)
+        logger.error(msg)
     
     ###############################################################################
     # Data for the BC Grades Tab
@@ -599,7 +686,7 @@ def generate_excelfile(logger, filepath, appName, snapshotversion, snapshotdate,
     str_df_bc_grades = "Application Name;Business criterion;Metric Id;Current grade;Simulation grade;Lowest critical grade;Weighted average of Technical criteria; Delta\n"
     for bc in listbusinesscriteria:
         if bc.applicationName == appName:
-            str_df_bc_grades += appName + ";" + bc.name + ";" + bc.id + ";" + str(bc.grade) + ";;;;"
+            str_df_bc_grades += appName + ";" + bc.name + ";" + bc.id + ";" + str(round_grades(broundgrades, bc.grade)) + ";;;;"
             str_df_bc_grades += '\n'
     
     
@@ -612,21 +699,33 @@ def generate_excelfile(logger, filepath, appName, snapshotversion, snapshotdate,
     str_df_bc_grades += ';Number of violations for action\n'
     str_df_bc_grades += ';Number of quality rules for action\n'
     str_df_bc_grades += ';Estimated effort (man.days)\n'
-    df_bc_grades = pd.read_csv(StringIO(str_df_bc_grades), sep=";")
+    try: 
+        str_df_bc_grades = remove_unicode_characters(str_df_bc_grades)
+        df_bc_grades = pd.read_csv(StringIO(str_df_bc_grades), sep=";")
+    except: 
+        msg = '###### csv.Error: unexpected end of data : df_bc_grades %s ' % str_df_bc_grades
+        print(msg)
+        logger.error(msg)
+   
     
     ###############################################################################
     # Data for the TC Grades Tab
     str_df_tc_grades = "Technical criterion name;Metric Id;Grade;Simulation grade;Lowest critical grade;Weighted average of quality rules;Delta grade (%)\n"
     for tc in listtechnicalcriteria:
         #print('tc grade 2=' + str(tc.grade) + str(type(tc.grade)))
-        str_df_tc_grades += tc.name + ';' + str(tc.id) + ';'+ str(tc.grade) + ';;;;'  
+        str_df_tc_grades += tc.name + ';' + str(tc.id) + ';'+ str(round_grades(broundgrades,tc.grade)) + ';;;;'  
         str_df_tc_grades  += '\n'
-    df_tc_grades = pd.read_csv(StringIO(str_df_tc_grades), sep=";",engine='python')
-
+    try: 
+        str_df_tc_grades = remove_unicode_characters(str_df_tc_grades)
+        df_tc_grades = pd.read_csv(StringIO(str_df_tc_grades), sep=";",engine='python',quoting=csv.QUOTE_NONE)
+    except: 
+        msg = '###### csv.Error: unexpected end of data : df_tc_grades %s ' % str_df_tc_grades
+        print(msg)
+        logger.error(msg)
     ###############################################################################
     # Data for the Rules Grades Tab
 
-    str_df_rules_grades = "Application Name;Snapshot Date;Snapshot version;Metric Name;Metric Id;Metric Type;Critical;Grade;Simulation grade;Grade Delta;Grade Delta (%);Nb of violations;Nb of violations for action;Remaining violations;Unit effort(man.hours);Total effort(man.hours);Total effort(man.days);Total Checks;Compliance ratio;New compliance ratio;Thres.1;Thres.2;Thres.3;Thres.4\n"
+    str_df_rules_grades = "Application Name;Snapshot Date;Snapshot version;Metric Name;Metric Id;Metric Type;Critical;Grade;Simulation grade;Grade Delta;Grade Delta (%);Nb of violations;Nb violations for action;Remaining violations;Unit effort (man.hours);Total effort (man.hours);Total effort (man.days);Total Checks;Compliance ratio;New compliance ratio;Thres.1;Thres.2;Thres.3;Thres.4\n"
     for qr in listmetrics:
         str_df_rules_grades += appName
         str_df_rules_grades += ";" + str(snapshotdate) 
@@ -635,7 +734,7 @@ def generate_excelfile(logger, filepath, appName, snapshotversion, snapshotdate,
         str_df_rules_grades += ";" + str(qr.id) 
         str_df_rules_grades += ";" + str(qr.type) 
         str_df_rules_grades += ";" + str(qr.critical) 
-        str_df_rules_grades += ";" + str(qr.grade) 
+        str_df_rules_grades += ";" + str(round_grades(broundgrades,qr.grade)) 
         #simulation grade, grade delta%, grade delta%
         str_df_rules_grades += ';;;' 
         #failed checks
@@ -666,8 +765,13 @@ def generate_excelfile(logger, filepath, appName, snapshotversion, snapshotdate,
             str_df_rules_grades += ';;;;'
         str_df_rules_grades += '\n'
     #logger.debug(str_df_rules_grades)
-    df_rules_grades = pd.read_csv(StringIO(str_df_rules_grades), sep=";",engine='python')
-    
+    try: 
+        str_df_rules_grades = remove_unicode_characters(str_df_rules_grades)
+        df_rules_grades = pd.read_csv(StringIO(str_df_rules_grades), sep=";",engine='python',quoting=csv.QUOTE_NONE)
+    except: 
+        msg = '###### csv.Error: unexpected end of data : df_rules_grades %s ' % str_df_rules_grades
+        print(msg)
+        logger.error(msg)
 
     ###############################################################################
     # Data for the BC Contributions Tab
@@ -683,8 +787,14 @@ def generate_excelfile(logger, filepath, appName, snapshotversion, snapshotdate,
         str_df_bc_contribution += ';' + str(bcc.weight) + ';' + str(bcc.critical) + ';;'
         str_df_bc_contribution += '\n'
     #logger.debug(str_df_bc_contribution)
-    df_bc_contribution = pd.read_csv(StringIO(str_df_bc_contribution), sep=";",engine='python')
-
+    try: 
+        str_df_bc_contribution = remove_unicode_characters(str_df_bc_contribution)
+        df_bc_contribution = pd.read_csv(StringIO(str_df_bc_contribution), sep=";",engine='python',quoting=csv.QUOTE_NONE)
+    except: 
+        msg = '###### csv.Error: unexpected end of data : df_bc_contribution %s ' % str_df_bc_contribution
+        print(msg)
+        logger.error(msg)
+        
     ###############################################################################
     # Data for the TC Contributions Tab
     str_df_tc_contribution = 'Technical criterion name;Technical criterion Id;Metric name;Metric Id;Weight;Critical;Grade simulation;Weighted grade\n'
@@ -699,9 +809,14 @@ def generate_excelfile(logger, filepath, appName, snapshotversion, snapshotdate,
             str_df_tc_contribution += tcc.parentmetricname + ';' + tcc.parentmetricid + ';' + tcc.metricname + ';' + tcc.metricid
             str_df_tc_contribution += ';' + str(tcc.weight) + ';' + str(tcc.critical) + ';;'
             str_df_tc_contribution += '\n'
-    df_tc_contribution = pd.read_csv(StringIO(str_df_tc_contribution), sep=";")
+    try: 
+        str_df_tc_contribution = remove_unicode_characters(str_df_tc_contribution)
+        df_tc_contribution = pd.read_csv(StringIO(str_df_tc_contribution), sep=";",quoting=csv.QUOTE_NONE)
     #,engine='python'
-
+    except: 
+        msg = '###### csv.Error: unexpected end of data : df_tc_contribution %s ' % str_df_tc_contribution
+        print(msg)
+        logger.error(msg)
     ###############################################################################
     # Data for the Remediation Tab
     str_df_remediationeffort = 'Quality rule id;Quality rule name;Remediation effort (minutes)\n'
@@ -717,9 +832,14 @@ def generate_excelfile(logger, filepath, appName, snapshotversion, snapshotdate,
                 #print (str(qr.id) + ' not in the abacus => N/A')
                 str_df_remediationeffort += ';#N/A'
             str_df_remediationeffort += '\n'
-        #TODO add all the rules in the abacus that are not in the application results ?
-    df_remediationeffort = pd.read_csv(StringIO(str_df_remediationeffort), sep=";",engine='python') 
-
+    try: 
+        str_df_remediationeffort = remove_unicode_characters(str_df_remediationeffort)
+        df_remediationeffort = pd.read_csv(StringIO(str_df_remediationeffort), sep=";",engine='python',quoting=csv.QUOTE_NONE) 
+    except: 
+        msg = '###### csv.Error: unexpected end of data : df_remediationeffort %s ' % str_df_remediationeffort
+        print(msg)
+        logger.error(msg)
+        
     ###############################################################################
     file = open(filepath, 'w')
     with pd.ExcelWriter(filepath,engine='xlsxwriter') as writer:
@@ -735,12 +855,15 @@ def generate_excelfile(logger, filepath, appName, snapshotversion, snapshotdate,
         
         #define the number format 
         format.format_percentage = workbook.add_format({'num_format': format.const_format_percentage})
-        format.format_int_thousands = workbook.add_format({'num_format': '### ### ### ### ### ##0'})
+        format.format_int_thousands = workbook.add_format({'num_format': format.const_format_int})
         format.format_float_with_2decimals = workbook.add_format({'num_format': format.const_float_with_2decimals})
         #define the colors
-
         format.format_green_percentage= workbook.add_format({'bg_color': format.const_color_green,'num_format': format.const_format_percentage})
-        format.format_red_percentage= workbook.add_format({'bg_color': format.const_color_red,'num_format': format.const_format_percentage})
+        format.format_red_percentage = workbook.add_format({'bg_color': format.const_color_red,'num_format': format.const_format_percentage})
+        format.format_grey_float_1decimal = workbook.add_format({'bg_color': format.const_color_light_grey, 'num_format': format.const_float_with_1decimal})
+        format.format_green_int = workbook.add_format({'bg_color': format.const_color_green,'num_format': format.const_format_int})
+        format.format_red_int = workbook.add_format({'bg_color': format.const_color_red,'num_format': format.const_format_int})
+        
 
         format.format_align_left = workbook.add_format({'align': format.const_format_align_left})
     
@@ -814,9 +937,22 @@ def is_locked(filepath):
     return locked
 
 ########################################################################
+
+def remove_unicode_characters(astr):
+    return astr.encode('ascii', 'ignore').decode("utf-8")
+
+########################################################################
 if __name__ == '__main__':
 
     global logger
+    # Version
+    script_version = "1.0.1"
+    # load the data or just generate an empty excel file
+    loaddata = True
+    # load only 10 metrics
+    loadonlyXmetrics = False    
+    # round the grades or not
+    broundgrades = False
 
     parser = init_parse_argument()
     args = parser.parse_args()
@@ -835,12 +971,6 @@ if __name__ == '__main__':
     effortcsvfilepath = "CAST_QualityRulesEffort.csv"
     if args.effortcsvfilepath != None:
         effortcsvfilepath = args.effortcsvfilepath 
-
-    # Version
-    script_version = "1.0.0"
-
-    # load the data or just generate an empty excel file
-    loaddata = True
 
     # new params
     applicationfilter = args.applicationfilter
@@ -897,7 +1027,6 @@ if __name__ == '__main__':
         logger.info('nbrows='+str(nbrows))
         logger.info('output folder='+str(outputfolder))
         logger.info('effortcsvfilepath='+str(effortcsvfilepath))
-        logger.info('loaddata='+str(loaddata))
         logger.info('********************************************')
         progressmsg = 'Initialization'
         print(progressmsg)
@@ -1015,8 +1144,16 @@ if __name__ == '__main__':
                                     with open(effortcsvfilepath, newline='') as infile:
                                         reader = csv.reader(infile,delimiter=csvdelimiter,quotechar=csvquotechar)
                                         for row in reader:
-                                            dicremediationabacus.update({row[0]:{"id":row[0],"name":row[1],"uniteffortinhours":row[2]}})
+                                            effortqrname = ''
+                                            try:
+                                                # remove unicode characters
+                                                effortqrname = remove_unicode_characters(row[1])
+                                                
+                                            except UnicodeDecodeError: 
+                                                logger.error('Non UTF-8 character in the row [' + str(row) + '] of the csv file')
+                                                effortqrname =  'Non UTF-8 quality rule name'
 
+                                            dicremediationabacus.update({row[0]:{"id":row[0],"name":effortqrname,"uniteffortinhours":row[2]}})
                             # snapshot list
                             logger.info('Loading the application snapshot')
                             json_snapshots = get_application_snapshots(logger, url, user, password, apikey,domain, applicationid)
@@ -1090,9 +1227,9 @@ if __name__ == '__main__':
                                                             logger.info(progressmsg)
                                                             print(progressmsg)
                                                             lastProgressReported = imetricprogress
-                                                    # for testing purpose, limit to the 10 first to optimize the time
-                                                    if iCount > 30:
-                                                        None#break
+                                                    # for testing purpose, limit to the X first to optimize the testing time
+                                                    if loadonlyXmetrics and iCount > 10:
+                                                        break
                                                         
                                                     metric = Metric()
                                                     try:
@@ -1201,7 +1338,7 @@ if __name__ == '__main__':
                                     # generated csv file if required                                    
                                     fpath = get_excelfilepath(outputfolder, appName)
                                     logger.info("Generating xlsx file " + fpath)
-                                    generate_excelfile(logger, fpath, appName, snapshotversion, snapshotdate, listbusinesscriteria, listtechnicalcriteria, listbccontributions, listtccontributions, listmetrics, dictapsummary, dicremediationabacus)
+                                    generate_excelfile(logger, fpath, appName, snapshotversion, snapshotdate, listbusinesscriteria, listtechnicalcriteria, listbccontributions, listtccontributions, listmetrics, dictapsummary, dicremediationabacus, broundgrades)
                                     
                                     json_qr_results = None
                                     # keep only last snapshot
