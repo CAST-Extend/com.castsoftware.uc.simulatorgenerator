@@ -115,6 +115,24 @@ class ExcelFormat:
     format_green_int = None
 
 ########################################################################
+def loginfo(logger, msg, tosysout = False):
+    logger.info(msg)
+    if tosysout:
+        print(msg)
+
+########################################################################
+def logwarning(logger, msg, tosysout = False):
+    logger.warning(msg)
+    if tosysout:
+        print("#### " + msg)
+
+########################################################################
+def logerror(logger, msg, tosysout = False):
+    logger.error(msg)
+    if tosysout:
+        print("#### " + msg)
+
+########################################################################
 # retrieve the connection depending on 
 def open_connection(logger, url, user, pwd):
     logger.info('Opening connection to ' + url)
@@ -183,9 +201,7 @@ def execute_request(logger, url, request, user, password, apikey, contenttype='a
     
     # Error 
     if  response.status_code != 200:
-        msg = 'HTTPS request failed ' + str(response.status) + ' ' + str(response.reason) + ':' + request_text
-        print (msg)
-        logger.error(msg)
+        logerror(logger,'HTTPS request failed ' + str(response.status) + ' ' + str(response.reason) + ':' + request_text,True)
         return None
     
     # look for the Set-Cookie in response headers, to inject it for future requests
@@ -330,6 +346,11 @@ def init_parse_argument():
     requiredNamed.add_argument('-of', required=False, dest='outputfolder', help='output folder')    
     requiredNamed.add_argument('-effortcsvfilepath', required=False, dest='effortcsvfilepath', help='Inputs quality rules effort csv file path (default=CAST_QualityRulesEffort.csv)')    
     requiredNamed.add_argument('-loadviolations', required=False, dest='loadviolations', help='Load the violations true/false default=false')
+    requiredNamed.add_argument('-qridfilter', required=False, dest='qridfilter', help='For violations filtering, violation quality rule id regexp filter')
+    requiredNamed.add_argument('-qrnamefilter', required=False, dest='qrnamefilter', help='For violations filtering, violation quality rule name regexp filter')
+    requiredNamed.add_argument('-criticalrulesonlyfilter', required=False, dest='criticalrulesonlyfilter', help='For violations filtering, violation quality rules filter (True|False)')
+    requiredNamed.add_argument('-businesscriterionfilter', required=False, dest='businesscriterionfilter', help='For violations filtering, business criterion filter : 60016,60012, ...)')
+    requiredNamed.add_argument('-technofilter', required=False, dest='technofilter', help='For violations filtering, violation quality rule technology filter (JEE, SQL, HTML5, Cobol...)')    
     
     requiredNamed.add_argument('-applicationfilter', required=False, dest='applicationfilter', help='Application name regexp filter')
     requiredNamed.add_argument('-loglevel', required=False, dest='loglevel', help='Log level (INFO|DEBUG) default = INFO')
@@ -368,46 +389,51 @@ def excel_round(formula,decimals):
 
 ########################################################################
 
-def format_table_bc_grades(workbook,worksheet,table,format):
+def format_table_bc_grades(workbook,worksheet,table,format,loadviolations):
     worksheet.set_tab_color(format.const_color_light_blue)
     header_format = workbook.add_format({'bold': True,'text_wrap': True,'valign': 'middle','fg_color': format.const_color_header_columns,'border': 1}) 
+    worksheet.set_zoom(85)
+    #TODO: ajust size autofilter
+    worksheet.autofilter('A1:H10000')
 
-    # the last 6 lines don't have this fomula 
+   
+    # the last 6 lines don't have this formula    
     offset = 1
-    row_to_format = len(table.index.values)+1 - 9
+    if not loadviolations:
+        max_row_bc_data = len(table.index.values)+1 - 9
+    else: 
+        max_row_bc_data = len(table.index.values)+1 - 15
+    
     col_to_format = colnum_string(len(table.columns) + 1 + offset)    
 
+    
     # 3 empty line + 3 lines for application name, snapshot version and date
-    row_to_format_for_summary = row_to_format + 6
+    row_to_format_for_summary = max_row_bc_data + 6
 
     start = "H2"
     #define the range to be formated in excel format
-    range_to_format = "{}:{}{}".format(start,col_to_format,row_to_format)
+    range_to_format = "{}:{}{}".format(start,col_to_format,max_row_bc_data)
     #print("range {}".format(range_to_format))
     
-    
-    worksheet.conditional_format(range_to_format, {'type':     'cell',
-                                        'criteria': '>',
-                                        'value':    0,
-                                        'format':   format.format_green_percentage})
-    worksheet.conditional_format(range_to_format, {'type':     'cell',
-                                        'criteria': '<',
-                                        'value':    0,
-                                        'format':   format.format_red_percentage})
+    worksheet.conditional_format(range_to_format, {'type': 'cell','criteria': '>','value': 0, 'format':   format.format_green_percentage})
+    worksheet.conditional_format(range_to_format, {'type': 'cell','criteria': '<','value': 0, 'format':   format.format_red_percentage})
 
     worksheet.set_column('A:A', 20, None) # Application column
-    worksheet.set_column('B:B', 30, format.format_align_left) # BC name
+    worksheet.set_column('B:B', 32, format.format_align_left) # BC name
     worksheet.set_column('C:C', 10, format.format_align_left) # Metric Id
     worksheet.set_column('D:D', 15, format.format_float_with_2decimals) # Grade 
     worksheet.set_column('E:E', 15, format.format_float_with_2decimals) # Simulated grade 
-    worksheet.set_column('F:F', 15, format.format_float_with_2decimals) #  
-    worksheet.set_column('G:G', 20, format.format_float_with_2decimals) #  
+    # group and hide columns lowest critical grade and weighted average
+    worksheet.set_column('F:F', 15, format.format_float_with_2decimals, {'level': 1, 'hidden': True}) #  
+    worksheet.set_column('G:G', 20, format.format_float_with_2decimals, {'level': 1, 'hidden': True}) #  
+    # group and hide columns lowest critical grade and weighted average
+    #worksheet.set_column('F:F', None, None, {'level': 1, 'collapsed': True})
+    #worksheet.set_column('G:G', None, None, {'level': 1, 'collapsed': True})    
     worksheet.set_column('H:H', 15, format.format_percentage) # delta %  
     
-    worksheet.autofilter('A1:H10000')
     
     # Create a for loop to start writing the formulas to each row
-    for row_num in range(1,row_to_format):
+    for row_num in range(1,max_row_bc_data):
         # simulation grade
         worksheet.write_formula(row_num, 5-1, round_grades(broundgrades,'=IF(F%d=0,G%d,MIN(F%d,G%d))') % (row_num + 1, row_num + 1, row_num + 1, row_num + 1))
         # lowest critical
@@ -422,13 +448,22 @@ def format_table_bc_grades(workbook,worksheet,table,format):
     worksheet.write_formula(row_to_format_for_summary+1, 3-1, "=COUNTIF('Rules Grades'!M:M,\">0\")")
     #estimated effort m.d
     worksheet.write_formula(row_to_format_for_summary+2, 3-1, "=SUM('Rules Grades'!Q:Q)")
+    #if loadviolations:
+        #Number of action plans added
+        #="[" & CONCATENATE(TRANSPOSE(A1:A5)&",") &"]"
+        #worksheet.write_formula(row_to_format_for_summary+4, 3-1, "=CONCATENATE(TRANSPOSE(A1:A5)&"" "")")
+        #Number of action plans removed
+        #worksheet.write_formula(row_to_format_for_summary+5, 3-1, "=SUM(Violations!P:P)")        
+        #JSON added
+        #worksheet.write_formula(row_to_format_for_summary+6, 3-1, "=SUM(Violations!P:P)")        
+        #JSON removed
+        #JSON modified
+    
+    
     # Write the column headers with the defined format.
     for col_num, value in enumerate(table.columns.values):
         worksheet.write(0, col_num, value, header_format)
 
-    # group and hide columns lowest critical grade and weighted average
-    worksheet.set_column('F:F', None, None, {'level': 1, 'collapsed': True})
-    worksheet.set_column('G:G', None, None, {'level': 1, 'collapsed': True})    
 
 ########################################################################
   
@@ -444,37 +479,31 @@ def colnum_string(n):
 def format_table_tc_grades(workbook,worksheet,table,format):
     worksheet.set_tab_color(format.const_color_light_grey)
     header_format = workbook.add_format({'bold': True,'text_wrap': True,'valign': 'middle','fg_color': format.const_color_header_columns,'border': 1}) 
+    worksheet.freeze_panes(1, 0)  # Freeze the first row.
+    #TODO: ajust size autofilter
+    worksheet.autofilter('A1:G10000')
+    worksheet.set_zoom(85)
 
     offset = 1 
     row_to_format = len(table.index.values)+1
     col_to_format = colnum_string(len(table.columns) + 1 + offset)    
-    
-    start = "G2"
+
     #define the range to be formated in excel format
+    start = "G2"
     range_to_format = "{}:{}{}".format(start,col_to_format,row_to_format)
-    #print("range {}".format(range_to_format))
-    #print("col_to_format " + str(col_to_format))
-    
-    worksheet.conditional_format(range_to_format, {'type':     'cell',
-                                        'criteria': '>',
-                                        'value':    0,
-                                        'format':   format.format_green_percentage})
-    worksheet.conditional_format(range_to_format, {'type':     'cell',
-                                        'criteria': '<',
-                                        'value':    0,
-                                        'format':   format.format_red_percentage})
-            
-         
+    worksheet.conditional_format(range_to_format, {'type':     'cell', 'criteria': '>','value':    0, 'format':   format.format_green_percentage})
+    worksheet.conditional_format(range_to_format, {'type':     'cell', 'criteria': '<','value':    0, 'format':   format.format_red_percentage})
             
     worksheet.set_column('A:A', 60, None) #  TC name
     worksheet.set_column('B:B', 8, format.format_align_left) # Id
     worksheet.set_column('C:C', 8, format.format_float_with_2decimals) # Grade
     worksheet.set_column('D:D', 10, format.format_float_with_2decimals) # Simulation grade
-    worksheet.set_column('E:E', 13, format.format_float_with_2decimals) # 
-    worksheet.set_column('F:F', 19, format.format_float_with_2decimals) # 
+    # group and hide columns lowest critical grade and weighted average
+    worksheet.set_column('E:E', 13, format.format_float_with_2decimals, {'level': 1, 'hidden': True}) # 
+    worksheet.set_column('F:F', 19, format.format_float_with_2decimals, {'level': 1, 'hidden': True}) # 
     worksheet.set_column('G:G', 12, format.format_percentage) # 
- 
-    worksheet.autofilter('A1:G10000')
+    #worksheet.set_column('E:E', None, None, {'level': 1, 'collapsed': True})
+    #worksheet.set_column('F:F', None, None, {'level': 1, 'collapsed': True}) 
  
     # Create a for loop to start writing the formulas to each row
     for row_num in range(1,row_to_format):
@@ -490,80 +519,53 @@ def format_table_tc_grades(workbook,worksheet,table,format):
     for col_num, value in enumerate(table.columns.values):
         worksheet.write(0, col_num, value, header_format) 
  
-    # group and hide columns lowest critical grade and weighted average
-    worksheet.set_column('E:E', None, None, {'level': 1, 'collapsed': True})
-    worksheet.set_column('F:F', None, None, {'level': 1, 'collapsed': True})
-    
-    worksheet.freeze_panes(1, 0)  # Freeze the first row.
 
-    # Add a header format.
-    header_format = workbook.add_format({'bold': True,'text_wrap': True,'valign': 'middle','fg_color': format.const_color_header_columns,'border': 1})
  
 ########################################################################
 
-
-def format_table_rules_grades(workbook,worksheet,table,format):
+def format_table_rules_grades(workbook,worksheet,table,format,listmetricsinviolations):
     worksheet.set_tab_color(format.const_color_light_blue)
     header_format = workbook.add_format({'bold': True,'text_wrap': True,'valign': 'middle','fg_color': format.const_color_header_columns,'border': 1})
     worksheet.set_zoom(85)
     worksheet.freeze_panes(1, 0)  # Freeze the first row.    
+    row_to_format = len(table.index.values)+1
+    #TODO: ajust size autofilter
+    worksheet.autofilter('A1:X10000')
     
-    row_to_format = len(table.index.values)+1 
     # conditional formating for the Grade delta column (red and green)
     col_to_format = 'K'    
     start = col_to_format + '2'
     #define the range to be formated in excel format
     range_to_format = "{}:{}{}".format(start,col_to_format,row_to_format)
-    worksheet.conditional_format(range_to_format, {'type':     'cell',
-                                        'criteria': '>',
-                                        'value':    0,
-                                        'format':   format.format_green_percentage})
-    worksheet.conditional_format(range_to_format, {'type':     'cell',
-                                        'criteria': '<',
-                                        'value':    0,
-                                        'format':   format.format_red_percentage})   
+    worksheet.conditional_format(range_to_format, {'type':'cell', 'criteria': '>', 'value': 0, 'format':   format.format_green_percentage})
+    worksheet.conditional_format(range_to_format, {'type':'cell', 'criteria': '<', 'value': 0, 'format':   format.format_red_percentage})   
 
     # conditional formating for the number of violations for action
     col_to_format = 'M'    
     start = col_to_format + '2'
     #define the range to be formated in excel format
     range_to_format = "{}:{}{}".format(start,col_to_format,row_to_format)
-    worksheet.conditional_format(range_to_format, {'type':     'cell',
-                                        'criteria': '>',
-                                        'value':    0,
-                                        'format':   format.format_green_int})
-    worksheet.conditional_format(range_to_format, {'type':     'cell',
-                                        'criteria': '<',
-                                        'value':    0,
-                                        'format':   format.format_red_int})   
+    worksheet.conditional_format(range_to_format, {'type': 'cell', 'criteria': '>', 'value': 0, 'format':   format.format_green_int})
+    worksheet.conditional_format(range_to_format, {'type': 'cell', 'criteria': '<', 'value': 0, 'format':   format.format_red_int})   
 
     # conditional formating for the unit effort column
     col_to_format = 'O'    
     start = col_to_format + '2'
     #define the range to be formated in excel format
     range_to_format = "{}:{}{}".format(start,col_to_format,row_to_format)
-    worksheet.conditional_format(range_to_format, {'type':     'cell',
-                                        'criteria': '=',
-                                        'value':    0,
-                                        'format':   format.format_grey_float_1decimal})
+    worksheet.conditional_format(range_to_format, {'type': 'cell', 'criteria': '=', 'value': 0, 'format':   format.format_grey_float_1decimal})
     # conditional formating for the total effort column in hours
     col_to_format = 'P'    
     start = col_to_format + '2'
     #define the range to be formated in excel format
     range_to_format = "{}:{}{}".format(start,col_to_format,row_to_format)
-    worksheet.conditional_format(range_to_format, {'type':     'cell',
-                                        'criteria': '=',
-                                        'value':    0,
-                                        'format':   format.format_grey_float_1decimal})
+    worksheet.conditional_format(range_to_format, {'type': 'cell', 'criteria': '=', 'value': 0, 'format':   format.format_grey_float_1decimal})
     # conditional formating for the total effort column in days
     col_to_format = 'Q'    
     start = col_to_format + '2'
     #define the range to be formated in excel format
     range_to_format = "{}:{}{}".format(start,col_to_format,row_to_format)
-    worksheet.conditional_format(range_to_format, {'type':     'cell',
-                                        'criteria': '=',
-                                        'value':    0,
-                                        'format':   format.format_grey_float_1decimal})
+    worksheet.conditional_format(range_to_format, {'type': 'cell', 'criteria': '=', 'value': 0, 'format':   format.format_grey_float_1decimal})
 
 
     worksheet.set_column('A:A', 25, None) #  Application name
@@ -587,16 +589,19 @@ def format_table_rules_grades(workbook,worksheet,table,format):
     worksheet.set_column('R:R', 11, format.format_int_thousands) #
     worksheet.set_column('S:S', 11, format.format_percentage) # %
     worksheet.set_column('T:T', 11, format.format_percentage) # %
-    worksheet.set_column('U:U', 6.5, None) #    
+    worksheet.set_column('U:U', 6.5, None) # Thres 1   
     worksheet.set_column('V:V', 6.5, None) #
     worksheet.set_column('W:W', 6.5, None) #
-    worksheet.set_column('X:X', 6.5, None) #      
+    worksheet.set_column('X:X', 6.5, None) # Thres 4   
+    worksheet.set_column('Y:Y', 11, None) # violations extracted ?
+
     
-    worksheet.autofilter('A1:X10000')
 
     # Create a for loop to start writing the formulas to each row
     for row_num in range(1,row_to_format):
         metrictype = str(table.loc[row_num-1, 'Metric Type'])
+        metricid = str(table.loc[row_num-1, 'Metric Id'])
+        
         # formulas applicable only for quality-rules, not for quality-measures and quality-distributions 
         if metrictype == 'quality-rules':
             #simulation grade
@@ -606,6 +611,13 @@ def format_table_rules_grades(workbook,worksheet,table,format):
             worksheet.write_formula(row_num, 10-1, '=$I%d-$H%d' % (row_num + 1, row_num + 1))
             #grade delta %
             worksheet.write_formula(row_num, 11-1, '=$J%d/$H%d' % (row_num + 1, row_num + 1))
+            
+            #Nb violations for action, with a formula only if the violations are loaded
+            # also only if we find the metric id in the list of violations
+            if listmetricsinviolations != None and len(listmetricsinviolations) > 0 and metricid in listmetricsinviolations:
+                formula = "=SUMIF(Violations!B:B,'Rules Grades'!E%d,Violations!N:N)"% (row_num + 1)
+                #print(formula)
+                worksheet.write_formula(row_num, 13-1, formula)
             #remaining violations
             worksheet.write_formula(row_num, 14-1, '=$L%d-$M%d' % (row_num + 1, row_num + 1))
             #unit effort
@@ -616,6 +628,13 @@ def format_table_rules_grades(workbook,worksheet,table,format):
             worksheet.write_formula(row_num, 17-1, "=P%d/8" % (row_num + 1))
             #new compliance ratio
             worksheet.write_formula(row_num, 20-1, '=($R%d-$N%d)/$R%d' % (row_num + 1, row_num + 1, row_num + 1))
+            #Violations extracted ? Present in violations tab
+            #TODO: fix Violations extracted formula
+            #formula = '=IF(NOT(ISNA(VLOOKUP($E%d,Violations!B:B,1,FALSE))),TRUE,FALSE)' % (row_num + 1)
+            formula = '=IF(NOT(ISNA(VLOOKUP($E%d,Violations!B:B,1,FALSE))),TRUE,FALSE)' % (row_num + 1)
+            print(formula)
+            worksheet.write_formula(row_num, 25-1, formula)
+            
         else:
             # simulation grade = grade
             worksheet.write_formula(row_num, 9-1, '=$H%d' % (row_num + 1))
@@ -645,25 +664,69 @@ def format_table_rules_grades(workbook,worksheet,table,format):
 def format_table_violations(workbook,worksheet,table,format):
     worksheet.set_tab_color(format.const_color_light_blue)
     header_format = workbook.add_format({'bold': True,'text_wrap': True,'valign': 'middle','fg_color': format.const_color_header_columns,'border': 1})
-    worksheet.set_zoom(70)
+    worksheet.set_zoom(78)
     worksheet.freeze_panes(1, 0)  # Freeze the first row. 
-    worksheet.autofilter('A1:M10000')
-   
-    worksheet.set_column('A:A', 11, None) #  QR Id
-    worksheet.set_column('B:B', 60, format.format_align_left) #  QR Name 
-    worksheet.set_column('C:C', 11, format.format_align_left) # Critical
-    worksheet.set_column('D:D', 60, None) # Fullname
-    worksheet.set_column('E:E', 11, None) # Action plan
-    worksheet.set_column('F:F', 11, None) # For action
-    worksheet.set_column('G:G', 11, None) # AP status
-    worksheet.set_column('H:H', 11, None) #   
-    worksheet.set_column('I:I', 11, None) #    
-    worksheet.set_column('J:J', 11, None) #     
-   
+    #TODO: ajust size autofilter
+    row_to_format = len(table.index.values)+1
+    worksheet.autofilter('A1:N' + str(row_to_format)) 
+    
+    worksheet.set_column('A:A', 80, format.format_align_left) #  QR Name
+    worksheet.set_column('B:B', 9, None) #  QR Id 
+    worksheet.set_column('C:C', 10, format.format_align_left) # Critical
+    worksheet.set_column('D:D', 65, None) # Fullname
+    worksheet.set_column('E:E', 10, None) # Action plan
+    worksheet.set_column('F:F', 10, None) # For action
+    worksheet.set_column('G:G', 10, None) # AP status
+    worksheet.set_column('H:H', 11, None) # AP tag 
+    
+    worksheet.set_column('I:I', 11, None)    
+    worksheet.set_column('J:J', 11, None) # Excl request
+    worksheet.set_column('K:K', 11, None) # Comp status     
+    worksheet.set_column('K:K', 11, None) # Viol status
+    worksheet.set_column('M:M', 11, None) # URL
+
+    # group and hide the context
+    #worksheet.set_column('N:T', None, None, {'level': 1, 'collapsed': True})
+    worksheet.set_column('N:N', 8, None) # Nb actions 
+    worksheet.set_column('O:O', 8, None) # Nb actions added
+    worksheet.set_column('P:P', 8, None) # Nb actions removed
+    worksheet.set_column('Q:Q', 8, None) # JSON actions added
+    worksheet.set_column('R:R', 8, None) # JSON actions modified
+    worksheet.set_column('S:S', 8, None) # JSON actions removed    
+    worksheet.set_column('T:T', 60, None) # Violation id
+    #{'level': 1, 'collapsed': True}
+    
     # Write the column headers with the defined format.
     for col_num, value in enumerate(table.columns.values):
         worksheet.write(0, col_num, value, header_format)   
    
+    # Create a for loop to start writing the formulas to each row
+    for row_num in range(1,row_to_format):    
+        None
+        #Nb actions 
+        worksheet.write_formula(row_num, 14-1, '=IF(E%d,1,"")' % (row_num + 1))
+        #Nb actions added 
+        worksheet.write_formula(row_num, 15-1, '=IF(AND(E%d,NOT(F%d)),1,"")' % (row_num + 1,row_num + 1))        
+        #for Nb action removed
+        worksheet.write_formula(row_num, 16-1, '=IF(AND(NOT(E%d),F%d),1,"")' % (row_num + 1,row_num + 1))
+        #        
+        #JSON actions added
+        formula_added = '=IF(O%d=1,"{""component"": {""href"":"""&MID($T%d,SEARCH("#",$T%d)+1,LEN($T%d))&""" },""rulePattern"": { ""href"":"""&MID($T%d,1,SEARCH("#",$T%d)-1)&""" },""remedialAction"": {""comment"": """&IF($I%d<>"",$I%d,"For action")&""", ""tag"": """&IF($H%d<>"",$H%d,"Moderate")&""" }}","")'% (row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1)
+        worksheet.write_formula(row_num, 17-1, formula_added)
+        #{"component": {"href":"DOMAIN04/components/227700/snapshots/18" },"rulePattern": { "href":"DOMAIN04/rule-patterns/1600110" },"remedialAction": {"comment": "For action", "tag": "extreme" }}
+        
+        #JSON actions modified
+        formula_modified = '=IF(AND(OR(O%d=0,O%d=""),OR(P%d=0,P%d="")),"{""component"": {""href"":"""&MID($T%d,SEARCH("#",$T%d)+1,LEN($T%d))&""" },""rulePattern"": { ""href"":"""&MID($T%d,1,SEARCH("#",$T%d)-1)&""" },""remedialAction"": {""comment"": """&IF($I%d<>"",$I%d,"For action")&""", ""tag"": """&IF($H%d<>"",$H%d,"Moderate")&""" }}","")'% (row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1)
+        worksheet.write_formula(row_num, 18-1, formula_modified)        
+        
+        #JSON actions removed
+        formula_removed = '=IF(P%d=1,"{""component"": {""href"":"""&MID($T%d,SEARCH("#",$T%d)+1,LEN($T%d))&""" },""rulePattern"": { ""href"":"""&MID($T%d,1,SEARCH("#",$T%d)-1)&""" }}","")'% (row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1)
+        worksheet.write_formula(row_num, 19-1 , formula_removed)        
+        
+        # Data validation        
+        worksheet.data_validation('E' + str(row_to_format+1), {'validate': 'list', 'source': ['TRUE', 'FALSE']})   
+
+     
 ########################################################################
 
 def format_table_bc_contribution(workbook,worksheet,table, format):
@@ -743,9 +806,11 @@ def format_table_remediation_effort(workbook,worksheet,table,format):
 
 ########################################################################
 
-def generate_excelfile(logger, filepath, appName, snapshotversion, snapshotdate, listbusinesscriteria, listtechnicalcriteria, listbccontributions, listtccontributions, listmetrics, dictapsummary, dicremediationabacus, listviolations, broundgrades):
+def generate_excelfile(logger, filepath, appName, snapshotversion, snapshotdate, loadviolations, listbusinesscriteria, listtechnicalcriteria, listbccontributions, listtccontributions, listmetrics, dictapsummary, dicremediationabacus, listviolations, broundgrades):
     format = ExcelFormat()
     pd.options.display.float_format = format.const_float_format.format
+    
+    logger.info("Loading data in Excel")
     
     #Readme Page content
     str_readme_content =  "Tab;Content;Comment\n"
@@ -753,6 +818,8 @@ def generate_excelfile(logger, filepath, appName, snapshotversion, snapshotdate,
     str_readme_content += "BC Grades;Business Criteria current grade and simulation grade;Use this sheet to see the global impact on application grades and total estimated effort\n"
     str_readme_content += "TC Grades;Technical criteria current grade and simulation grade;\n"
     str_readme_content += "Rules Grades;Quality Rules, Distributions and Measures grades and simulation;Use this sheet to change the number of violations for action and see the impact on rules grades and estimated effort\n"
+    if loadviolations:
+        str_readme_content += "Violations;Violations list;Use this sheet to select your violations for action\n"
     str_readme_content += "BC contributions;Business Criteria contributors (Technical criteria);\n"
     str_readme_content += "TC Contributions;Technical Criteria contributors (Quality metrics);\n"
     str_readme_content += "Remediation effort;Quality rules unit remediation effort;\n"
@@ -760,9 +827,7 @@ def generate_excelfile(logger, filepath, appName, snapshotversion, snapshotdate,
     try: 
         df_readme = pd.read_csv(StringIO(remove_unicode_characters(str_readme_content)), sep=";",engine='python',quoting=csv.QUOTE_NONE)
     except: 
-        msg='###### csv.Error: unexpected end of data : readme'
-        print(msg)
-        logger.error(msg)
+        logerror(logger,'csv.Error: unexpected end of data : readme',True)
     
     ###############################################################################
     # Data for the BC Grades Tab
@@ -783,14 +848,21 @@ def generate_excelfile(logger, filepath, appName, snapshotversion, snapshotdate,
     str_df_bc_grades += ';Number of violations for action\n'
     str_df_bc_grades += ';Number of quality rules for action\n'
     str_df_bc_grades += ';Estimated effort (man.days)\n'
+
+    if loadviolations:
+        str_df_bc_grades += '\n'
+        str_df_bc_grades += ';Number of action plans added\n'
+        str_df_bc_grades += ';Number of action plans removed\n'
+        #TODO: identify the action plan modified
+        str_df_bc_grades += ';Number of action plans modified; <Not available>\n'
+        str_df_bc_grades += ';JSON violations added\n'
+        str_df_bc_grades += ';JSON violations removed\n'
+        str_df_bc_grades += ';JSON violations modified\n'
     try: 
         str_df_bc_grades = remove_unicode_characters(str_df_bc_grades)
         df_bc_grades = pd.read_csv(StringIO(str_df_bc_grades), sep=";")
     except: 
-        msg = '###### csv.Error: unexpected end of data : df_bc_grades %s ' % str_df_bc_grades
-        print(msg)
-        logger.error(msg)
-   
+        logerror(logger,'csv.Error: unexpected end of data : df_bc_grades %s ' % str_df_bc_grades,True)
     
     ###############################################################################
     # Data for the TC Grades Tab
@@ -803,13 +875,12 @@ def generate_excelfile(logger, filepath, appName, snapshotversion, snapshotdate,
         str_df_tc_grades = remove_unicode_characters(str_df_tc_grades)
         df_tc_grades = pd.read_csv(StringIO(str_df_tc_grades), sep=";",engine='python',quoting=csv.QUOTE_NONE)
     except: 
-        msg = '###### csv.Error: unexpected end of data : df_tc_grades %s ' % str_df_tc_grades
-        print(msg)
-        logger.error(msg)
+        logerror(logger,'csv.Error: unexpected end of data : df_tc_grades %s ' % str_df_tc_grades,True)
+
     ###############################################################################
     # Data for the Rules Grades Tab
 
-    str_df_rules_grades = "Application Name;Snapshot Date;Snapshot version;Metric Name;Metric Id;Metric Type;Critical;Grade;Simulation grade;Grade Delta;Grade Delta (%);Nb of violations;Nb violations for action;Remaining violations;Unit effort (man.hours);Total effort (man.hours);Total effort (man.days);Total Checks;Compliance ratio;New compliance ratio;Thres.1;Thres.2;Thres.3;Thres.4\n"
+    str_df_rules_grades = "Application Name;Snapshot Date;Snapshot version;Metric Name;Metric Id;Metric Type;Critical;Grade;Simulation grade;Grade Delta;Grade Delta (%);Nb of violations;Nb violations for action;Remaining violations;Unit effort (man.hours);Total effort (man.hours);Total effort (man.days);Total Checks;Compliance ratio;New compliance ratio;Thres.1;Thres.2;Thres.3;Thres.4;Violations extracted\n"
     for qr in listmetrics:
         str_df_rules_grades += appName
         str_df_rules_grades += ";" + str(snapshotdate) 
@@ -846,18 +917,35 @@ def generate_excelfile(logger, filepath, appName, snapshotversion, snapshotdate,
         if qr.type == 'quality-rules':
             str_df_rules_grades += ';'+str(qr.threshold1)+';'+str(qr.threshold2)+';'+str(qr.threshold3)+';' + str(qr.threshold4)
         else:
-            str_df_rules_grades += ';;;;'
+            str_df_rules_grades += ';;;;;'
         str_df_rules_grades += '\n'
     #logger.debug(str_df_rules_grades)
     try: 
         str_df_rules_grades = remove_unicode_characters(str_df_rules_grades)
         df_rules_grades = pd.read_csv(StringIO(str_df_rules_grades), sep=";",engine='python',quoting=csv.QUOTE_NONE)
     except: 
-        msg = '###### csv.Error: unexpected end of data : df_rules_grades %s ' % str_df_rules_grades
-        print(msg)
-        logger.error(msg)
+        logerror(logger,'csv.Error: unexpected end of data : df_rules_grades %s ' % str_df_rules_grades,True)
 
     ###############################################################################
+    # Data for the Violations Tab
+    listmetricsinviolations = []
+    if loadviolations:
+        loginfo(logger,'Loading violations for excel reporting',True)
+        str_df_violations = 'Quality rule name;Quality rule Id;Critical;Component name location;Selected for action;In action plan;Action plan status;Action plan tag;Action plan comment;Has exclusion request'
+        str_df_violations += ';Violation status;Component status;URL;Nb actions;Nb actions added;Nb actions removed;JSON actions added;JSON actions modified;JSON actions removed;Violation id\n'
+        for objviol in listviolations:
+            str_df_violations += str(objviol.qrname) + ';' + str(objviol.qrid) + ';' + str(objviol.critical) + ';' + str(objviol.componentNameLocation) + ';'+ str(objviol.hasActionPlan) + ';' + str(objviol.hasActionPlan) + ';' + str(objviol.actionplanstatus) + ';' + str(objviol.actionplantag) + ';' + str(objviol.actionplancomment) 
+            str_df_violations +=  ';'+ str(objviol.hasExclusionRequest) + ';'+ str(objviol.violationstatus) + ';'+ str(objviol.componentstatus)  + ';'+ str(objviol.url) + ';;;;;;;'+ str(objviol.id) 
+            str_df_violations += '\n'
+            listmetricsinviolations.append(str(objviol.qrid))
+        try: 
+            str_df_violations = remove_unicode_characters(str_df_violations)
+            df_violations = pd.read_csv(StringIO(str_df_violations), sep=";",engine='python',quoting=csv.QUOTE_NONE) 
+        except: 
+            logerror(logger,'csv.Error: unexpected end of data : df_violations %s ' % str_df_violations,True)
+    
+    ###############################################################################
+    
     # Data for the BC Contributions Tab
     str_df_bc_contribution = 'Business criterion name;Business criterion Id;Technical criterion name;Technical criterion Id;Weight;Critical;Simulation grade;Weighted grade\n'
     for bcc in listbccontributions:
@@ -875,20 +963,19 @@ def generate_excelfile(logger, filepath, appName, snapshotversion, snapshotdate,
         str_df_bc_contribution = remove_unicode_characters(str_df_bc_contribution)
         df_bc_contribution = pd.read_csv(StringIO(str_df_bc_contribution), sep=";",engine='python',quoting=csv.QUOTE_NONE)
     except: 
-        msg = '###### csv.Error: unexpected end of data : df_bc_contribution %s ' % str_df_bc_contribution
-        print(msg)
-        logger.error(msg)
+        logerror(logger,'csv.Error: unexpected end of data : df_bc_contribution %s ' % str_df_bc_contribution,True)
         
     ###############################################################################
     # Data for the TC Contributions Tab
     str_df_tc_contribution = 'Technical criterion name;Technical criterion Id;Metric name;Metric Id;Weight;Critical;Grade simulation;Weighted grade\n'
+    # for each contribution TC/QR 
     for tcc in listtccontributions:
-        hasresults = False
+        QRhasresults = False
         for met in listmetrics:
             if str(met.id) == str(tcc.metricid): 
-                hasresults = True 
-        # keep only the metrics that have results
-        if hasresults:
+                QRhasresults = True
+        # keep only the quality metrics that have metrics that have results 
+        if QRhasresults:
             #print (tcc.metricid)
             str_df_tc_contribution += tcc.parentmetricname + ';' + tcc.parentmetricid + ';' + tcc.metricname + ';' + tcc.metricid
             str_df_tc_contribution += ';' + str(tcc.weight) + ';' + str(tcc.critical) + ';;'
@@ -898,9 +985,7 @@ def generate_excelfile(logger, filepath, appName, snapshotversion, snapshotdate,
         df_tc_contribution = pd.read_csv(StringIO(str_df_tc_contribution), sep=";",quoting=csv.QUOTE_NONE)
     #,engine='python'
     except: 
-        msg = '###### csv.Error: unexpected end of data : df_tc_contribution %s ' % str_df_tc_contribution
-        print(msg)
-        logger.error(msg)
+        logerror(logger, 'csv.Error: unexpected end of data : df_tc_contribution %s ' % str_df_tc_contribution, True)
     ###############################################################################
     # Data for the Remediation Tab
     str_df_remediationeffort = 'Quality rule id;Quality rule name;Remediation effort (minutes)\n'
@@ -920,32 +1005,17 @@ def generate_excelfile(logger, filepath, appName, snapshotversion, snapshotdate,
         str_df_remediationeffort = remove_unicode_characters(str_df_remediationeffort)
         df_remediationeffort = pd.read_csv(StringIO(str_df_remediationeffort), sep=";",engine='python',quoting=csv.QUOTE_NONE) 
     except: 
-        msg = '###### csv.Error: unexpected end of data : df_remediationeffort %s ' % str_df_remediationeffort
-        print(msg)
-        logger.error(msg)
-    ###############################################################################
-    # Data for the Violations Tab
-    str_df_violations = 'Quality rule Id;Quality rule name;Critical;Component name location;Selected for action;In action plan;Action plan status;Action plan tag;Has exclusion request;Violation status;Component status;URL;Violation id\n'
-    for objviol in listviolations:
-        str_df_violations += str(objviol.qrid) + ';' + str(objviol.qrname) + ';' + str(objviol.critical) + ';' + str(objviol.componentNameLocation) + ';'+ str(objviol.hasActionPlan) + ';' + str(objviol.hasActionPlan) + ';' + str(objviol.actionplanstatus) + ';' + str(objviol.actionplantag) 
-        str_df_violations +=  ';'+ str(objviol.hasExclusionRequest) + ';'+ str(objviol.violationstatus) + ';'+ str(objviol.componentstatus)  + ';'+ str(objviol.url) + ';'+ str(objviol.id) 
-        str_df_violations += '\n'
-    try: 
-        str_df_violations = remove_unicode_characters(str_df_violations)
-        df_violations = pd.read_csv(StringIO(str_df_violations), sep=";",engine='python',quoting=csv.QUOTE_NONE) 
-    except: 
-        msg = '###### csv.Error: unexpected end of data : df_violations %s ' % str_df_violations
-        print(msg)
-        logger.error(msg)        
+        logerror(logger, 'csv.Error: unexpected end of data : df_remediationeffort %s ' % str_df_remediationeffort,True)
         
     ###############################################################################
+    logger.info("Writing data in Excel")
     file = open(filepath, 'w')
     with pd.ExcelWriter(filepath,engine='xlsxwriter') as writer:
         df_readme.to_excel(writer, sheet_name=format.const_TAB_README, index=False)
         df_bc_grades.to_excel(writer, sheet_name=format.const_TAB_BC_GRADES, index=False)
         df_tc_grades.to_excel(writer, sheet_name=format.const_TAB_TC_GRADES, index=False)
         df_rules_grades.to_excel(writer, sheet_name=format.const_TAB_RULES_GRADES, index=False)
-        if listviolations != None and len(listviolations) > 0:
+        if loadviolations:
             df_violations.to_excel(writer, sheet_name=format.const_TAB_VIOLATIONS, index=False)        
         df_bc_contribution.to_excel(writer, sheet_name=format.const_TAB_BC_CONTRIBUTIONS, index=False) 
         df_tc_contribution.to_excel(writer, sheet_name=format.const_TAB_TC_CONTRIBUTIONS, index=False)
@@ -963,7 +1033,6 @@ def generate_excelfile(logger, filepath, appName, snapshotversion, snapshotdate,
         format.format_grey_float_1decimal = workbook.add_format({'bg_color': format.const_color_light_grey, 'num_format': format.const_float_with_1decimal})
         format.format_green_int = workbook.add_format({'bg_color': format.const_color_green,'num_format': format.const_format_int})
         format.format_red_int = workbook.add_format({'bg_color': format.const_color_red,'num_format': format.const_format_int})
-        
 
         format.format_align_left = workbook.add_format({'align': format.const_format_align_left})
     
@@ -971,16 +1040,17 @@ def generate_excelfile(logger, filepath, appName, snapshotversion, snapshotdate,
         format_table_readme(workbook,worksheet,df_readme,format)      
         
         worksheet = writer.sheets[format.const_TAB_BC_GRADES]
-        format_table_bc_grades(workbook,worksheet,df_bc_grades,format)   
+        format_table_bc_grades(workbook,worksheet,df_bc_grades,format,loadviolations)   
     
         worksheet = writer.sheets[format.const_TAB_TC_GRADES]
         format_table_tc_grades(workbook,worksheet,df_tc_grades,format)  
     
         worksheet = writer.sheets[format.const_TAB_RULES_GRADES]
-        format_table_rules_grades(workbook,worksheet,df_rules_grades,format)  
+        format_table_rules_grades(workbook,worksheet,df_rules_grades,format,listmetricsinviolations)  
     
-        worksheet = writer.sheets[format.const_TAB_VIOLATIONS]
-        format_table_violations(workbook,worksheet,df_violations,format)      
+        if loadviolations:
+            worksheet = writer.sheets[format.const_TAB_VIOLATIONS]
+            format_table_violations(workbook,worksheet,df_violations,format)      
     
         worksheet = writer.sheets[format.const_TAB_BC_CONTRIBUTIONS]
         format_table_bc_contribution(workbook,worksheet,df_bc_contribution,format)     
@@ -996,9 +1066,7 @@ def generate_excelfile(logger, filepath, appName, snapshotversion, snapshotdate,
         
         writer.save()
     
-        msg = 'File ' + filepath + ' generated'
-        print (msg)
-        logger.info(msg) 
+        loginfo(logger, 'File ' + filepath + ' generated', True)
 
 ########################################################################
 
@@ -1082,6 +1150,13 @@ if __name__ == '__main__':
     loadviolations = False
     if args.loadviolations != None and args.loadviolations in ('True','true'):
         loadviolations = True                                  
+    qridfilter = args.qridfilter
+    qrnamefilter = args.qrnamefilter
+    criticalrulesonlyfilter = False
+    if args.criticalrulesonlyfilter != None and (args.criticalrulesonlyfilter == 'True' or args.criticalrulesonlyfilter == 'true'):
+        criticalrulesonlyfilter = True
+    businesscriterionfilter = args.businesscriterionfilter
+    technofilter = args.technofilter
 
     # new params
     applicationfilter = args.applicationfilter
@@ -1140,9 +1215,8 @@ if __name__ == '__main__':
         logger.info('output folder='+str(outputfolder))
         logger.info('effortcsvfilepath='+str(effortcsvfilepath))
         logger.info('********************************************')
-        progressmsg = 'Initialization'
-        print(progressmsg)
-        logger.info(progressmsg)
+        
+        loginfo(logger, 'Initialization', True) 
         
         connection = open_connection(logger, restapiurl, user, password)   
         
@@ -1176,9 +1250,8 @@ if __name__ == '__main__':
                 except KeyError:
                     pass
                 
-                msg = "Domain " + domain + " | progress:" + str(idomain) + "/" + str(len(json_domains))
-                logger.info(msg)
-                print(msg) 
+                loginfo(logger, "Domain " + domain + " | progress:" + str(idomain) + "/" + str(len(json_domains)), True)
+ 
                 # only engineering domains, or AAD domain only in case there is no engineering domain, we prefer to have engineering domains containing of action plan summary
                 if domain == 'AAD' and bAEDdomainFound:
                     logger.info("  Skipping domain " + domain + ", because we process in priority Engineering domains")
@@ -1208,9 +1281,7 @@ if __name__ == '__main__':
                             logger.info('Skipping application : ' + appName)
                             continue                
                         elif applicationfilter == None or re.match(applicationfilter, appName):
-                            msg = "Processing application " + appName
-                            logger.info(msg)
-                            print(msg)
+                            loginfo(logger, "Processing application " + appName, True)
                             # testing if csv file can be written
                             fpath = get_excelfilepath(outputfolder, appName)
                             filelocked = False
@@ -1218,14 +1289,10 @@ if __name__ == '__main__':
                             while icount < 10 and is_locked(fpath):
                                 icount += 1
                                 filelocked = True
-                                msg = 'File %s is locked. Please unlock it ! Waiting 5 seconds before retrying (try %s/10) ' % (fpath, str(icount))
-                                logger.warning(msg)
-                                print(msg)
+                                logwarning(logger, 'File %s is locked. Please unlock it ! Waiting 5 seconds before retrying (try %s/10) ' % (fpath, str(icount)), True)
                                 time.sleep(5)
                             if is_locked(fpath):
-                                msg = 'File %s is locked, aborting for application %s' % (fpath,appName)
-                                logger.error(msg)
-                                print(msg)
+                                logerror(logger, 'File %s is locked, aborting for application %s' % (fpath,appName),True)
                                 continue
 
                             listbusinesscriteria = []
@@ -1293,129 +1360,132 @@ if __name__ == '__main__':
                                     listbccontributions = []
                                     listtccontributions = []
                                     dictapsummary = {}
-
-
-                                    if loaddata:
-                                        logger.info("Extracting the action plan summary")
-                                        try:
+                                    
+                                    try:
+                                        json_apsummary = None
+                                        if loaddata:
+                                            logger.info("Extracting the action plan summary")
                                             json_apsummary = get_actionplan_summary(logger, restapiurl, user, password, apikey, domain, applicationid, snapshotid)
-                                            if json_apsummary != None:
-                                                for qrap in json_apsummary:
-                                                    qrhref = qrap['rulePattern']['href']
-                                                    qrid = ''
-                                                    hrefsplit = qrhref.split('/')
-                                                    for elem in hrefsplit:
-                                                        # the last element is the id
-                                                        qrid = elem
-                                                    addedissues = 0
-                                                    pendingissues = 0
-                                                    try:
-                                                        addedissues  = qrap['addedIssues']
-                                                    except KeyError:
-                                                        logger.warning('Error in extracting the addedIssues')             
-                                                    try:
-                                                        pendingissues  = qrap['pendingIssues']
-                                                    except KeyError:
-                                                        logger.warning('Error in extracting the pendingIssues')                                                    
-                                                    numberofactions = addedissues + pendingissues
-                                                    dictapsummary.update({qrid:numberofactions})
-                                            json_apsummary = None 
-                                        except:
-                                            msg='** Not able to extract the action plan summary ***'
-                                            print(msg)
-                                            logger.warning('** Not able to extract the action plan summary ***')
-                                        
-                                        logger.info('Extracting the quality metrics results and the quality rules thresholds')
+                                        if json_apsummary != None:
+                                            for qrap in json_apsummary:
+                                                qrhref = qrap['rulePattern']['href']
+                                                qrid = ''
+                                                hrefsplit = qrhref.split('/')
+                                                for elem in hrefsplit:
+                                                    # the last element is the id
+                                                    qrid = elem
+                                                addedissues = 0
+                                                pendingissues = 0
+                                                try:
+                                                    addedissues  = qrap['addedIssues']
+                                                except KeyError:
+                                                    logger.warning('Error in extracting the addedIssues')             
+                                                try:
+                                                    pendingissues  = qrap['pendingIssues']
+                                                except KeyError:
+                                                    logger.warning('Error in extracting the pendingIssues')                                                    
+                                                numberofactions = addedissues + pendingissues
+                                                dictapsummary.update({qrid:numberofactions})
+                                        json_apsummary = None 
+                                    except:
+                                        logwarning(logger, 'Not able to extract the action plan summary ***',True)
+                                    
+                                    json_qr_results = None
+                                    if loaddata:
+                                        loginfo(logger,'Extracting the quality metrics results and the quality rules thresholds',True)
                                         json_qr_results = get_qualityindicator_results(logger, restapiurl, user, password, apikey, domain, applicationid, False, nbrows)
-                                        if json_qr_results != None:
-                                            for res in json_qr_results:
-                                                iCount = 0
-                                                lastProgressReported = None
-                                                for res2 in res['applicationResults']:
-                                                    iCount += 1
-                                                    metricssize = len(res['applicationResults'])
-                                                    imetricprogress = int(100 * (iCount / metricssize))
-                                                    if imetricprogress in (9,19,29,39,49,59,69,79,89,99) : 
-                                                        if lastProgressReported == None or lastProgressReported != imetricprogress:
-                                                            progressmsg = ' ' + str(imetricprogress+1) + '% of the metrics processed'
-                                                            logger.info(progressmsg)
-                                                            print(progressmsg)
-                                                            lastProgressReported = imetricprogress
-                                                    # for testing purpose, limit to the X first to optimize the testing time
-                                                    if loadonlyXmetrics and iCount > 10:
-                                                        break
-                                                        
-                                                    metric = Metric()
-                                                    try:
-                                                        metric.type = res2['type']
-                                                    except KeyError:
-                                                        None
-                                                    try:
-                                                        metric.grade = res2['result']['grade']
-                                                    except KeyError:
-                                                        None
-                                                    try:
-                                                        metric.id = res2['reference']['key']
-                                                    except KeyError:
-                                                        None
-                                                    try:
-                                                        metric.name = res2['reference']['name']
-                                                    except KeyError:
-                                                        None                                                    
-                                                    try:
-                                                        metric.critical = res2['reference']['critical']
-                                                    except KeyError:
-                                                        None
-                                                    try:
-                                                        metric.failedchecks = res2['result']['violationRatio']['failedChecks']
-                                                    except KeyError:
-                                                        None                                                          
-                                                    try:
-                                                        metric.successfulchecks = res2['result']['violationRatio']['successfulChecks']
-                                                    except KeyError:
-                                                        None                                                             
-                                                    try:
-                                                        metric.totalchecks = res2['result']['violationRatio']['totalChecks']
-                                                    except KeyError:
-                                                        totalChecks = None                                                         
-                                                    try:
-                                                        metric.ratio = res2['result']['violationRatio']['ratio']
-                                                    except KeyError:
-                                                        None                                                            
-                                                    try:
-                                                        metric.addedviolations = res2['result']['evolutionSummary']['addedViolations']                                              
-                                                    except KeyError:
-                                                        None   
-                                                    try:
-                                                        metric.removedviolations = res2['result']['evolutionSummary']['removedViolations']
-                                                    except KeyError:
-                                                        None
-                                                    if metric.type in ("quality-measures","quality-distributions","quality-rules"):
-                                                        if (metric.grade == None): 
-                                                            logger.warning("Metric has no grade, removing it from the list : " + metric.name)
-                                                        else:
-                                                            listmetrics.append(metric)
-                                                            if metric.type == "quality-rules":
+                                    if json_qr_results != None:
+                                        for res in json_qr_results:
+                                            iCount = 0
+                                            lastProgressReported = None
+                                            for res2 in res['applicationResults']:
+                                                iCount += 1
+                                                metricssize = len(res['applicationResults'])
+                                                imetricprogress = int(100 * (iCount / metricssize))
+                                                if imetricprogress in (9,19,29,39,49,59,69,79,89,99) : 
+                                                    if lastProgressReported == None or lastProgressReported != imetricprogress:
+                                                        loginfo(logger,  ' ' + str(imetricprogress+1) + '% of the metrics processed',True)
+                                                        lastProgressReported = imetricprogress
+                                                # for testing purpose, limit to the X first to optimize the testing time
+                                                if loadonlyXmetrics and iCount > 10:
+                                                    break
+                                                    
+                                                metric = Metric()
+                                                try:
+                                                    metric.type = res2['type']
+                                                except KeyError:
+                                                    None
+                                                try:
+                                                    metric.grade = res2['result']['grade']
+                                                except KeyError:
+                                                    None
+                                                try:
+                                                    metric.id = res2['reference']['key']
+                                                except KeyError:
+                                                    None
+                                                try:
+                                                    metric.name = res2['reference']['name']
+                                                except KeyError:
+                                                    None                                                    
+                                                try:
+                                                    metric.critical = res2['reference']['critical']
+                                                except KeyError:
+                                                    None
+                                                try:
+                                                    metric.failedchecks = res2['result']['violationRatio']['failedChecks']
+                                                except KeyError:
+                                                    None                                                          
+                                                try:
+                                                    metric.successfulchecks = res2['result']['violationRatio']['successfulChecks']
+                                                except KeyError:
+                                                    None                                                             
+                                                try:
+                                                    metric.totalchecks = res2['result']['violationRatio']['totalChecks']
+                                                except KeyError:
+                                                    totalChecks = None                                                         
+                                                try:
+                                                    metric.ratio = res2['result']['violationRatio']['ratio']
+                                                except KeyError:
+                                                    None                                                            
+                                                try:
+                                                    metric.addedviolations = res2['result']['evolutionSummary']['addedViolations']                                              
+                                                except KeyError:
+                                                    None   
+                                                try:
+                                                    metric.removedviolations = res2['result']['evolutionSummary']['removedViolations']
+                                                except KeyError:
+                                                    None
+                                                if metric.type in ("quality-measures","quality-distributions","quality-rules"):
+                                                    if (metric.grade == None): 
+                                                        logger.warning("Metric has no grade, removing it from the list : " + metric.name)
+                                                    else:
+                                                        listmetrics.append(metric)
+                                                        if metric.type == "quality-rules":
+                                                            json_thresholds = None
+                                                            if loaddata:
                                                                 json_thresholds = get_qualityrules_thresholds(logger, restapiurl, user, password, apikey, domain, snapshotid, metric.id)   
-                                                                if json_thresholds != None and json_thresholds['thresholds'] != None:
-                                                                    icount = 0
-                                                                    for thres in json_thresholds['thresholds']:
-                                                                        icount += 1
-                                                                        if icount == 1: metric.threshold1=thres
-                                                                        if icount == 2: metric.threshold2=thres
-                                                                        if icount == 3: metric.threshold3=thres
-                                                                        if icount == 4: metric.threshold4=thres
-                                                    elif metric.type == "technical-criteria":
-                                                        #print('tc grade=' + str(metric.grade) + str(type(metric.grade)))
-                                                        if (metric.grade == None): 
-                                                            logger.warning("Technical criterion has no grade, removing it from the list : " + metric.name)
-                                                        else:
-                                                            listtechnicalcriteria.append(metric)
-                                                    #logger.debug(metric.id + ":" + str(metric.type) + ":" + str(metric.grade))
-                                                    metric = None
-                                            logger.info('Extracting the technical criteria contributors')
-                                            for tciterator in listtechnicalcriteria:
+                                                            if json_thresholds != None and json_thresholds['thresholds'] != None:
+                                                                icount = 0
+                                                                for thres in json_thresholds['thresholds']:
+                                                                    icount += 1
+                                                                    if icount == 1: metric.threshold1=thres
+                                                                    if icount == 2: metric.threshold2=thres
+                                                                    if icount == 3: metric.threshold3=thres
+                                                                    if icount == 4: metric.threshold4=thres
+                                                elif metric.type == "technical-criteria":
+                                                    #print('tc grade=' + str(metric.grade) + str(type(metric.grade)))
+                                                    if (metric.grade == None): 
+                                                        logger.warning("Technical criterion has no grade, removing it from the list : " + metric.name)
+                                                    else:
+                                                        listtechnicalcriteria.append(metric)
+                                                #logger.debug(metric.id + ":" + str(metric.type) + ":" + str(metric.grade))
+                                                metric = None
+                                        logger.info('Extracting the technical criteria contributors')
+                                        for tciterator in listtechnicalcriteria:
+                                            json_metriccontributions = None
+                                            if loaddata:
                                                 json_metriccontributions = get_metric_contributions(logger, restapiurl, user, password, apikey, domain, tciterator.id, snapshotid)
+                                            if json_metriccontributions != None:
                                                 for contr in json_metriccontributions['gradeContributors']:
                                                     tccontribution = Contribution()
                                                     tccontribution.parentmetricname = json_metriccontributions['name']
@@ -1424,13 +1494,15 @@ if __name__ == '__main__':
                                                     tccontribution.metricid = contr['key']
                                                     tccontribution.critical = contr['critical']
                                                     tccontribution.weight = contr['weight']
-
                                                     # add only the one that have results
                                                     listtccontributions.append(tccontribution)
-                                                json_metriccontributions = None
-                                            logger.info('Extracting the business criteria contributors')
-                                            for bcid in bcids:
+                                            json_metriccontributions = None
+                                        logger.info('Extracting the business criteria contributors')
+                                        for bcid in bcids:
+                                            json_metriccontributions = None
+                                            if loaddata:                                            
                                                 json_metriccontributions = get_metric_contributions(logger, restapiurl, user, password, apikey, domain, bcid, snapshotid)
+                                            if json_metriccontributions != None:
                                                 for contr in json_metriccontributions['gradeContributors']:
                                                     bccontribution = Contribution()
                                                     bccontribution.parentmetricname = json_metriccontributions['name']
@@ -1447,174 +1519,135 @@ if __name__ == '__main__':
                                                             break 
                                                     if bfound:
                                                         listbccontributions.append(bccontribution)
-                                                json_metriccontributions = None
-                                        
-                                        json_violations = None
-                                        listviolations = []
-                                        if loaddata and loadviolations: 
-                                            progressmsg = 'Extracting violations'
-                                            print(progressmsg)
-                                            logger.info(progressmsg)
-                                            progressmsg = 'Loading violations & components data from the REST API'
-                                            print(progressmsg)
-                                            logger.info(progressmsg)                                    
-                                            #json_violations = get_snapshot_violations(logger, connection, warname, user, password, apikey,domain, applicationid, snapshotid,  criticalrulesonlyfilter, violationstatusfilter, businesscriterionfilter, technofilter,nbrows)
-                                            json_violations = get_snapshot_violations(logger, connection, warname, user, password, apikey,domain, applicationid, snapshotid, True, None, None, None, nbrows)                                            
-                                        if json_violations != None:
-                                            iCouterRestAPIViolations = 0
-                                            lastProgressReported = None
-                                            for violation in json_violations:
-                                                objviol = Violation()
-                                                iCouterRestAPIViolations += 1
-                                                currentviolurl = ''
-                                                violations_size = len(json_violations)
-                                                imetricprogress = int(100 * (iCouterRestAPIViolations / violations_size))
-                                                if iCouterRestAPIViolations==1 or iCouterRestAPIViolations==violations_size or iCouterRestAPIViolations%500 == 0:
-                                                    msg = "processing violation " + str(iCouterRestAPIViolations) + "/" + str(violations_size)  + ' (' + str(imetricprogress) + '%)'
-                                                    print(msg)
-                                                    logger.info(msg)
-                                                try:
-                                                    objviol.qrname = violation['rulePattern']['name']
-                                                except KeyError:
-                                                    qrname = None    
-                                                objviol.critical = '<Not extracted>'
-                                                try:
-                                                    objviol.qrcritical = str(violation['rulePattern']['critical'])
-                                                except KeyError:
-                                                    # in earlier versions of the rest API this information was not available, taking the value from another location when possible
-                                                    #if tqiqm != None and tqiqm[qrid] != None and tqiqm[qrid].get("critical") != None:
-                                                    #    qrcritical = str(tqiqm[qrid].get("critical"))
-                                                    None                                                    
-                                                try:                                    
-                                                    qrrulepatternhref = violation['rulePattern']['href']
-                                                except KeyError:
-                                                    qrrulepatternhref = None
+                                            json_metriccontributions = None
+                                    
+                                    json_violations = None
+                                    listviolations = []
+                                    ''' loaddata and ''' 
+                                    if loadviolations: 
+                                        loginfo(logger,'Extracting violations',True)
+                                        loginfo(logger,'Loading violations & components data from the REST API',True)
+                                        #json_violations = get_snapshot_violations(logger, connection, warname, user, password, apikey,domain, applicationid, snapshotid,  criticalrulesonlyfilter, violationstatusfilter, businesscriterionfilter, technofilter,nbrows)
+                                        json_violations = get_snapshot_violations(logger, connection, warname, user, password, apikey,domain, applicationid, snapshotid, criticalrulesonlyfilter, None, businesscriterionfilter, technofilter, nbrows)                                            
+                                    if json_violations != None:
+                                        iCouterRestAPIViolations = 0
+                                        lastProgressReported = None
+                                        for violation in json_violations:
+                                            objviol = Violation()
+                                            iCouterRestAPIViolations += 1
+                                            currentviolurl = ''
+                                            violations_size = len(json_violations)
+                                            imetricprogress = int(100 * (iCouterRestAPIViolations / violations_size))
+                                            if iCouterRestAPIViolations==1 or iCouterRestAPIViolations==violations_size or iCouterRestAPIViolations%500 == 0:
+                                                loginfo(logger,"processing violation " + str(iCouterRestAPIViolations) + "/" + str(violations_size)  + ' (' + str(imetricprogress) + '%)',True)
+                                            try:
+                                                objviol.qrname = violation['rulePattern']['name']
+                                            except KeyError:
+                                                qrname = None    
+                                            objviol.critical = '<Not extracted>'
+                                            try:
+                                                crit = violation['rulePattern']['critical']
+                                                objviol.critical = str(crit)
+                                            except KeyError:
+                                                # in earlier versions of the rest API this information was not available, taking the value from another location when possible
+                                                #if tqiqm != None and tqiqm[qrid] != None and tqiqm[qrid].get("critical") != None:
+                                                #    qrcritical = str(tqiqm[qrid].get("critical"))
+                                                None                                                    
+                                            try:                                    
+                                                qrrulepatternhref = violation['rulePattern']['href']
+                                            except KeyError:
+                                                qrrulepatternhref = None
+                                            
+                                            qrrulepatternsplit = qrrulepatternhref.split('/')
+                                            for elem in qrrulepatternsplit:
+                                                # the last element is the id
+                                                objviol.qrid = elem
                                                 
-                                                qrrulepatternsplit = qrrulepatternhref.split('/')
-                                                for elem in qrrulepatternsplit:
-                                                    # the last element is the id
-                                                    objviol.qrid = elem
-                                                    
-                                                '''
-                                                # filter on quality rule id or name, if the filter match
-                                                if qridfilter != None and not re.match(qridfilter, str(qrid)):
-                                                    continue
-                                                if qrnamefilter != None and not re.match(qrnamefilter, qrname):
-                                                    continue
-                                                ''' 
-                                                actionPlan = violation['remedialAction']
+                                            # filter on quality rule id or name, if the filter match
+                                            if qridfilter != None and not re.match(qridfilter, str(qrid)):
+                                                continue
+                                            if qrnamefilter != None and not re.match(qrnamefilter, qrname):
+                                                continue
+                                            actionPlan = violation['remedialAction']
+                                            try:               
+                                                objviol.hasActionPlan = actionPlan != None
+                                            except KeyError:
+                                                logger.warning('Not able to extract the action plan')
+                                            if objviol.hasActionPlan:
                                                 try:               
-                                                    objviol.hasActionPlan = actionPlan != None
+                                                    objviol.actionplanstatus = actionPlan['status']
+                                                    objviol.actionplantag = actionPlan['tag']
+                                                    objviol.actionplancomment = actionPlan['comment']
                                                 except KeyError:
-                                                    logger.warning('Not able to extract the action plan')
-                                                if objviol.hasActionPlan:
-                                                    try:               
-                                                        objviol.actionplanstatus = actionPlan['status']
-                                                        objviol.actionplantag = actionPlan['tag']
-                                                        objviol.actionplancomment = actionPlan['comment']
-                                                    except KeyError:
-                                                        logger.warning('Not able to extract the action plan details')
-                                                '''
-                                                # filter the violations already in the action plan 
-                                                if actionplanfilter != None and actionplanfilter == 'WithActionPlan' and actionPlan == None:
-                                                    continue
-                                                # filter the violations not in the action plan 
-                                                if actionplanfilter != None and actionplanfilter == 'WithoutActionPlan' and actionPlan != None:
-                                                    continue
-                                                '''    
-                                                try:                                    
-                                                    objviol.hasExclusionRequest = violation['exclusionRequest'] != None
-                                                except KeyError:
-                                                    logger.warning('Not able to extract the exclusion request')
-                                                # filter the violations already in the exclusion list 
-                                                '''if exclusionrequestfilter != None and exclusionrequestfilter == 'Excluded' and exclusionRequest != None:
-                                                    continue
-                                                # filter the violations not in the exclusion list 
-                                                if exclusionrequestfilter != None and exclusionrequestfilter == 'NotExcluded' and exclusionRequest == None:
-                                                    continue
-                                                '''    
-                                                try:                                    
-                                                    objviol.violationstatus = violation['diagnosis']['status']
-                                                except KeyError:
-                                                    logger.warning('Not able to extract the violation status')
-                                                try:
-                                                    componentHref = violation['component']['href']
-                                                except KeyError:
-                                                    componentHref = None
-    
-                                                objviol.componentid = ''
-                                                rexcompid = "/components/([0-9]+)/snapshots/"
-                                                m0 = re.search(rexcompid, componentHref)
-                                                if m0: 
-                                                    objviol.componentid = m0.group(1)
-                                                '''
-                                                # filter the components that are not in the list if a list of component href is provided
-                                                if componentsfilter != None and componentHref not in componentsfilter:
-                                                    # example DOMAIN08/components/165586,DOMAIN08/components/166686
-                                                    continue
-            
-                                                # filter the violations that are not in the list if a list of violations href is provided
-                                                if violationsfilter != None and qrrulepatternhref+'#'+componentHref not in violationsfilter: 
-                                                    # example : DOMAIN08/rule-patterns/7778#DOMAIN08/components/137407/snapshots/21,DOMAIN08/rule-patterns/7776#DOMAIN08/components/13766/snapshots/21                                          
-                                                    continue
-                                                '''
-                                                if qrrulepatternhref != None and componentHref != None:
-                                                    objviol.id = qrrulepatternhref+'#'+componentHref
-                                                    
-                                                try:
-                                                    objviol.componentShortName = violation['component']['shortName']
-                                                except KeyError:
-                                                    logger.warning('Not able to extract the componentShortName')                                     
-                                                try:
-                                                    objviol.componentNameLocation = violation['component']['name']
-                                                except KeyError:
-                                                    logger.warning('Not able to extract the componentNameLocation')
-                                                # filter on component name location
-                                                '''
-                                                if componentnamelocationfilter != None and not re.match(componentnamelocationfilter, componentNameLocation):
-                                                    continue
-                                                ''' 
-                                                try:
-                                                    objviol.componentstatus = violation['component']['status']
-                                                except KeyError:
-                                                    componentStatus = None                                            
-                                                
-                                                # filter on component status
-                                                '''
-                                                if componentstatusfilter != None and componentStatus != None and componentstatusfilter != componentStatus:
-                                                    continue
-                                                '''
-                                                try:
-                                                    findingsHref = violation['diagnosis']['findings']['href']
-                                                except KeyError:
-                                                    findingsHref = None                                            
-                                                try:
-                                                    componentTreeNodeHref = violation['component']['treeNodes']['href']
-                                                except KeyError:
-                                                    componentTreeNodeHref = None                                        
-                                                try:
-                                                    sourceCodesHref = violation['component']['sourceCodes']['href']
-                                                except KeyError:
-                                                    sourceCodesHref = None
-                                                
-                                                try:
-                                                    propagationRiskIndex = violation['component']['propagationRiskIndex']
-                                                except KeyError:
-                                                    propagationRiskIndex = None                                            
-                                        
-                                                #TODO get the first technical criterion found for this rule#
-                                                firsttechnicalcriterionid = '#TODO#'
-                                                currentviolfullurl = edurl + '/engineering/index.html#' + snapHref 
-                                                currentviolfullurl += '/business/60017/qualityInvestigation/0/60017/' 
-                                                currentviolfullurl += firsttechnicalcriterionid + '/' + objviol.qrid + '/' + objviol.componentid
-                                                objviol.url = currentviolfullurl
-                                        
-                                                listviolations.append(objviol)
+                                                    logger.warning('Not able to extract the action plan details')
+                                            try:                                    
+                                                objviol.hasExclusionRequest = violation['exclusionRequest'] != None
+                                            except KeyError:
+                                                logger.warning('Not able to extract the exclusion request')
+                                            # filter the violations already in the exclusion list 
+                                            try:                                    
+                                                objviol.violationstatus = violation['diagnosis']['status']
+                                            except KeyError:
+                                                logger.warning('Not able to extract the violation status')
+                                            try:
+                                                componentHref = violation['component']['href']
+                                            except KeyError:
+                                                componentHref = None
+
+                                            objviol.componentid = ''
+                                            rexcompid = "/components/([0-9]+)/snapshots/"
+                                            m0 = re.search(rexcompid, componentHref)
+                                            if m0: 
+                                                objviol.componentid = m0.group(1)
+                                            if qrrulepatternhref != None and componentHref != None:
+                                                objviol.id = qrrulepatternhref+'#'+componentHref
+                                            try:
+                                                objviol.componentShortName = violation['component']['shortName']
+                                            except KeyError:
+                                                logger.warning('Not able to extract the componentShortName')                                     
+                                            try:
+                                                objviol.componentNameLocation = violation['component']['name']
+                                            except KeyError:
+                                                logger.warning('Not able to extract the componentNameLocation')
+                                            # filter on component name location
+                                            try:
+                                                objviol.componentstatus = violation['component']['status']
+                                            except KeyError:
+                                                componentStatus = None                                            
+                                            try:
+                                                findingsHref = violation['diagnosis']['findings']['href']
+                                            except KeyError:
+                                                findingsHref = None                                            
+                                            try:
+                                                componentTreeNodeHref = violation['component']['treeNodes']['href']
+                                            except KeyError:
+                                                componentTreeNodeHref = None                                        
+                                            try:
+                                                sourceCodesHref = violation['component']['sourceCodes']['href']
+                                            except KeyError:
+                                                sourceCodesHref = None
+                                            
+                                            try:
+                                                propagationRiskIndex = violation['component']['propagationRiskIndex']
+                                            except KeyError:
+                                                propagationRiskIndex = None                                            
+                                    
+                                            firsttechnicalcriterionid = '#N/A#'
+                                            for tcc in listtccontributions:
+                                                if tcc.metricid ==  objviol.qrid:
+                                                    firsttechnicalcriterionid = tcc.parentmetricid
+                                                    break 
+                                            currentviolfullurl = edurl + '/engineering/index.html#' + snapHref 
+                                            currentviolfullurl += '/business/60017/qualityInvestigation/0/60017/' 
+                                            currentviolfullurl += firsttechnicalcriterionid + '/' + objviol.qrid + '/' + objviol.componentid
+                                            objviol.url = currentviolfullurl
+                                    
+                                            listviolations.append(objviol)
                                         
                                     # generated csv file if required                                    
                                     fpath = get_excelfilepath(outputfolder, appName)
-                                    logger.info("Generating xlsx file " + fpath)
-                                    generate_excelfile(logger, fpath, appName, snapshotversion, snapshotdate, listbusinesscriteria, listtechnicalcriteria, listbccontributions, listtccontributions, listmetrics, dictapsummary, dicremediationabacus, listviolations, broundgrades)
+                                    loginfo(logger,"Generating xlsx file " + fpath,True)
+                                    generate_excelfile(logger, fpath, appName, snapshotversion, snapshotdate, loadviolations, listbusinesscriteria, listtechnicalcriteria, listbccontributions, listtccontributions, listmetrics, dictapsummary, dicremediationabacus, listviolations, broundgrades)
                                     
                                     json_qr_results = None
                                     # keep only last snapshot
@@ -1624,8 +1657,6 @@ if __name__ == '__main__':
     except: # catch *all* exceptions
         tb = traceback.format_exc()
         #e = sys.exc_info()[0]
-        logging.error('  Error during the processing %s' % tb)
+        logerror(logger, '  Error during the processing %s' % tb,True)
 
-    msg = 'Done !'
-    print (msg)
-    logger.info(msg)
+    loginfo(logger,'Done !',True)
