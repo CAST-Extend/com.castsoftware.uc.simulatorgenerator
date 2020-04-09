@@ -2,4 +2,5 @@
 /*.log
 /*.xlsx
 /*.bat
-/CAST_QualityRulesEffort_CASTInternal.xls
+/*.nupkg
+/CASTInternal

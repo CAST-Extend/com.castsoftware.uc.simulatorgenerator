@@ -17,10 +17,8 @@
     </dependencies>
   </metadata>
 	<files>
-	  <!-- file src="**\*simulator_generator.py" exclude="**\tests*;**\*.log;**\*.gitignore;**\*.xml;**githubwiki**\*.txt;**TEF**\*.*" target="./ "/ -->
-	  <file src="**\*simulator_generator.py" target="./ "/>
-	  <file src="simulation_generator - DEMO.bat" target="./" />
-	  <file src="**\*.csv" exclude="**\*CASTInternal*.csv" />
-	  **\*.py
+	  <file src="**\*"  exclude="**\tests**;**\TEF**;**\reports**;**\*.log;**\*.xlsx;**\*.csv;**\*.txt;**\*.bat;**\*.gitignore;**\CASTInternal**;**\*.xml**;**\*.png" />
+	  <file src="simulation_generator-DEMO.bat" />
+
 	</files>  
 </package>
