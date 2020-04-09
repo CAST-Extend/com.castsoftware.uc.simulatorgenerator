@@ -57,13 +57,19 @@ Run the batch file or the command line running the python script to generate the
 For each application, and only for the last snapshot : 
 1 Excel file named <Application name>_simulation.xlsx is generated
 The remediation efforts are pre-loaded from CAST_QualityRulesEffort.csv file into the Excel, but can be modified in the Excel file.
+By default only the violations are not loaded, but you have an option to load them. 
 
 You can change the number of violations that will be fixed and you will have the grade and efforts simulations computed in the Excel file. 
 
 Parameter available :   
-- Application name (regexp) : -applicationfilter, if Empty all the application that are configured in the different engineering domains will be processed  
-- Log level -loglevel INFO/DEBUG, default INFO  
-- Maximum number of rows -nbrows int value, default 1000000000 (has a high impact of performance, but is truncating the data)  
+- Application name (regexp): -applicationfilter, if Empty all the application that are configured in the different engineering domains will be processed  
+- Load violations: -loadviolations True/False default False
+- Quality rule id (regexp): -qridfilter  
+- Quality rule name (regexp): -qrnamefilter 
+- Business criterion: -businesscriterionfilter (60017,60016,60013,60014,60011,60012), can be a multiple value, separated with comma, default "Empty" (All)  
+- Technology: -technofilter List of technologies separated by a comma, default "Empty" (All)  
+- Log level: -loglevel INFO/DEBUG, default INFO  
+- Maximum number of rows: -nbrows int value, default 1000000000 (has a high impact of performance, but is truncating the data)  
 
 <a name="links"></a>
 ## Links
@@ -74,12 +80,12 @@ N/A
 
 <a name="knownIssues"></a>
 # Known issues
-- Some quality rules information or source code snipplet might contain unicode characters that provokes the script to abort, except for a set unicode characters already identified   
+None
 
 <a name="limitations"></a>
 - Only the last snapshot data are exported in the Excel file  
 - Only the Full application mode is covered. The legacy consolidation mode like Aggregation by Number of Artifacts, ... is not managed  
 <a name="rn"></a>
 # Release Notes
-## Version 1.0.0
+## Version 1.0.1
 * Initial version published  

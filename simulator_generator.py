@@ -1199,6 +1199,7 @@ if __name__ == '__main__':
         # log params
         logger.info('********************************************')
         logger.info('script_version='+script_version)
+        logger.info('python version='+sys.version)
         logger.info('****************** params ******************')
         logger.info('restapiurl='+restapiurl)
         logger.info('edurl='+edurl)        
