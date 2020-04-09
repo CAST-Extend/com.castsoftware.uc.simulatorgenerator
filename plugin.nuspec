@@ -19,6 +19,5 @@
 	<files>
 	  <file src="**\*"  exclude="**\tests**;**\TEF**;**\reports**;**\*.log;**\*.xlsx;**\*.csv;**\*.txt;**\*.bat;**\*.gitignore;**\CASTInternal**;**\*.xml**;**\*.png" />
 	  <file src="simulation_generator-DEMO.bat" />
-
 	</files>  
 </package>
