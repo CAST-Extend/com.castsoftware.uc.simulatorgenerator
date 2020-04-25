@@ -201,7 +201,7 @@ def execute_request(logger, url, request, user, password, apikey, contenttype='a
     
     # Error 
     if  response.status_code != 200:
-        logerror(logger,'HTTPS request failed ' + str(response.status) + ' ' + str(response.reason) + ':' + request_text,True)
+        logerror(logger,'HTTPS request failed ' + str(response.status_code) + ' ' + str(response.reason) + ':' + request_text,True)
         return None
     
     # look for the Set-Cookie in response headers, to inject it for future requests
@@ -210,15 +210,7 @@ def execute_request(logger, url, request, user, password, apikey, contenttype='a
         if sc != None and sc[1]  != None:
             setcookie = sc[1]
     output = response.json()
-    
-    '''
-    encoding = response.info().get_content_charset('iso-8859-1')
-    responseread_decoded = response.read().decode(encoding)
-    if contenttype=='application/json':
-        output = json.loads(responseread_decoded)
-    else:
-        output = responseread_decoded
-    '''
+
     return output    
 ########################################################################
 def get_server(logger, url, user, password, apikey):
@@ -632,7 +624,7 @@ def format_table_rules_grades(workbook,worksheet,table,format,listmetricsinviola
             #TODO: fix Violations extracted formula
             #formula = '=IF(NOT(ISNA(VLOOKUP($E%d,Violations!B:B,1,FALSE))),TRUE,FALSE)' % (row_num + 1)
             formula = '=IF(NOT(ISNA(VLOOKUP($E%d,Violations!B:B,1,FALSE))),TRUE,FALSE)' % (row_num + 1)
-            print(formula)
+            #print(formula)
             worksheet.write_formula(row_num, 25-1, formula)
             
         else:
@@ -1128,6 +1120,9 @@ if __name__ == '__main__':
     parser = init_parse_argument()
     args = parser.parse_args()
     restapiurl = args.restapiurl
+    if restapiurl != None and restapiurl[-1:] == '/':
+        # remove the trailing / 
+        restapiurl = restapiurl[:-1] 
     edurl = restapiurl 
     # the engineering dashboard url can be different from the rest api url, but if not specified we will take the same value are rest api url
     if args.edurl != None:
@@ -1281,7 +1276,7 @@ if __name__ == '__main__':
                         if applicationfilter != None and not re.match(applicationfilter, appName):
                             logger.info('Skipping application : ' + appName)
                             continue                
-                        elif applicationfilter == None or re.match(applicationfilter, appName):
+                        elif applicationfilter == None or applicationfilter == '' or re.match(applicationfilter, appName):
                             loginfo(logger, "Processing application " + appName, True)
                             # testing if csv file can be written
                             fpath = get_excelfilepath(outputfolder, appName)

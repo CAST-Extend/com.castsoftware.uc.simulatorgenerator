@@ -34,7 +34,7 @@ SET CMD_APIKEY=-apikey "%APIKEY%"
 SET OUTPUTFOLDER=C:\Users\mmr\workspace\com.castsoftware.uc.simulatorgenerator
 SET CMD_OUTPUTFOLDER=-of "%OUTPUTFOLDER%"
 
-SET LOGFILE=%OUTPUTFOLDER%\sim_gene_crmmoder.log
+SET LOGFILE=%OUTPUTFOLDER%\simulation_generator.log
 SET CMD_LOGFILE=-log "%LOGFILE%"
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
