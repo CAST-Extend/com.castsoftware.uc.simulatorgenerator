@@ -3,23 +3,16 @@
     <!--this file was created by Eclipse Runnable JAR Export Wizard-->
     <!--ANT 1.7 is required                                        -->
     
-    <!-- package version, should be the same as attribute VERSION located in java class QualityCubeReport -->
-	<property file = "version.properties"/>
-	
 	<property name="extension.name" value="com.castsoftware.uc.simulatorgenerator" />
 	
-	<!-- Output directory where the package will generate the binary package -->  
-	<!-- property name="output.dir" value="C:\Temp\MMR\QualityCubeReport_build"/ -->
-	
 	<!-- Local eclipse project directory -->  
-	<!-- on MMR workstation -->
 	<property name="project.dir" value="C:\Users\mmr\workspace\${extension.name}"/>
 	
 	<target name="build">
 		<!--Nugget command to package the extension -->
 		<exec executable="cmd">
 		    <arg value="/c"/>
-		    <arg value="nugget_package.bat"/>
+		    <arg value="nuget_package.bat"/>
 			<arg value="${version}"/>
 		</exec>
 

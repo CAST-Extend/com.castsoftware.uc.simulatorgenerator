@@ -1,4 +1,5 @@
 @echo off
+
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 REM configure python path if not defined
 REM min version to use is Python 3.6
@@ -36,6 +37,10 @@ SET CMD_OUTPUTFOLDER=-of "%OUTPUTFOLDER%"
 
 SET LOGFILE=%OUTPUTFOLDER%\simulation_generator.log
 SET CMD_LOGFILE=-log "%LOGFILE%"
+
+SET EXTENSIONINSTALLATIONFOLDER=%~dp0
+SET CMD_EXTENSIONINSTALLATIONFOLDER=-extensioninstallationfolder %EXTENSIONINSTALLATIONFOLDER%
+
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 :: Application name regexp filter
@@ -88,7 +93,7 @@ SET CMD_NBROWS=
 
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ECHO Running the command line 
-SET CMD="%PYTHONPATH%\python" "%~dp0simulator_generator.py" %CMD_URL% %CMD_USER% %CMD_PASSWORD% %CMD_APIKEY% %CMD_LOGFILE% %CMD_OUTPUTFOLDER% %CMD_APPFILTER%  %CMD_NBROWS% %CMD_EFFORTFILEPATH% %CMD_LOADVIOLATIONS% %CMD_QRIDFILTER% %CMD_QRNAMEFILTER% %CMD_CRITICALONLYFILTER% %CMD_BCFILTER% %CMD_TECHNOFILTER%
+SET CMD="%PYTHONPATH%\python" "%~dp0simulator_generator.py" %CMD_URL% %CMD_USER% %CMD_PASSWORD% %CMD_APIKEY% %CMD_LOGFILE% %CMD_OUTPUTFOLDER% %CMD_APPFILTER% %CMD_NBROWS% %CMD_EFFORTFILEPATH% %CMD_LOADVIOLATIONS% %CMD_QRIDFILTER% %CMD_QRNAMEFILTER% %CMD_CRITICALONLYFILTER% %CMD_BCFILTER% %CMD_TECHNOFILTER% %CMD_EXTENSIONINSTALLATIONFOLDER%
 ECHO %CMD%
 %CMD%
 SET RETURNCODE=%ERRORLEVEL%

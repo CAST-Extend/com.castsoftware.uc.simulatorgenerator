@@ -14,10 +14,6 @@ The extension is published under GNU LGPL v3 open source license
    - [Analysis processing](#analysis)
    - [Checks to be performed upon analysis](#checks)
 - [What results can you expect?](#expect)
-   - [List of custom objects](#objects)
-   - [List of links between custom objects](#links)
-   - [Sample graphical view in Enlighten](#graphical)
-   - [List of quality rules](#rules)
 - [Known issues](#KnownIssues)
 - [Limitations and potential enhancements](#limitations)
 - [Release Notes](#rn)
@@ -30,11 +26,7 @@ This extension generates an Excel file that allows to simulate the grade impact 
 # In what situation should you install this extension?  
 When you want to do a grade / effort simulation  
 When you don't have access to the Cast environment, or only access trough the Engineering dashboard REST API, and not able to use Action Plan Optimizer.      
-    
-Not when you want to inititialize/inject an action plan in then Engineering dashboard
-Not when you want to select a specific list of violations     
-Not when you want to prioritize violations on the TRI, PRI, ...    
-
+   
 <a name="aipcompatibility"></a>
 # CAST AIP versions compatibility
 
@@ -87,5 +79,8 @@ None
 - Only the Full application mode is covered. The legacy consolidation mode like Aggregation by Number of Artifacts, ... is not managed  
 <a name="rn"></a>
 # Release Notes
+## Version 1.0.2
+Add an option to extract the violations in a tab  
+Minor fixes
 ## Version 1.0.1
 * Initial version published  
