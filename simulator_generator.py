@@ -14,6 +14,8 @@ import numpy as np
 import requests
 from io import StringIO
 import xlsxwriter
+from utils.utils import open_connection, close_connection
+from utils.utils import AIPRestAPI, LogUtils, ObjectViolationMetric, RulePatternDetails, FileUtils, StringUtils, Metric, Contribution, Violation
 
 '''
  Author : MMR & TGU
@@ -23,56 +25,8 @@ import xlsxwriter
 
 # Total Quality Index,Security,Efficiency,Robustness,Transferability,Changeability,Coding Best Practices/Programming Practices,Documentation,Architectural Design
 bcids = ["60017","60016","60016","60014","60013","60012","60011","66031","66032","66033"]
-# connection cookie
-setcookie = None
 
 ########################################################################
-
-# metric class
-class Metric:
-    id = None
-    name = None
-    type = None
-    critical = None
-    grade = None
-    failedchecks = None
-    successfulchecks = None
-    totalchecks = None
-    ratio = None
-    threshold1 = None
-    threshold2 = None
-    threshold3 = None
-    threshold4 = None
-    addedviolations = None
-    removedviolations = None
-    applicationName = None
-
-# violation class
-class Violation:
-    id = None
-    qrid = None
-    qrname = None
-    critical = None
-    componentid = None
-    componentShortName = None
-    componentNameLocation = None
-    hasActionPlan = False
-    actionplanstatus = ''
-    actionplantag = ''
-    actionplancomment = ''
-    hasExclusionRequest = False
-    url = None
-    violationstatus = None
-    componentstatus = None
-    
-# contribution class (technical criteria contributions to business criteria, or quality metrics to technical criteria) 
-class Contribution:
-    parentmetricid = None
-    parentmetricname = None
-    metricid = None
-    metricname = None
-    weight = None
-    critical = None
 
 # excel format class
 class ExcelFormat:
@@ -113,217 +67,6 @@ class ExcelFormat:
     format_green_int = None
     format_red_int = None
     format_green_int = None
-
-########################################################################
-def loginfo(logger, msg, tosysout = False):
-    logger.info(msg)
-    if tosysout:
-        print(msg)
-
-########################################################################
-def logwarning(logger, msg, tosysout = False):
-    logger.warning(msg)
-    if tosysout:
-        print("#### " + msg)
-
-########################################################################
-def logerror(logger, msg, tosysout = False):
-    logger.error(msg)
-    if tosysout:
-        print("#### " + msg)
-
-########################################################################
-# retrieve the connection depending on 
-def open_connection(logger, url, user, pwd):
-    logger.info('Opening connection to ' + url)
-    try:
-        resp = requests.get(url, headers={"User-Agent": "XY"}, auth=(user, pwd))
-    except:
-        logger.error ('Error connecting to ' + url)
-        logger.error ('URL is not reachable. Please check your connection (web application down, VPN not active, ...)')
-        raise SystemExit
-    
-    if resp.status_code != 200:
-        # This means something went wrong.
-        logger.error ('Error connecting to ' + url)
-        logger.error ('Status code = ' + str(resp.status_code))
-        logger.error ('Headers = ' + str(resp.headers))
-        logger.error ('Please check the URL, user and password ')
-        raise SystemExit
-    else: 
-        logger.error ('Successfully connected to  : ' + url)    
-    
-    global setcookie
-    setcookie = None
-
-########################################################################
-# retrieve the connection depending on 
-def close_connection(logger):
-    global setcookie
-    setcookie = None
-
-########################################################################
-  
-def execute_request(logger, url, request, user, password, apikey, contenttype='application/json'):
-    global setcookie
-    
-    request_headers = {}
-    request_text = url + "/rest/" + request
-    logger.debug('Sending GET ' + request_text + ' with contenttype=' + contenttype)   
-
-    # if the user and password are provided, we take them first
-    if user != None and password != None and user != 'N/A' and user != 'N/A':
-        #we need to base 64 encode it 
-        #and then decode it to acsii as python 3 stores it as a byte string
-        #userAndPass = b64encode(user_password).decode("ascii")
-        auth = str.encode("%s:%s" % (user, password))
-        #user_and_pass = b64encode(auth).decode("ascii")
-        user_and_pass = b64encode(auth).decode("iso-8859-1")
-        request_headers.update({'Authorization':'Basic %s' %  user_and_pass})
-    # else if the api key is provided
-    elif apikey != None and apikey != 'N/A':
-        print (apikey)
-        # API key configured in the WAR
-        request_headers.update({'X-API-KEY:':apikey})
-        # we are provide a user name hardcoded' 
-        request_headers.update({'X-API-USER:':'admin_apikey'})
-        
-    # Name of the client added in the header (for the audit trail)
-    request_headers.update({'X-Client':'com.castsoftware.uc.simulatorgenerator'})
-    request_headers.update({'accept' : contenttype})
-    
-    # if the session JSESSIONID is already defined we inject the cookie to reuse previous session
-    if setcookie != None:
-        request_headers.update({'Set-Cookie':setcookie})
-
-    # send the request
-    response = requests.get(request_text,headers=request_headers,auth=(user, password))
-    
-    # Error 
-    if  response.status_code != 200:
-        logerror(logger,'HTTPS request failed ' + str(response.status_code) + ' ' + str(response.reason) + ':' + request_text,True)
-        return None
-    
-    # look for the Set-Cookie in response headers, to inject it for future requests
-    if setcookie == None: 
-        sc = response.headers._store.get('set-cookie')
-        if sc != None and sc[1]  != None:
-            setcookie = sc[1]
-    output = response.json()
-
-    return output    
-########################################################################
-def get_server(logger, url, user, password, apikey):
-    request = "server"
-    return execute_request(logger, url, request, user, password, apikey)
-
-########################################################################
-def get_domains(logger, url, user, password, apikey):
-    request = ""
-    return execute_request(logger, url, request, user, password, apikey)
-
-########################################################################
-
-def get_applications(logger, url, user, password, apikey, domain):
-    request = domain + "/applications"
-    return execute_request(logger, url, request, user, password, apikey)
-
-########################################################################
-
-def get_application_snapshots(logger, url, user, password, apikey, domain, applicationid):
-    request = domain + "/applications/" + applicationid + "/snapshots" 
-    return execute_request(logger, url, request, user, password, apikey)
-
-########################################################################
-
-def get_businesscriteria_grades(logger, url, user, password, apikey, domain):
-    request = domain + "/results?quality-indicators=(60017,60016,60014,60013,60011,60012,66031,66032,66033)&applications=($all)&snapshots=(-1)" 
-    return execute_request(logger, url, request, user, password, apikey)
-
-########################################################################
-
-def get_metric_contributions(logger, url, user, password, apikey, domain, metricid, snapshotid):
-    request = domain + "/quality-indicators/" + metricid + "/snapshots/" + snapshotid 
-    return execute_request(logger, url, request, user, password, apikey)
-
-########################################################################
-
-def get_actionplan_summary(logger, url, user, password, apikey, domain, applicationid, snapshotid):
-    request = domain + "/applications/" + applicationid + "/snapshots/" + snapshotid + "/action-plan/summary"
-    return execute_request(logger, url, request, user, password, apikey)
-
-########################################################################
-
-def get_qualityindicator_results(logger, url, user, password, apikey, domain, applicationid, criticalonly, nbrows):
-    request = domain + "/applications/" + applicationid + "/results?quality-indicators"
-    request += '=(cc:60017'
-    if criticalonly == None or not criticalonly:   
-        request += ',nc:60017'
-    request += ')&select=(evolutionSummary,violationRatio)'
-    # last snapshot only
-    request += '&snapshots=-1'
-    request += '&startRow=1'
-    request += '&nbRows=' + str(nbrows)
-    return execute_request(logger, url, request, user, password, apikey)
-
-########################################################################
-
-def get_qualityrules_thresholds(logger, url, user, password, apikey, domain, snapshotid, qrid):
-    request = domain + "/quality-indicators/" + str(qrid) + "/snapshots/"+ snapshotid
-    return execute_request(logger, url, request, user, password, apikey)
-
-########################################################################
-
-def get_rule_pattern(logger, url, user, password, apikey, rulepatternHref):
-    logger.debug("Extracting the rule pattern details")   
-    request = rulepatternHref
-    return execute_request(logger, url, request, user, password, apikey)
-
-########################################################################
-
-# extract the all quality rules and their contributions to technical criterias
-def get_snapshot_tqi_quality_model (logger, connection, warname, user, password, apikey, domain, snapshotid):
-    logger.info("Extracting the snapshot quality model")   
-    request = domain + "/quality-indicators/60017/snapshots/" + snapshotid + "/base-quality-indicators" 
-    return execute_request(logger, connection, 'GET', request, warname, user, password, apikey, None)
-
-########################################################################
-
-def get_snapshot_bc_tc_mapping(logger, url, user, password, apikey, domain, snapshotid, bcid):
-    logger.info("Extracting the snapshot business criterion " + bcid +  " => technical criteria mapping")  
-    request = domain + "/quality-indicators/" + str(bcid) + "/snapshots/" + snapshotid
-    return execute_request(logger, url, request, user, password, apikey)
-    
-########################################################################
-def get_snapshot_violations(logger, connection, warname, user, password, apikey, domain, applicationid, snapshotid, criticalonly, violationStatus, businesscriterionfilter, technoFilter, nbrows):
-    logger.info("Extracting the snapshot violations")
-    request = domain + "/applications/" + applicationid + "/snapshots/" + snapshotid + '/violations'
-    request += '?startRow=1'
-    request += '&nbRows=' + str(nbrows)
-    if criticalonly != None and criticalonly:         
-        request += '&rule-pattern=critical-rules'
-    if violationStatus != None:
-        request += '&status=' + violationStatus
-    if businesscriterionfilter == None:
-        businesscriterionfilter = "60017"
-    if businesscriterionfilter != None:
-        strbusinesscriterionfilter = str(businesscriterionfilter)        
-        # we can have multiple value separated with a comma
-        if ',' not in strbusinesscriterionfilter:
-            request += '&business-criterion=' + strbusinesscriterionfilter
-        request += '&rule-pattern=('
-        for item in strbusinesscriterionfilter.split(sep=','):
-            request += 'cc:' + item + ','
-            if criticalonly == None or not criticalonly:   
-                request += 'nc:' + item + ','
-        request = request[:-1]
-        request += ')'
-        
-    if technoFilter != None:
-        request += '&technologies=' + technoFilter
-        
-    return execute_request(logger, restapiurl, request, user, password, apikey)
-
 ########################################################################
 def init_parse_argument():
     # get arguments
@@ -817,9 +560,9 @@ def generate_excelfile(logger, filepath, appName, snapshotversion, snapshotdate,
     str_readme_content += "Remediation effort;Quality rules unit remediation effort;\n"
     
     try: 
-        df_readme = pd.read_csv(StringIO(remove_unicode_characters(str_readme_content)), sep=";",engine='python',quoting=csv.QUOTE_NONE)
+        df_readme = pd.read_csv(StringIO(StringUtils.remove_unicode_characters(str_readme_content)), sep=";",engine='python',quoting=csv.QUOTE_NONE)
     except: 
-        logerror(logger,'csv.Error: unexpected end of data : readme',True)
+        LogUtils.logerror(logger,'csv.Error: unexpected end of data : readme',True)
     
     ###############################################################################
     # Data for the BC Grades Tab
@@ -851,10 +594,10 @@ def generate_excelfile(logger, filepath, appName, snapshotversion, snapshotdate,
         str_df_bc_grades += ';JSON violations removed\n'
         str_df_bc_grades += ';JSON violations modified\n'
     try: 
-        str_df_bc_grades = remove_unicode_characters(str_df_bc_grades)
+        str_df_bc_grades = StringUtils.remove_unicode_characters(str_df_bc_grades)
         df_bc_grades = pd.read_csv(StringIO(str_df_bc_grades), sep=";")
     except: 
-        logerror(logger,'csv.Error: unexpected end of data : df_bc_grades %s ' % str_df_bc_grades,True)
+        LogUtils.logerror(logger,'csv.Error: unexpected end of data : df_bc_grades %s ' % str_df_bc_grades,True)
     
     ###############################################################################
     # Data for the TC Grades Tab
@@ -864,10 +607,10 @@ def generate_excelfile(logger, filepath, appName, snapshotversion, snapshotdate,
         str_df_tc_grades += tc.name + ';' + str(tc.id) + ';'+ str(round_grades(broundgrades,tc.grade)) + ';;;;'  
         str_df_tc_grades  += '\n'
     try: 
-        str_df_tc_grades = remove_unicode_characters(str_df_tc_grades)
+        str_df_tc_grades = StringUtils.remove_unicode_characters(str_df_tc_grades)
         df_tc_grades = pd.read_csv(StringIO(str_df_tc_grades), sep=";",engine='python',quoting=csv.QUOTE_NONE)
     except: 
-        logerror(logger,'csv.Error: unexpected end of data : df_tc_grades %s ' % str_df_tc_grades,True)
+        LogUtils.logerror(logger,'csv.Error: unexpected end of data : df_tc_grades %s ' % str_df_tc_grades,True)
 
     ###############################################################################
     # Data for the Rules Grades Tab
@@ -913,16 +656,16 @@ def generate_excelfile(logger, filepath, appName, snapshotversion, snapshotdate,
         str_df_rules_grades += '\n'
     #logger.debug(str_df_rules_grades)
     try: 
-        str_df_rules_grades = remove_unicode_characters(str_df_rules_grades)
+        str_df_rules_grades = StringUtils.remove_unicode_characters(str_df_rules_grades)
         df_rules_grades = pd.read_csv(StringIO(str_df_rules_grades), sep=";",engine='python',quoting=csv.QUOTE_NONE)
     except: 
-        logerror(logger,'csv.Error: unexpected end of data : df_rules_grades %s ' % str_df_rules_grades,True)
+        LogUtils.logerror(logger,'csv.Error: unexpected end of data : df_rules_grades %s ' % str_df_rules_grades,True)
 
     ###############################################################################
     # Data for the Violations Tab
     listmetricsinviolations = []
     if loadviolations:
-        loginfo(logger,'Loading violations for excel reporting',True)
+        LogUtils.loginfo(logger,'Loading violations for excel reporting',True)
         str_df_violations = 'Quality rule name;Quality rule Id;Critical;Component name location;Selected for action;In action plan;Action plan status;Action plan tag;Action plan comment;Has exclusion request'
         str_df_violations += ';Violation status;Component status;URL;Nb actions;Nb actions added;Nb actions removed;JSON actions added;JSON actions modified;JSON actions removed;Violation id\n'
         for objviol in listviolations:
@@ -931,10 +674,10 @@ def generate_excelfile(logger, filepath, appName, snapshotversion, snapshotdate,
             str_df_violations += '\n'
             listmetricsinviolations.append(str(objviol.qrid))
         try: 
-            str_df_violations = remove_unicode_characters(str_df_violations)
+            str_df_violations = StringUtils.remove_unicode_characters(str_df_violations)
             df_violations = pd.read_csv(StringIO(str_df_violations), sep=";",engine='python',quoting=csv.QUOTE_NONE) 
         except: 
-            logerror(logger,'csv.Error: unexpected end of data : df_violations %s ' % str_df_violations,True)
+            LogUtils.logerror(logger,'csv.Error: unexpected end of data : df_violations %s ' % str_df_violations,True)
     
     ###############################################################################
     
@@ -952,10 +695,10 @@ def generate_excelfile(logger, filepath, appName, snapshotversion, snapshotdate,
         str_df_bc_contribution += '\n'
     #logger.debug(str_df_bc_contribution)
     try: 
-        str_df_bc_contribution = remove_unicode_characters(str_df_bc_contribution)
+        str_df_bc_contribution = StringUtils.remove_unicode_characters(str_df_bc_contribution)
         df_bc_contribution = pd.read_csv(StringIO(str_df_bc_contribution), sep=";",engine='python',quoting=csv.QUOTE_NONE)
     except: 
-        logerror(logger,'csv.Error: unexpected end of data : df_bc_contribution %s ' % str_df_bc_contribution,True)
+        LogUtils.logerror(logger,'csv.Error: unexpected end of data : df_bc_contribution %s ' % str_df_bc_contribution,True)
         
     ###############################################################################
     # Data for the TC Contributions Tab
@@ -973,11 +716,11 @@ def generate_excelfile(logger, filepath, appName, snapshotversion, snapshotdate,
             str_df_tc_contribution += ';' + str(tcc.weight) + ';' + str(tcc.critical) + ';;'
             str_df_tc_contribution += '\n'
     try: 
-        str_df_tc_contribution = remove_unicode_characters(str_df_tc_contribution)
+        str_df_tc_contribution = StringUtils.remove_unicode_characters(str_df_tc_contribution)
         df_tc_contribution = pd.read_csv(StringIO(str_df_tc_contribution), sep=";",quoting=csv.QUOTE_NONE)
     #,engine='python'
     except: 
-        logerror(logger, 'csv.Error: unexpected end of data : df_tc_contribution %s ' % str_df_tc_contribution, True)
+        LogUtils.logerror(logger, 'csv.Error: unexpected end of data : df_tc_contribution %s ' % str_df_tc_contribution, True)
     ###############################################################################
     # Data for the Remediation Tab
     str_df_remediationeffort = 'Quality rule id;Quality rule name;Remediation effort (minutes)\n'
@@ -994,10 +737,10 @@ def generate_excelfile(logger, filepath, appName, snapshotversion, snapshotdate,
                 str_df_remediationeffort += ';#N/A'
             str_df_remediationeffort += '\n'
     try: 
-        str_df_remediationeffort = remove_unicode_characters(str_df_remediationeffort)
+        str_df_remediationeffort = StringUtils.remove_unicode_characters(str_df_remediationeffort)
         df_remediationeffort = pd.read_csv(StringIO(str_df_remediationeffort), sep=";",engine='python',quoting=csv.QUOTE_NONE) 
     except: 
-        logerror(logger, 'csv.Error: unexpected end of data : df_remediationeffort %s ' % str_df_remediationeffort,True)
+        LogUtils.logerror(logger, 'csv.Error: unexpected end of data : df_remediationeffort %s ' % str_df_remediationeffort,True)
         
     ###############################################################################
     logger.info("Writing data in Excel")
@@ -1058,7 +801,7 @@ def generate_excelfile(logger, filepath, appName, snapshotversion, snapshotdate,
         
         writer.save()
     
-        loginfo(logger, 'File ' + filepath + ' generated', True)
+        LogUtils.loginfo(logger, 'File ' + filepath + ' generated', True)
 
 ########################################################################
 
@@ -1068,41 +811,6 @@ def get_excelfilepath(outputfolder, appName):
         fpath = outputfolder + '/'
     fpath += appName + "_simulation.xlsx"
     return fpath 
-
-########################################################################
-
-def is_locked(filepath):
-    """Checks if a file is locked by opening it in append mode.
-    If no exception thrown, then the file is not locked.
-    """
-    locked = None
-    file_object = None
-    if os.path.exists(filepath):
-        try:
-            #print ("Trying to open %s." % filepath)
-            buffer_size = 8
-            # Opening file in append mode and read the first 8 characters.
-            file_object = open(filepath, 'a', buffer_size)
-            if file_object:
-                #print ("%s is not locked." % filepath)
-                locked = False
-        
-        except IOError:
-            e = sys.exc_info()[0]
-            #print ("File is locked (unable to open in append mode). %s." % e)
-            locked = True
-        finally:
-            if file_object:
-                file_object.close()
-                #print ("%s closed." % filepath)
-    #else:
-    #    print "%s not found." % filepath
-    return locked
-
-########################################################################
-
-def remove_unicode_characters(astr):
-    return astr.encode('ascii', 'ignore').decode("utf-8")
 
 ########################################################################
 if __name__ == '__main__':
@@ -1204,20 +912,25 @@ if __name__ == '__main__':
         logger.info('usr='+str(user))
         logger.info('pwd=*******')
         logger.info('apikey='+str(apikey))
-        logger.info('log file='+log)
+        LogUtils.loginfo(logger,'log file='+log,True)
         logger.info('log level='+loglevel)
         logger.info('applicationfilter='+str(applicationfilter))
         logger.info('nbrows='+str(nbrows))
         logger.info('output folder='+str(outputfolder))
         logger.info('effortcsvfilepath='+str(effortcsvfilepath))
+        logger.info('loadviolations='+str(loadviolations))
+        logger.info('qridfilter='+str(qridfilter))
+        logger.info('qrnamefilter='+str(qrnamefilter))
+        logger.info('criticalrulesonlyfilter='+str(criticalrulesonlyfilter))
+        logger.info('businesscriterionfilter='+str(businesscriterionfilter))
+        logger.info('technofilter='+str(technofilter)) 
         logger.info('********************************************')
         
-        loginfo(logger, 'Initialization', True) 
-        
-        connection = open_connection(logger, restapiurl, user, password)   
+        LogUtils.loginfo(logger, 'Initialization', True) 
+        connection = open_connection(logger, restapiurl, user, password) 
         
         # few checks on the server 
-        json_server = get_server(logger, restapiurl, user, password, apikey)
+        json_server = AIPRestAPI.get_server(logger, restapiurl, user, password, apikey)
         if json_server != None:
             logger.info('server status=' + json_server['status'])    
             servversion = json_server['version']
@@ -1229,7 +942,7 @@ if __name__ == '__main__':
             logger.info('********************************************')    
         
         # retrieve the domains & the applications in those domains 
-        json_domains = get_domains(logger, restapiurl, user, password, apikey)
+        json_domains = AIPRestAPI.get_domains(logger, restapiurl, user, password, apikey)
         if json_domains != None:
             bAEDdomainFound = False
             for item in json_domains:
@@ -1246,7 +959,7 @@ if __name__ == '__main__':
                 except KeyError:
                     pass
                 
-                loginfo(logger, "Domain " + domain + " | progress:" + str(idomain) + "/" + str(len(json_domains)), True)
+                LogUtils.loginfo(logger, "Domain " + domain + " | progress:" + str(idomain) + "/" + str(len(json_domains)), True)
  
                 # only engineering domains, or AAD domain only in case there is no engineering domain, we prefer to have engineering domains containing of action plan summary
                 if domain == 'AAD' and bAEDdomainFound:
@@ -1254,7 +967,7 @@ if __name__ == '__main__':
                     continue
                 
                 if domain != 'AAD' or not bAEDdomainFound:
-                    json_apps = get_applications(logger, restapiurl, user, password, apikey,domain)
+                    json_apps = AIPRestAPI.get_applications(logger, restapiurl, user, password, apikey,domain)
                     applicationid = -1
                     appHref = ''
                     appName = ''
@@ -1277,18 +990,18 @@ if __name__ == '__main__':
                             logger.info('Skipping application : ' + appName)
                             continue                
                         elif applicationfilter == None or applicationfilter == '' or re.match(applicationfilter, appName):
-                            loginfo(logger, "Processing application " + appName, True)
+                            LogUtils.loginfo(logger, "Processing application " + appName, True)
                             # testing if csv file can be written
                             fpath = get_excelfilepath(outputfolder, appName)
                             filelocked = False
                             icount = 0
-                            while icount < 10 and is_locked(fpath):
+                            while icount < 10 and FileUtils.is_file_locked(fpath):
                                 icount += 1
                                 filelocked = True
-                                logwarning(logger, 'File %s is locked. Please unlock it ! Waiting 5 seconds before retrying (try %s/10) ' % (fpath, str(icount)), True)
+                                LogUtils.logwarning(logger, 'File %s is locked. Please unlock it ! Waiting 5 seconds before retrying (try %s/10) ' % (fpath, str(icount)), True)
                                 time.sleep(5)
-                            if is_locked(fpath):
-                                logerror(logger, 'File %s is locked, aborting for application %s' % (fpath,appName),True)
+                            if FileUtils.is_file_locked(fpath):
+                                LogUtils.logerror(logger, 'File %s is locked, aborting for application %s' % (fpath,appName),True)
                                 continue
 
                             listbusinesscriteria = []
@@ -1296,7 +1009,7 @@ if __name__ == '__main__':
                             # applications health factors for last snapshot
                             if (loaddata):
                                 logger.info('Extracting the applications business criteria grades for last snapshot')
-                                json_bc_grades = get_businesscriteria_grades(logger, restapiurl, user, password, apikey,domain)
+                                json_bc_grades = AIPRestAPI.get_businesscriteria_grades(logger, restapiurl, user, password, apikey,domain)
                                 if json_bc_grades != None:
                                     for res in json_bc_grades:
                                         for bc in res['applicationResults']:
@@ -1324,7 +1037,7 @@ if __name__ == '__main__':
                                             effortqrname = ''
                                             try:
                                                 # remove unicode characters
-                                                effortqrname = remove_unicode_characters(row[1])
+                                                effortqrname = StringUtils.remove_unicode_characters(row[1])
                                                 
                                             except UnicodeDecodeError: 
                                                 logger.error('Non UTF-8 character in the row [' + str(row) + '] of the csv file')
@@ -1333,7 +1046,7 @@ if __name__ == '__main__':
                                             dicremediationabacus.update({row[0]:{"id":row[0],"name":effortqrname,"uniteffortinhours":row[2]}})
                             # snapshot list
                             logger.info('Loading the application snapshot')
-                            json_snapshots = get_application_snapshots(logger, restapiurl, user, password, apikey,domain, applicationid)
+                            json_snapshots = AIPRestAPI.get_application_snapshots(logger, restapiurl, user, password, apikey,domain, applicationid)
                             if json_snapshots != None:
                                 for snap in json_snapshots:
                                     snapHref = ''
@@ -1358,10 +1071,35 @@ if __name__ == '__main__':
                                     dictapsummary = {}
                                     
                                     try:
+                                        tqiqm = {}
+                                        if not loaddata:
+                                            logger.info("NOT Extracting the snapshot quality model")                                           
+                                        else:
+                                            json_snapshot_quality_model = AIPRestAPI.get_snapshot_tqi_quality_model(logger, restapiurl, user, password, apikey,domain, snapshotid)
+                                        if json_snapshot_quality_model != None:
+                                            for qmitem in json_snapshot_quality_model:
+                                                maxWeight = -1
+                                                qrid = qmitem['key']
+                                                qrcompoundWeight = qmitem['compoundedWeight'] 
+                                                qrcompoundWeightFormula = qmitem['compoundedWeightFormula']
+                                                regexp = "\([0-9]+x([0-9]+)\)"                                            
+                                                for m in re.finditer(regexp, qrcompoundWeightFormula):
+                                                    if m.group(1) != None and int(m.group(1)) > int(maxWeight): 
+                                                        maxWeight = int(m.group(1))                                            
+                                                qrcrt = qmitem['critical']
+                                                tqiqm[qrid] = {"critical":qrcrt,"tc":{},"maxWeight":maxWeight,"compoundedWeight":qrcompoundWeight,"compoundedWeightFormula":qrcompoundWeightFormula}
+                                                #contains the technical criteria (might be several) for each rule, we keep the fist one
+                                                for tccont in qmitem['compoundedWeightTerms']:
+                                                    term = tccont['term'] 
+                                                    #tqiqm[qrid] = {tccont['technicalCriterion']['key']: tccont['technicalCriterion']['name']} 
+                                                    #TODO: add qrcompoundWeight and/or qrcompoundWeightFormula
+                                                    tqiqm.get(qrid).get("tc").update({tccont['technicalCriterion']['key']: tccont['technicalCriterion']['name']})                                        
+                                        
+                                        
                                         json_apsummary = None
                                         if loaddata:
                                             logger.info("Extracting the action plan summary")
-                                            json_apsummary = get_actionplan_summary(logger, restapiurl, user, password, apikey, domain, applicationid, snapshotid)
+                                            json_apsummary = AIPRestAPI.get_actionplan_summary(logger, restapiurl, user, password, apikey, domain, applicationid, snapshotid)
                                         if json_apsummary != None:
                                             for qrap in json_apsummary:
                                                 qrhref = qrap['rulePattern']['href']
@@ -1384,12 +1122,12 @@ if __name__ == '__main__':
                                                 dictapsummary.update({qrid:numberofactions})
                                         json_apsummary = None 
                                     except:
-                                        logwarning(logger, 'Not able to extract the action plan summary ***',True)
+                                        LogUtils.logwarning(logger, 'Not able to extract the action plan summary ***',True)
                                     
                                     json_qr_results = None
                                     if loaddata:
-                                        loginfo(logger,'Extracting the quality metrics results and the quality rules thresholds',True)
-                                        json_qr_results = get_qualityindicator_results(logger, restapiurl, user, password, apikey, domain, applicationid, False, nbrows)
+                                        LogUtils.loginfo(logger,'Extracting the quality metrics results and the quality rules thresholds',True)
+                                        json_qr_results = AIPRestAPI.get_qualitymetrics_results(logger, restapiurl, user, password, apikey, domain, applicationid, False, nbrows)
                                     if json_qr_results != None:
                                         for res in json_qr_results:
                                             iCount = 0
@@ -1400,7 +1138,7 @@ if __name__ == '__main__':
                                                 imetricprogress = int(100 * (iCount / metricssize))
                                                 if imetricprogress in (9,19,29,39,49,59,69,79,89,99) : 
                                                     if lastProgressReported == None or lastProgressReported != imetricprogress:
-                                                        loginfo(logger,  ' ' + str(imetricprogress+1) + '% of the metrics processed',True)
+                                                        LogUtils.loginfo(logger,  ' ' + str(imetricprogress+1) + '% of the metrics processed',True)
                                                         lastProgressReported = imetricprogress
                                                 # for testing purpose, limit to the X first to optimize the testing time
                                                 if loadonlyXmetrics and iCount > 10:
@@ -1459,7 +1197,7 @@ if __name__ == '__main__':
                                                         if metric.type == "quality-rules":
                                                             json_thresholds = None
                                                             if loaddata:
-                                                                json_thresholds = get_qualityrules_thresholds(logger, restapiurl, user, password, apikey, domain, snapshotid, metric.id)   
+                                                                json_thresholds = AIPRestAPI.get_qualityrules_thresholds(logger, restapiurl, user, password, apikey, domain, snapshotid, metric.id)   
                                                             if json_thresholds != None and json_thresholds['thresholds'] != None:
                                                                 icount = 0
                                                                 for thres in json_thresholds['thresholds']:
@@ -1480,7 +1218,7 @@ if __name__ == '__main__':
                                         for tciterator in listtechnicalcriteria:
                                             json_metriccontributions = None
                                             if loaddata:
-                                                json_metriccontributions = get_metric_contributions(logger, restapiurl, user, password, apikey, domain, tciterator.id, snapshotid)
+                                                json_metriccontributions = AIPRestAPI.get_metric_contributions(logger, restapiurl, user, password, apikey, domain, tciterator.id, snapshotid)
                                             if json_metriccontributions != None:
                                                 for contr in json_metriccontributions['gradeContributors']:
                                                     tccontribution = Contribution()
@@ -1497,7 +1235,7 @@ if __name__ == '__main__':
                                         for bcid in bcids:
                                             json_metriccontributions = None
                                             if loaddata:                                            
-                                                json_metriccontributions = get_metric_contributions(logger, restapiurl, user, password, apikey, domain, bcid, snapshotid)
+                                                json_metriccontributions = AIPRestAPI.get_metric_contributions(logger, restapiurl, user, password, apikey, domain, bcid, snapshotid)
                                             if json_metriccontributions != None:
                                                 for contr in json_metriccontributions['gradeContributors']:
                                                     bccontribution = Contribution()
@@ -1521,10 +1259,9 @@ if __name__ == '__main__':
                                     listviolations = []
                                     ''' loaddata and ''' 
                                     if loadviolations: 
-                                        loginfo(logger,'Extracting violations',True)
-                                        loginfo(logger,'Loading violations & components data from the REST API',True)
-                                        #json_violations = get_snapshot_violations(logger, connection, warname, user, password, apikey,domain, applicationid, snapshotid,  criticalrulesonlyfilter, violationstatusfilter, businesscriterionfilter, technofilter,nbrows)
-                                        json_violations = get_snapshot_violations(logger, connection, warname, user, password, apikey,domain, applicationid, snapshotid, criticalrulesonlyfilter, None, businesscriterionfilter, technofilter, nbrows)                                            
+                                        LogUtils.loginfo(logger,'Extracting violations',True)
+                                        LogUtils.loginfo(logger,'Loading violations & components data from the REST API',True)
+                                        json_violations = AIPRestAPI.get_snapshot_violations(logger, restapiurl, user, password, apikey, domain, applicationid, snapshotid, criticalrulesonlyfilter, None, businesscriterionfilter, technofilter, nbrows)                                            
                                     if json_violations != None:
                                         iCouterRestAPIViolations = 0
                                         lastProgressReported = None
@@ -1535,29 +1272,30 @@ if __name__ == '__main__':
                                             violations_size = len(json_violations)
                                             imetricprogress = int(100 * (iCouterRestAPIViolations / violations_size))
                                             if iCouterRestAPIViolations==1 or iCouterRestAPIViolations==violations_size or iCouterRestAPIViolations%500 == 0:
-                                                loginfo(logger,"processing violation " + str(iCouterRestAPIViolations) + "/" + str(violations_size)  + ' (' + str(imetricprogress) + '%)',True)
+                                                LogUtils.loginfo(logger,"processing violation " + str(iCouterRestAPIViolations) + "/" + str(violations_size)  + ' (' + str(imetricprogress) + '%)',True)
                                             try:
                                                 objviol.qrname = violation['rulePattern']['name']
                                             except KeyError:
                                                 qrname = None    
-                                            objviol.critical = '<Not extracted>'
-                                            try:
-                                                crit = violation['rulePattern']['critical']
-                                                objviol.critical = str(crit)
-                                            except KeyError:
-                                                # in earlier versions of the rest API this information was not available, taking the value from another location when possible
-                                                #if tqiqm != None and tqiqm[qrid] != None and tqiqm[qrid].get("critical") != None:
-                                                #    qrcritical = str(tqiqm[qrid].get("critical"))
-                                                None                                                    
+                                                   
                                             try:                                    
                                                 qrrulepatternhref = violation['rulePattern']['href']
                                             except KeyError:
                                                 qrrulepatternhref = None
-                                            
+                                                                                            
                                             qrrulepatternsplit = qrrulepatternhref.split('/')
                                             for elem in qrrulepatternsplit:
                                                 # the last element is the id
-                                                objviol.qrid = elem
+                                                objviol.qrid = elem                                            
+                                            
+                                            # critical contribution
+                                            objviol.qrcritical = '<Not extracted>'
+                                            try:
+                                                qrdetails = tqiqm[objviol.qrid]
+                                                if tqiqm != None and qrdetails != None and qrdetails.get("critical") != None:
+                                                    objviol.critical = str(qrdetails.get("critical"))
+                                            except KeyError:
+                                                LogUtils.logwarning(logger, 'Could not find the critical contribution for %s'% str(objviol.qrid), True)
                                                 
                                             # filter on quality rule id or name, if the filter match
                                             if qridfilter != None and not re.match(qridfilter, str(qrid)):
@@ -1642,7 +1380,7 @@ if __name__ == '__main__':
                                         
                                     # generated csv file if required                                    
                                     fpath = get_excelfilepath(outputfolder, appName)
-                                    loginfo(logger,"Generating xlsx file " + fpath,True)
+                                    LogUtils.loginfo(logger,"Generating xlsx file " + fpath,True)
                                     generate_excelfile(logger, fpath, appName, snapshotversion, snapshotdate, loadviolations, listbusinesscriteria, listtechnicalcriteria, listbccontributions, listtccontributions, listmetrics, dictapsummary, dicremediationabacus, listviolations, broundgrades)
                                     
                                     json_qr_results = None
@@ -1653,6 +1391,6 @@ if __name__ == '__main__':
     except: # catch *all* exceptions
         tb = traceback.format_exc()
         #e = sys.exc_info()[0]
-        logerror(logger, '  Error during the processing %s' % tb,True)
+        LogUtils.logerror(logger, '  Error during the processing %s' % tb,True)
 
-    loginfo(logger,'Done !',True)
+    LogUtils.loginfo(logger,'Done !',True)
