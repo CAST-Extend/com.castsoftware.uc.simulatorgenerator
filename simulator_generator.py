@@ -14,6 +14,7 @@ import numpy as np
 import requests
 from io import StringIO
 import xlsxwriter
+import xml.etree.ElementTree as ET
 from utils.utils import open_connection, close_connection
 from utils.utils import AIPRestAPI, LogUtils, ObjectViolationMetric, RulePatternDetails, FileUtils, StringUtils, Metric, Contribution, Violation
 
@@ -67,6 +68,7 @@ class ExcelFormat:
     format_green_int = None
     format_red_int = None
     format_green_int = None
+
 ########################################################################
 def init_parse_argument():
     # get arguments
@@ -90,6 +92,7 @@ def init_parse_argument():
     requiredNamed.add_argument('-applicationfilter', required=False, dest='applicationfilter', help='Application name regexp filter')
     requiredNamed.add_argument('-loglevel', required=False, dest='loglevel', help='Log level (INFO|DEBUG) default = INFO')
     requiredNamed.add_argument('-nbrows', required=False, dest='nbrows', help='max number of rows extracted from the rest API, default = 1000000000')
+    requiredNamed.add_argument('-extensioninstallationfolder', required=False, dest='extensioninstallationfolder', help='extension installation folder')
 
     return parser
 ########################################################################
@@ -816,8 +819,6 @@ def get_excelfilepath(outputfolder, appName):
 if __name__ == '__main__':
 
     global logger
-    # Version
-    script_version = "1.0.1"
     # load the data or just generate an empty excel file
     loaddata = True
     # load only 10 metrics
@@ -845,6 +846,13 @@ if __name__ == '__main__':
     if args.apikey != None: 
         apikey = args.apikey    
     log = args.log
+    extensioninstallationfolder = "."
+    if args.extensioninstallationfolder != None:
+        extensioninstallationfolder = args.extensioninstallationfolder
+    # add trailing / if not exist 
+    if extensioninstallationfolder[-1:] != '/' and extensioninstallationfolder[-1:] != '\\' :
+        extensioninstallationfolder += '/'
+    
     outputfolder = args.outputfolder 
     effortcsvfilepath = "CAST_QualityRulesEffort.csv"
     if args.effortcsvfilepath != None:
@@ -887,6 +895,19 @@ if __name__ == '__main__':
         logger.setLevel(logging.INFO)
 
     try:
+        # Version
+        script_version = 'Unknown'
+        try:
+            pluginfile = extensioninstallationfolder + 'plugin.nuspec'
+            LogUtils.loginfo(logger,pluginfile,True)
+            tree = ET.parse(pluginfile)
+            root = tree.getroot()
+            namespace = "{http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd}"
+            for versiontag in root.findall('{0}metadata/{0}version'.format(namespace)):
+                script_version = versiontag.text
+        except:
+            None 
+        
         protocol = 'Undefined'
         host = 'Undefined'
         warname = 'Undefined'
@@ -901,7 +922,7 @@ if __name__ == '__main__':
     
         # log params
         logger.info('********************************************')
-        logger.info('script_version='+script_version)
+        LogUtils.loginfo(logger,'log script_version='+script_version,True)
         logger.info('python version='+sys.version)
         logger.info('****************** params ******************')
         logger.info('restapiurl='+restapiurl)
@@ -913,6 +934,7 @@ if __name__ == '__main__':
         logger.info('pwd=*******')
         logger.info('apikey='+str(apikey))
         LogUtils.loginfo(logger,'log file='+log,True)
+        logger.info('extensioninstallationfolder='+extensioninstallationfolder)
         logger.info('log level='+loglevel)
         logger.info('applicationfilter='+str(applicationfilter))
         logger.info('nbrows='+str(nbrows))
