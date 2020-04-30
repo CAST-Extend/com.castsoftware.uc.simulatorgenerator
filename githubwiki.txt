@@ -79,6 +79,8 @@ None
 - Only the Full application mode is covered. The legacy consolidation mode like Aggregation by Number of Artifacts, ... is not managed  
 <a name="rn"></a>
 # Release Notes
+## Version 1.0.3
+Minor improvements & fixes
 ## Version 1.0.2
 Add an option to extract the violations in a tab  
 Minor fixes

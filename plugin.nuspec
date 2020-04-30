@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>com.castsoftware.uc.simulatorgenerator</id>
-    <version>1.0.2</version>
+    <version>1.0.3</version>
     <title>Grade and effort simulation generator</title>
     <authors>User Community</authors>
     <owners>CAST</owners>
@@ -10,7 +10,7 @@
     <iconUrl>https://raw.githubusercontent.com/CAST-Extend/com.castsoftware.uc.simulatorgenerator/master/256px-Office-ms-excel.svg.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>This extension generates an Excel file that allows to simulate the grade impact and effort to fix a number of violations for a set of quality rules</description>
-    <releaseNotes>https://github.com/CAST-Extend/com.castsoftware.uc.simulatorgenerator/wiki#version-102</releaseNotes>
+    <releaseNotes>https://github.com/CAST-Extend/com.castsoftware.uc.simulatorgenerator/wiki#version-103</releaseNotes>
     <tags>CASTUserCommunity Quality</tags>
     <dependencies>
       <dependency id="CAIP" version="8.3" />

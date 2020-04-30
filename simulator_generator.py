@@ -15,8 +15,7 @@ import requests
 from io import StringIO
 import xlsxwriter
 import xml.etree.ElementTree as ET
-from utils.utils import open_connection, close_connection
-from utils.utils import AIPRestAPI, LogUtils, ObjectViolationMetric, RulePatternDetails, FileUtils, StringUtils, Metric, Contribution, Violation
+from utils.utils import RestUtils, AIPRestAPI, LogUtils, ObjectViolationMetric, RulePatternDetails, FileUtils, StringUtils, Metric, Contribution, Violation
 
 '''
  Author : MMR & TGU
@@ -100,6 +99,8 @@ def init_parse_argument():
 def format_table_readme(workbook,worksheet,table,format):
     worksheet.set_tab_color(format.const_color_light_grey)
     header_format = workbook.add_format({'bold': True,'text_wrap': True,'valign': 'middle','fg_color': format.const_color_header_columns,'border': 1}) 
+    worksheet.freeze_panes(1, 0)  # Freeze the first row.
+    
     
     worksheet.set_column('A:A', 25, None) # Page 
     worksheet.set_column('B:B', 60, None) # Content  
@@ -130,27 +131,25 @@ def excel_round(formula,decimals):
 def format_table_bc_grades(workbook,worksheet,table,format,loadviolations):
     worksheet.set_tab_color(format.const_color_light_blue)
     header_format = workbook.add_format({'bold': True,'text_wrap': True,'valign': 'middle','fg_color': format.const_color_header_columns,'border': 1}) 
+    worksheet.freeze_panes(1, 0)  # Freeze the first row.
     worksheet.set_zoom(85)
-    #TODO: ajust size autofilter
-    worksheet.autofilter('A1:H10000')
-
    
     # the last 6 lines don't have this formula    
     offset = 1
     if not loadviolations:
-        max_row_bc_data = len(table.index.values)+1 - 9
+        nb_rows = len(table.index.values)+1 - 9
     else: 
-        max_row_bc_data = len(table.index.values)+1 - 15
+        nb_rows = len(table.index.values)+1 - 15
     
     col_to_format = colnum_string(len(table.columns) + 1 + offset)    
 
     
     # 3 empty line + 3 lines for application name, snapshot version and date
-    row_to_format_for_summary = max_row_bc_data + 6
+    row_to_format_for_summary = nb_rows + 6
 
     start = "H2"
     #define the range to be formated in excel format
-    range_to_format = "{}:{}{}".format(start,col_to_format,max_row_bc_data)
+    range_to_format = "{}:{}{}".format(start,col_to_format,nb_rows)
     #print("range {}".format(range_to_format))
     
     worksheet.conditional_format(range_to_format, {'type': 'cell','criteria': '>','value': 0, 'format':   format.format_green_percentage})
@@ -158,20 +157,21 @@ def format_table_bc_grades(workbook,worksheet,table,format,loadviolations):
 
     worksheet.set_column('A:A', 20, None) # Application column
     worksheet.set_column('B:B', 32, format.format_align_left) # BC name
-    worksheet.set_column('C:C', 10, format.format_align_left) # Metric Id
-    worksheet.set_column('D:D', 15, format.format_float_with_2decimals) # Grade 
-    worksheet.set_column('E:E', 15, format.format_float_with_2decimals) # Simulated grade 
+    worksheet.set_column('C:C', 7.5, format.format_align_left) # Metric Id
+    worksheet.set_column('D:D', 11, format.format_float_with_2decimals) # Grade 
+    worksheet.set_column('E:E', 11, format.format_float_with_2decimals) # Simulated grade 
     # group and hide columns lowest critical grade and weighted average
     worksheet.set_column('F:F', 15, format.format_float_with_2decimals, {'level': 1, 'hidden': True}) #  
     worksheet.set_column('G:G', 20, format.format_float_with_2decimals, {'level': 1, 'hidden': True}) #  
     # group and hide columns lowest critical grade and weighted average
     #worksheet.set_column('F:F', None, None, {'level': 1, 'collapsed': True})
     #worksheet.set_column('G:G', None, None, {'level': 1, 'collapsed': True})    
-    worksheet.set_column('H:H', 15, format.format_percentage) # delta %  
-    
+    worksheet.set_column('H:H', 11, format.format_percentage) # delta %  
+    last_column = 'H'
+    worksheet.autofilter('A1:' + last_column + str(nb_rows))      
     
     # Create a for loop to start writing the formulas to each row
-    for row_num in range(1,max_row_bc_data):
+    for row_num in range(1,nb_rows):
         # simulation grade
         worksheet.write_formula(row_num, 5-1, round_grades(broundgrades,'=IF(F%d=0,G%d,MIN(F%d,G%d))') % (row_num + 1, row_num + 1, row_num + 1, row_num + 1))
         # lowest critical
@@ -218,17 +218,15 @@ def format_table_tc_grades(workbook,worksheet,table,format):
     worksheet.set_tab_color(format.const_color_light_grey)
     header_format = workbook.add_format({'bold': True,'text_wrap': True,'valign': 'middle','fg_color': format.const_color_header_columns,'border': 1}) 
     worksheet.freeze_panes(1, 0)  # Freeze the first row.
-    #TODO: ajust size autofilter
-    worksheet.autofilter('A1:G10000')
     worksheet.set_zoom(85)
 
     offset = 1 
-    row_to_format = len(table.index.values)+1
+    nb_rows = len(table.index.values)+1
     col_to_format = colnum_string(len(table.columns) + 1 + offset)    
 
     #define the range to be formated in excel format
     start = "G2"
-    range_to_format = "{}:{}{}".format(start,col_to_format,row_to_format)
+    range_to_format = "{}:{}{}".format(start,col_to_format,nb_rows)
     worksheet.conditional_format(range_to_format, {'type':     'cell', 'criteria': '>','value':    0, 'format':   format.format_green_percentage})
     worksheet.conditional_format(range_to_format, {'type':     'cell', 'criteria': '<','value':    0, 'format':   format.format_red_percentage})
             
@@ -240,11 +238,11 @@ def format_table_tc_grades(workbook,worksheet,table,format):
     worksheet.set_column('E:E', 13, format.format_float_with_2decimals, {'level': 1, 'hidden': True}) # 
     worksheet.set_column('F:F', 19, format.format_float_with_2decimals, {'level': 1, 'hidden': True}) # 
     worksheet.set_column('G:G', 12, format.format_percentage) # 
-    #worksheet.set_column('E:E', None, None, {'level': 1, 'collapsed': True})
-    #worksheet.set_column('F:F', None, None, {'level': 1, 'collapsed': True}) 
+    last_column = 'G'
+    worksheet.autofilter('A1:' + last_column + str(nb_rows))     
  
     # Create a for loop to start writing the formulas to each row
-    for row_num in range(1,row_to_format):
+    for row_num in range(1,nb_rows):
         #simulation grade
         worksheet.write_formula(row_num, 4-1, round_grades(broundgrades,"=IF(E%d=0,F%d,MIN(E%d,F%d))") % (row_num + 1, row_num + 1, row_num + 1, row_num + 1), format.format_float_with_2decimals)
         #lowest critical rule grade
@@ -266,15 +264,14 @@ def format_table_rules_grades(workbook,worksheet,table,format,listmetricsinviola
     header_format = workbook.add_format({'bold': True,'text_wrap': True,'valign': 'middle','fg_color': format.const_color_header_columns,'border': 1})
     worksheet.set_zoom(85)
     worksheet.freeze_panes(1, 0)  # Freeze the first row.    
-    row_to_format = len(table.index.values)+1
-    #TODO: ajust size autofilter
-    worksheet.autofilter('A1:X10000')
+    nb_rows = len(table.index.values)+1
+
     
     # conditional formating for the Grade delta column (red and green)
     col_to_format = 'K'    
     start = col_to_format + '2'
     #define the range to be formated in excel format
-    range_to_format = "{}:{}{}".format(start,col_to_format,row_to_format)
+    range_to_format = "{}:{}{}".format(start,col_to_format,nb_rows)
     worksheet.conditional_format(range_to_format, {'type':'cell', 'criteria': '>', 'value': 0, 'format':   format.format_green_percentage})
     worksheet.conditional_format(range_to_format, {'type':'cell', 'criteria': '<', 'value': 0, 'format':   format.format_red_percentage})   
 
@@ -282,7 +279,7 @@ def format_table_rules_grades(workbook,worksheet,table,format,listmetricsinviola
     col_to_format = 'M'    
     start = col_to_format + '2'
     #define the range to be formated in excel format
-    range_to_format = "{}:{}{}".format(start,col_to_format,row_to_format)
+    range_to_format = "{}:{}{}".format(start,col_to_format,nb_rows)
     worksheet.conditional_format(range_to_format, {'type': 'cell', 'criteria': '>', 'value': 0, 'format':   format.format_green_int})
     worksheet.conditional_format(range_to_format, {'type': 'cell', 'criteria': '<', 'value': 0, 'format':   format.format_red_int})   
 
@@ -290,19 +287,19 @@ def format_table_rules_grades(workbook,worksheet,table,format,listmetricsinviola
     col_to_format = 'O'    
     start = col_to_format + '2'
     #define the range to be formated in excel format
-    range_to_format = "{}:{}{}".format(start,col_to_format,row_to_format)
+    range_to_format = "{}:{}{}".format(start,col_to_format,nb_rows)
     worksheet.conditional_format(range_to_format, {'type': 'cell', 'criteria': '=', 'value': 0, 'format':   format.format_grey_float_1decimal})
     # conditional formating for the total effort column in hours
     col_to_format = 'P'    
     start = col_to_format + '2'
     #define the range to be formated in excel format
-    range_to_format = "{}:{}{}".format(start,col_to_format,row_to_format)
+    range_to_format = "{}:{}{}".format(start,col_to_format,nb_rows)
     worksheet.conditional_format(range_to_format, {'type': 'cell', 'criteria': '=', 'value': 0, 'format':   format.format_grey_float_1decimal})
     # conditional formating for the total effort column in days
     col_to_format = 'Q'    
     start = col_to_format + '2'
     #define the range to be formated in excel format
-    range_to_format = "{}:{}{}".format(start,col_to_format,row_to_format)
+    range_to_format = "{}:{}{}".format(start,col_to_format,nb_rows)
     worksheet.conditional_format(range_to_format, {'type': 'cell', 'criteria': '=', 'value': 0, 'format':   format.format_grey_float_1decimal})
 
 
@@ -332,11 +329,11 @@ def format_table_rules_grades(workbook,worksheet,table,format,listmetricsinviola
     worksheet.set_column('W:W', 6.5, None) #
     worksheet.set_column('X:X', 6.5, None) # Thres 4   
     worksheet.set_column('Y:Y', 11, None) # violations extracted ?
-
-    
+    last_column='Y'
+    worksheet.autofilter('A1:' + last_column + str(nb_rows))     
 
     # Create a for loop to start writing the formulas to each row
-    for row_num in range(1,row_to_format):
+    for row_num in range(1,nb_rows):
         metrictype = str(table.loc[row_num-1, 'Metric Type'])
         metricid = str(table.loc[row_num-1, 'Metric Id'])
         
@@ -404,9 +401,7 @@ def format_table_violations(workbook,worksheet,table,format):
     header_format = workbook.add_format({'bold': True,'text_wrap': True,'valign': 'middle','fg_color': format.const_color_header_columns,'border': 1})
     worksheet.set_zoom(78)
     worksheet.freeze_panes(1, 0)  # Freeze the first row. 
-    #TODO: ajust size autofilter
-    row_to_format = len(table.index.values)+1
-    worksheet.autofilter('A1:N' + str(row_to_format)) 
+    nb_rows = len(table.index.values)+1
     
     worksheet.set_column('A:A', 80, format.format_align_left) #  QR Name
     worksheet.set_column('B:B', 9, None) #  QR Id 
@@ -432,14 +427,15 @@ def format_table_violations(workbook,worksheet,table,format):
     worksheet.set_column('R:R', 8, None) # JSON actions modified
     worksheet.set_column('S:S', 8, None) # JSON actions removed    
     worksheet.set_column('T:T', 60, None) # Violation id
-    #{'level': 1, 'collapsed': True}
+    last_column = 'T'
+    worksheet.autofilter('A1:' + last_column + str(nb_rows))
     
     # Write the column headers with the defined format.
     for col_num, value in enumerate(table.columns.values):
         worksheet.write(0, col_num, value, header_format)   
    
     # Create a for loop to start writing the formulas to each row
-    for row_num in range(1,row_to_format):    
+    for row_num in range(1,nb_rows):    
         None
         #Nb actions 
         worksheet.write_formula(row_num, 14-1, '=IF(E%d,1,"")' % (row_num + 1))
@@ -462,7 +458,7 @@ def format_table_violations(workbook,worksheet,table,format):
         worksheet.write_formula(row_num, 19-1 , formula_removed)        
         
         # Data validation        
-        worksheet.data_validation('E' + str(row_to_format+1), {'validate': 'list', 'source': ['TRUE', 'FALSE']})   
+        worksheet.data_validation('E' + str(nb_rows+1), {'validate': 'list', 'source': ['TRUE', 'FALSE']})   
 
      
 ########################################################################
@@ -471,8 +467,9 @@ def format_table_bc_contribution(workbook,worksheet,table, format):
     worksheet.set_tab_color(format.const_color_light_grey)
     header_format = workbook.add_format({'bold': True,'text_wrap': True,'valign': 'middle','fg_color': format.const_color_header_columns,'border': 1})
     worksheet.freeze_panes(1, 0)  # Freeze the first row.
+    worksheet.set_zoom(85)
+    nb_rows = len(table.index.values)+1
     
-    row_to_format = len(table.index.values)+1  
     worksheet.set_column('A:A', 25, None) #  
     worksheet.set_column('B:B', 13, format.format_align_left) # Application column 
     worksheet.set_column('C:C', 60, format.format_align_left) # BC column 
@@ -481,11 +478,11 @@ def format_table_bc_contribution(workbook,worksheet,table, format):
     worksheet.set_column('F:F', 9, None) # HF column 
     worksheet.set_column('G:G', 13, format.format_float_with_2decimals) # HF column 
     worksheet.set_column('H:H', 13, format.format_float_with_2decimals) # HF column  
-
-    worksheet.autofilter('A1:H10000')
+    last_column = 'H'
+    worksheet.autofilter('A1:' + last_column + str(nb_rows))
 
     # Create a for loop to start writing the formulas to each row
-    for row_num in range(1,row_to_format):
+    for row_num in range(1,nb_rows):
         worksheet.write_formula(row_num, 7 - 1, "=VLOOKUP(D%d,'TC grades'!B:D,3,FALSE)" % (row_num + 1))
         worksheet.write_formula(row_num, 8 - 1, '=$G%d*$E%d' % (row_num + 1, row_num + 1))
 
@@ -499,9 +496,10 @@ def format_table_tc_contribution(workbook,worksheet,table,format):
     worksheet.set_tab_color(format.const_color_light_grey)
     header_format = workbook.add_format({'bold': True,'text_wrap': True,'valign': 'middle','fg_color': format.const_color_header_columns,'border': 1}) 
     worksheet.freeze_panes(1, 0)  # Freeze the first row.
+    worksheet.set_zoom(85)
     
     offset = 1 
-    row_to_format = len(table.index.values)+1
+    nb_rows = len(table.index.values)+1
     col_to_format = colnum_string(len(table.columns) + 1 + offset)    
     
     worksheet.set_column('A:A', 45, None) #  
@@ -512,11 +510,11 @@ def format_table_tc_contribution(workbook,worksheet,table,format):
     worksheet.set_column('F:F', 9, None) #  
     worksheet.set_column('G:G', 13, format.format_float_with_2decimals) #  grade simulation
     worksheet.set_column('H:H', 13, format.format_float_with_2decimals) #  weighted grade
-    
-    worksheet.autofilter('A1:H10000')
-    
+    last_column = 'H'
+    worksheet.autofilter('A1:' + last_column + str(nb_rows))    
+   
     # Create a for loop to start writing the formulas to each row
-    for row_num in range(1,row_to_format):
+    for row_num in range(1,nb_rows):
         worksheet.write_formula(row_num, 7 - 1, "=VLOOKUP(D%d,'Rules Grades'!E:I,5,FALSE)" % (row_num + 1))
         worksheet.write_formula(row_num, 8 - 1, '=$G%d*$E%d' % (row_num + 1, row_num + 1))
 
@@ -531,12 +529,13 @@ def format_table_remediation_effort(workbook,worksheet,table,format):
     header_format = workbook.add_format({'bold': True,'text_wrap': True,'valign': 'middle','fg_color': format.const_color_header_columns,'border': 1}) 
     worksheet.set_zoom(85)
     worksheet.freeze_panes(1, 0)  # Freeze the first row.
+    nb_rows = len(table.index.values)+1
     
     worksheet.set_column('A:A', 15, None) # QR Id
     worksheet.set_column('B:B', 100, None) # QR Name 
     worksheet.set_column('C:C', 50, None) # Remediation effort 
-    
-    worksheet.autofilter('A1:C10000')
+    last_column = 'C'
+    worksheet.autofilter('A1:' + last_column + str(nb_rows))    
 
     # Write the column headers with the defined format.
     for col_num, value in enumerate(table.columns.values):
@@ -560,7 +559,7 @@ def generate_excelfile(logger, filepath, appName, snapshotversion, snapshotdate,
         str_readme_content += "Violations;Violations list;Use this sheet to select your violations for action\n"
     str_readme_content += "BC contributions;Business Criteria contributors (Technical criteria);\n"
     str_readme_content += "TC Contributions;Technical Criteria contributors (Quality metrics);\n"
-    str_readme_content += "Remediation effort;Quality rules unit remediation effort;\n"
+    str_readme_content += "Remediation effort;Quality rules unit remediation effort;Use to sheet to set or modify the unit remediation effort per quality rule\n"
     
     try: 
         df_readme = pd.read_csv(StringIO(StringUtils.remove_unicode_characters(str_readme_content)), sep=";",engine='python',quoting=csv.QUOTE_NONE)
@@ -570,7 +569,7 @@ def generate_excelfile(logger, filepath, appName, snapshotversion, snapshotdate,
     ###############################################################################
     # Data for the BC Grades Tab
     
-    str_df_bc_grades = "Application Name;Business criterion;Metric Id;Current grade;Simulation grade;Lowest critical grade;Weighted average of Technical criteria; Delta\n"
+    str_df_bc_grades = "Application Name;Business criterion;Metric Id;Grade;Simulation grade;Lowest critical grade;Weighted average of Technical criteria; Delta\n"
     for bc in listbusinesscriteria:
         if bc.applicationName == appName:
             str_df_bc_grades += appName + ";" + bc.name + ";" + bc.id + ";" + str(round_grades(broundgrades, bc.grade)) + ";;;;"
@@ -816,6 +815,14 @@ def get_excelfilepath(outputfolder, appName):
     return fpath 
 
 ########################################################################
+
+def checkoutputfilelocked(logger, filepath):
+    if FileUtils.is_file_locked_with_retries(logger, filepath):
+        LogUtils.logerror(logger, 'File is locked. Aborting', True)
+        return True
+    return False
+
+########################################################################
 if __name__ == '__main__':
 
     global logger
@@ -949,10 +956,12 @@ if __name__ == '__main__':
         logger.info('********************************************')
         
         LogUtils.loginfo(logger, 'Initialization', True) 
-        connection = open_connection(logger, restapiurl, user, password) 
+        rest_utils = RestUtils(logger, restapiurl, user, password, apikey)
+        rest_utils.open_session()
+        rest_service = AIPRestAPI(rest_utils) 
         
         # few checks on the server 
-        json_server = AIPRestAPI.get_server(logger, restapiurl, user, password, apikey)
+        json_server = rest_service.get_server()
         if json_server != None:
             logger.info('server status=' + json_server['status'])    
             servversion = json_server['version']
@@ -964,7 +973,7 @@ if __name__ == '__main__':
             logger.info('********************************************')    
         
         # retrieve the domains & the applications in those domains 
-        json_domains = AIPRestAPI.get_domains(logger, restapiurl, user, password, apikey)
+        json_domains = rest_service.get_domains()
         if json_domains != None:
             bAEDdomainFound = False
             for item in json_domains:
@@ -989,7 +998,7 @@ if __name__ == '__main__':
                     continue
                 
                 if domain != 'AAD' or not bAEDdomainFound:
-                    json_apps = AIPRestAPI.get_applications(logger, restapiurl, user, password, apikey,domain)
+                    json_apps = rest_service.get_applications(domain)
                     applicationid = -1
                     appHref = ''
                     appName = ''
@@ -1015,15 +1024,8 @@ if __name__ == '__main__':
                             LogUtils.loginfo(logger, "Processing application " + appName, True)
                             # testing if csv file can be written
                             fpath = get_excelfilepath(outputfolder, appName)
-                            filelocked = False
-                            icount = 0
-                            while icount < 10 and FileUtils.is_file_locked(fpath):
-                                icount += 1
-                                filelocked = True
-                                LogUtils.logwarning(logger, 'File %s is locked. Please unlock it ! Waiting 5 seconds before retrying (try %s/10) ' % (fpath, str(icount)), True)
-                                time.sleep(5)
-                            if FileUtils.is_file_locked(fpath):
-                                LogUtils.logerror(logger, 'File %s is locked, aborting for application %s' % (fpath,appName),True)
+                            # if the output file is locked we move to next application
+                            if checkoutputfilelocked(logger, fpath):
                                 continue
 
                             listbusinesscriteria = []
@@ -1031,7 +1033,7 @@ if __name__ == '__main__':
                             # applications health factors for last snapshot
                             if (loaddata):
                                 logger.info('Extracting the applications business criteria grades for last snapshot')
-                                json_bc_grades = AIPRestAPI.get_businesscriteria_grades(logger, restapiurl, user, password, apikey,domain)
+                                json_bc_grades = rest_service.get_businesscriteria_grades(domain)
                                 if json_bc_grades != None:
                                     for res in json_bc_grades:
                                         for bc in res['applicationResults']:
@@ -1068,7 +1070,7 @@ if __name__ == '__main__':
                                             dicremediationabacus.update({row[0]:{"id":row[0],"name":effortqrname,"uniteffortinhours":row[2]}})
                             # snapshot list
                             logger.info('Loading the application snapshot')
-                            json_snapshots = AIPRestAPI.get_application_snapshots(logger, restapiurl, user, password, apikey,domain, applicationid)
+                            json_snapshots = rest_service.get_application_snapshots(domain, applicationid)
                             if json_snapshots != None:
                                 for snap in json_snapshots:
                                     snapHref = ''
@@ -1097,7 +1099,7 @@ if __name__ == '__main__':
                                         if not loaddata:
                                             logger.info("NOT Extracting the snapshot quality model")                                           
                                         else:
-                                            json_snapshot_quality_model = AIPRestAPI.get_snapshot_tqi_quality_model(logger, restapiurl, user, password, apikey,domain, snapshotid)
+                                            json_snapshot_quality_model = rest_service.get_snapshot_tqi_quality_model(domain, snapshotid)
                                         if json_snapshot_quality_model != None:
                                             for qmitem in json_snapshot_quality_model:
                                                 maxWeight = -1
@@ -1121,7 +1123,7 @@ if __name__ == '__main__':
                                         json_apsummary = None
                                         if loaddata:
                                             logger.info("Extracting the action plan summary")
-                                            json_apsummary = AIPRestAPI.get_actionplan_summary(logger, restapiurl, user, password, apikey, domain, applicationid, snapshotid)
+                                            json_apsummary = rest_service.get_actionplan_summary(domain, applicationid, snapshotid)
                                         if json_apsummary != None:
                                             for qrap in json_apsummary:
                                                 qrhref = qrap['rulePattern']['href']
@@ -1148,8 +1150,7 @@ if __name__ == '__main__':
                                     
                                     json_qr_results = None
                                     if loaddata:
-                                        LogUtils.loginfo(logger,'Extracting the quality metrics results and the quality rules thresholds',True)
-                                        json_qr_results = AIPRestAPI.get_qualitymetrics_results(logger, restapiurl, user, password, apikey, domain, applicationid, False, nbrows)
+                                        json_qr_results = rest_service.get_qualitymetrics_results(domain, applicationid, False, nbrows)
                                     if json_qr_results != None:
                                         for res in json_qr_results:
                                             iCount = 0
@@ -1219,7 +1220,8 @@ if __name__ == '__main__':
                                                         if metric.type == "quality-rules":
                                                             json_thresholds = None
                                                             if loaddata:
-                                                                json_thresholds = AIPRestAPI.get_qualityrules_thresholds(logger, restapiurl, user, password, apikey, domain, snapshotid, metric.id)   
+                                                                #LogUtils.loginfo(logger,'Extracting the quality rules thresholds',True)
+                                                                json_thresholds = rest_service.get_qualityrules_thresholds(domain, snapshotid, metric.id)   
                                                             if json_thresholds != None and json_thresholds['thresholds'] != None:
                                                                 icount = 0
                                                                 for thres in json_thresholds['thresholds']:
@@ -1240,7 +1242,7 @@ if __name__ == '__main__':
                                         for tciterator in listtechnicalcriteria:
                                             json_metriccontributions = None
                                             if loaddata:
-                                                json_metriccontributions = AIPRestAPI.get_metric_contributions(logger, restapiurl, user, password, apikey, domain, tciterator.id, snapshotid)
+                                                json_metriccontributions = rest_service.get_metric_contributions(domain, tciterator.id, snapshotid)
                                             if json_metriccontributions != None:
                                                 for contr in json_metriccontributions['gradeContributors']:
                                                     tccontribution = Contribution()
@@ -1257,7 +1259,7 @@ if __name__ == '__main__':
                                         for bcid in bcids:
                                             json_metriccontributions = None
                                             if loaddata:                                            
-                                                json_metriccontributions = AIPRestAPI.get_metric_contributions(logger, restapiurl, user, password, apikey, domain, bcid, snapshotid)
+                                                json_metriccontributions = rest_service.get_metric_contributions(domain, bcid, snapshotid)
                                             if json_metriccontributions != None:
                                                 for contr in json_metriccontributions['gradeContributors']:
                                                     bccontribution = Contribution()
@@ -1283,7 +1285,7 @@ if __name__ == '__main__':
                                     if loadviolations: 
                                         LogUtils.loginfo(logger,'Extracting violations',True)
                                         LogUtils.loginfo(logger,'Loading violations & components data from the REST API',True)
-                                        json_violations = AIPRestAPI.get_snapshot_violations(logger, restapiurl, user, password, apikey, domain, applicationid, snapshotid, criticalrulesonlyfilter, None, businesscriterionfilter, technofilter, nbrows)                                            
+                                        json_violations = rest_service.get_snapshot_violations(domain, applicationid, snapshotid, criticalrulesonlyfilter, None, businesscriterionfilter, technofilter, nbrows)                                            
                                     if json_violations != None:
                                         iCouterRestAPIViolations = 0
                                         lastProgressReported = None
@@ -1408,7 +1410,6 @@ if __name__ == '__main__':
                                     json_qr_results = None
                                     # keep only last snapshot
                                     break
-        close_connection(logger)
                                         
     except: # catch *all* exceptions
         tb = traceback.format_exc()
