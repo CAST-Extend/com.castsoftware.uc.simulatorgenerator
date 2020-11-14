@@ -128,7 +128,7 @@ def generate_excelfile(logger, filepath, appName, snapshotversion, snapshotdate,
     ###############################################################################
     # Data for the Rules Grades Tab
 
-    str_df_rules_grades = "Application Name;Snapshot Date;Snapshot version;Metric Name;Metric Id;Metric Type;Critical;Grade;Simulation grade;Grade Delta;Grade Delta (%);Nb of violations;Nb violations for action;Remaining violations;Unit effort (man.hours);Total effort (man.hours);Total effort (man.days);Total Checks;Compliance ratio;New compliance ratio;Thres.1;Thres.2;Thres.3;Thres.4;Educate (Mark for ...);Violations extracted\n"
+    str_df_rules_grades = "Application Name;Snapshot Date;Snapshot version;Metric Name;Metric Id;Metric Type;Critical;Grade;Simulation grade;Grade Delta;Grade Delta (%);Nb of violations;Nb violations for action;Remaining violations;Unit effort (man.hours);Total effort (man.hours);Total effort (man.days);Total Checks;Compliance ratio;New compliance ratio;Thres.1;Thres.2;Thres.3;Thres.4;Educate (Mark for ...);Violations extracted;Grade improvement priority\n"
     for qr in dictmetrics:
         oqr = dictmetrics[qr]
         str_line = ''
@@ -182,6 +182,8 @@ def generate_excelfile(logger, filepath, appName, snapshotversion, snapshotdate,
                 str_line += 'Continuous improvement'
         #new compliance ratio
         str_line += ';'
+        #grade improvement priority
+        str_line += ';'
         str_line += '\n'
         str_df_rules_grades += str_line
     #logger.debug(str_df_rules_grades)
@@ -232,7 +234,9 @@ def generate_excelfile(logger, filepath, appName, snapshotversion, snapshotdate,
         
     ###############################################################################
     # Data for the TC Contributions Tab
-    str_df_tc_contribution = 'Technical criterion name;Technical criterion Id;Metric name;Metric Id;Weight;Critical;Grade simulation;Weighted grade\n'
+    str_df_tc_contribution = 'Technical criterion name;Technical criterion Id;Metric name;Metric Id;Weight;Critical;Grade simulation;Weighted grade'
+    str_df_tc_contribution  += ';Grade improvement priority;Grade improvement opportunity;TC simulation grade;TC weight;TC Lowest critical grade;TC Weighted average of quality rules;Simulation grade for improvement;Weighted grade for improvement;Delta weighted grade for improvement;TC simulation grade from improvement;TC Lowest critical grade for improvement'
+    str_df_tc_contribution  += '\n'
     # for each contribution TC/QR 
     for tcc in listtccontributions:
         QRhasresults = False
@@ -244,6 +248,7 @@ def generate_excelfile(logger, filepath, appName, snapshotversion, snapshotdate,
             #print (tcc.metricid)
             str_df_tc_contribution += tcc.parentmetricname + ';' + tcc.parentmetricid + ';' + tcc.metricname + ';' + tcc.metricid
             str_df_tc_contribution += ';' + str(tcc.weight) + ';' + str(tcc.critical) + ';;'
+            str_df_tc_contribution  += ';;;;;;;;;;'
             str_df_tc_contribution += '\n'
     try: 
         str_df_tc_contribution = StringUtils.remove_unicode_characters(str_df_tc_contribution)
@@ -550,10 +555,17 @@ def format_table_rules_grades(workbook,worksheet,table,format,listmetricsinviola
     range_to_format = "{}:{}{}".format(start,col_to_format,nb_rows)
     worksheet.conditional_format(range_to_format, {'type': 'cell', 'criteria': '=', 'value': 0, 'format':   format.format_grey_float_1decimal})
 
+    # conditional formating for the Grade improvement priority
+    col_to_format = 'AA'    
+    start = col_to_format + '2'
+    #define the range to be formated in excel format
+    range_to_format = "{}:{}{}".format(start,col_to_format,nb_rows)
+    worksheet.conditional_format(range_to_format, {'type':'3_color_scale', 'min_value': 1, 'max_value': 4})
 
-    worksheet.set_column('A:A', 25, None) #  Application name
-    worksheet.set_column('B:B', 12, format.format_align_left) # Application column 
-    worksheet.set_column('C:C', 10, format.format_align_left) # Snapshot date
+
+    worksheet.set_column('A:A', 25, None,                     {'level': 1, 'hidden': True}) #  Application name
+    worksheet.set_column('B:B', 12, format.format_align_left, {'level': 1, 'hidden': True}) # Application column 
+    worksheet.set_column('C:C', 10, format.format_align_left, {'level': 1, 'hidden': True}) # Snapshot date
     worksheet.set_column('D:D', 60, None) # Metric name 
     worksheet.set_column('E:E', 8, None) # metric id
     worksheet.set_column('F:F', 18, None) #  
@@ -573,13 +585,16 @@ def format_table_rules_grades(workbook,worksheet,table,format,listmetricsinviola
     worksheet.set_column('S:S', 11, format.format_percentage) # % compliance ratio
     worksheet.set_column('T:T', 11, format.format_percentage) # % new compliance ratio
     worksheet.set_column('U:U', 6.5, None) # Thres 1   
-    worksheet.set_column('V:V', 6.5, None) #
-    worksheet.set_column('W:W', 6.5, None) #
-    worksheet.set_column('X:X', 6.5, None) # Thres 4
     
-    worksheet.set_column('Y:Y', 11, None) # Educate   
+    worksheet.set_column('V:V', 6.5, None, {'level': 2, 'hidden': True}) #
+    worksheet.set_column('W:W', 6.5, None, {'level': 2, 'hidden': True}) #
+    worksheet.set_column('X:X', 6.5, None, {'level': 2, 'hidden': True}) # Thres 4
+    
+    worksheet.set_column('Y:Y', 11, None, {'level': 2, 'hidden': True}) # Educate   
     worksheet.set_column('Z:Z', 11, None) # violations extracted ?
-    last_column='Z'
+    worksheet.set_column('AA:AA', 13, None) # Grade improvement priority
+    
+    last_column='AA'
     worksheet.autofilter('A1:' + last_column + str(nb_rows))     
 
     # Create a for loop to start writing the formulas to each row
@@ -620,6 +635,9 @@ def format_table_rules_grades(workbook,worksheet,table,format,listmetricsinviola
             #print(formula)
             worksheet.write_formula(row_num, 26-1, formula)
             
+            #Grade improvement opportunity
+            worksheet.write_formula(row_num, 27-1, "=VLOOKUP(E%s,'TC contributions'!D:N,6,FALSE)" % (row_num + 1))
+            
         else:
             # simulation grade = grade
             worksheet.write_formula(row_num, 9-1, '=$H%d' % (row_num + 1))
@@ -633,7 +651,7 @@ def format_table_rules_grades(workbook,worksheet,table,format,listmetricsinviola
             worksheet.write(0, col_num, value, header_format)
 
     # group and hide the context
-    worksheet.set_column('A:A', None, None, {'level': 1, 'hidden': True})
+    """worksheet.set_column('A:A', None, None, {'level': 1, 'hidden': True})
     worksheet.set_column('B:B', None, None, {'level': 1, 'hidden': True})
     worksheet.set_column('C:C', None, None, {'level': 1, 'hidden': True})
 
@@ -642,7 +660,7 @@ def format_table_rules_grades(workbook,worksheet,table,format,listmetricsinviola
     worksheet.set_column('W:W', None, None, {'level': 2, 'hidden': True})
     worksheet.set_column('X:X', None, None, {'level': 2, 'hidden': True})
     worksheet.set_column('Y:Y', None, None, {'level': 2, 'hidden': True})
-
+    """
 ########################################################################
 
 
@@ -748,9 +766,14 @@ def format_table_tc_contribution(workbook,worksheet,table,format):
     worksheet.freeze_panes(1, 0)  # Freeze the first row.
     worksheet.set_zoom(85)
     
-    offset = 1 
     nb_rows = len(table.index.values)+1
-    col_to_format = colnum_string(len(table.columns) + 1 + offset)    
+    
+    # conditional formating for the Grade improvement priority
+    col_to_format = 'I'    
+    start = col_to_format + '2'
+    #define the range to be formated in excel format
+    range_to_format = "{}:{}{}".format(start,col_to_format,nb_rows)
+    worksheet.conditional_format(range_to_format, {'type':'3_color_scale', 'min_value': 1, 'max_value': 4})
     
     worksheet.set_column('A:A', 60, None) #  
     worksheet.set_column('B:B', 13, format.format_align_left)  
@@ -760,17 +783,43 @@ def format_table_tc_contribution(workbook,worksheet,table,format):
     worksheet.set_column('F:F', 9, None) #  
     worksheet.set_column('G:G', 13, format.format_float_with_2decimals) #  grade simulation
     worksheet.set_column('H:H', 13, format.format_float_with_2decimals) #  weighted grade
-    last_column = 'H'
+    
+    worksheet.set_column('I:I', 13, None) #  Grade imp priority
+    worksheet.set_column('J:J', 13, None) #  Grade imp opp
+    worksheet.set_column('K:K', 11, format.format_float_with_2decimals      , {'level': 1, 'hidden': True}) #  TC simu grad
+    worksheet.set_column('L:L', 9,  None                                    , {'level': 1, 'hidden': True}) #  TC weight
+    worksheet.set_column('M:M', 11, format.format_float_with_2decimals      , {'level': 1, 'hidden': True}) #  TC lower critic grad
+    worksheet.set_column('N:N', 11, format.format_float_with_2decimals      , {'level': 1, 'hidden': True}) #  TC weighted avg qr
+    worksheet.set_column('N:N', 12, format.format_float_with_2decimals      , {'level': 1, 'hidden': True}) #   
+    worksheet.set_column('O:O', 12, format.format_float_with_2decimals      , {'level': 1, 'hidden': True}) #   
+    worksheet.set_column('P:P', 12, format.format_float_with_2decimals      , {'level': 1, 'hidden': True}) #   
+    worksheet.set_column('Q:Q', 12, format.format_float_with_2decimals      , {'level': 1, 'hidden': True}) #  
+    worksheet.set_column('R:R', 12, format.format_float_with_2decimals      , {'level': 1, 'hidden': True}) #  
+    worksheet.set_column('S:S', 12, format.format_float_with_2decimals      , {'level': 1, 'hidden': True}) #  
+    
+    last_column = 'S'
     worksheet.autofilter('A1:' + last_column + str(nb_rows))    
    
     # Create a for loop to start writing the formulas to each row
     for row_num in range(1,nb_rows):
         worksheet.write_formula(row_num, 7 - 1, "=VLOOKUP(D%d,'Rules Grades'!E:I,5,FALSE)" % (row_num + 1))
         worksheet.write_formula(row_num, 8 - 1, '=$G%d*$E%d' % (row_num + 1, row_num + 1))
-
+        worksheet.write_formula(row_num, 9 - 1, '=IF(J%d,IF(F%d,1,2),IF(AND(F%d,G%d<4),3,IF(G%d<4,4,"")))' % (row_num + 1, row_num + 1, row_num + 1, row_num + 1, row_num + 1))
+        worksheet.write_formula(row_num, 10 - 1, "=IF(AND(F%s,M%s<N%s),IF(G%s=M%s,TRUE,FALSE),IF(Q%s=_xlfn.MAXIFS('TC contributions'!Q:Q,'TC contributions'!B:B,B%s),TRUE,FALSE))" % (row_num + 1, row_num + 1, row_num + 1, row_num + 1, row_num + 1, row_num + 1, row_num + 1))
+        worksheet.write_formula(row_num, 11 - 1, "=VLOOKUP(A%s,'TC Grades'!A:G,4,FALSE)"% (row_num + 1))
+        worksheet.write_formula(row_num, 12 - 1, "=SUMIF(A:A,A%s,E:E)"% (row_num + 1))
+        worksheet.write_formula(row_num, 13 - 1, "=_xlfn.MINIFS('TC contributions'!G:G,'TC contributions'!B:B,B%s,'TC contributions'!F:F,TRUE)"% (row_num + 1))
+        worksheet.write_formula(row_num, 14 - 1, "=SUMIF('TC contributions'!B:B,B%s,'TC contributions'!H:H)/SUMIF('TC contributions'!B:B,B%s,'TC contributions'!E:E)" % (row_num + 1, row_num + 1))
+        worksheet.write_formula(row_num, 15 - 1, "=IF(IF(G%s*1.1>4,G%s*1.05,G%s*1.1)>4,4,IF(G%s*1.1>4,G%s*1.05,G%s*1.1))"% (row_num + 1, row_num + 1, row_num + 1, row_num + 1, row_num + 1, row_num + 1))
+        worksheet.write_formula(row_num, 16 - 1, "=O%s*E%s" % (row_num + 1, row_num + 1))
+        worksheet.write_formula(row_num, 17 - 1, "=P%s-H%s" % (row_num + 1, row_num + 1))
+        worksheet.write_formula(row_num, 18 - 1, "=SUMIF('TC contributions'!B:B,B%s,'TC contributions'!H:H)/SUMIF('TC contributions'!B:B,B%s,'TC contributions'!E:E)"% (row_num + 1, row_num + 1))
+        worksheet.write_formula(row_num, 19 - 1, "=_xlfn.MINIFS('TC contributions'!O:O,'TC contributions'!B:B,B%s,'TC contributions'!F:F,TRUE)"% (row_num + 1))
     # Write the column headers with the defined format.
     for col_num, value in enumerate(table.columns.values):
         worksheet.write(0, col_num, value, header_format)
+
+
 
 ########################################################################
 

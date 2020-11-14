@@ -94,7 +94,7 @@ if __name__ == '__main__':
     # load the data or just generate an empty excel file
     loaddata = True
     # load only 10 metrics
-    loadonlyXmetrics = False    
+    loadonlyXmetrics = True    
     # round the grades or not
 
 
@@ -374,48 +374,23 @@ if __name__ == '__main__':
                             json_qr_results = None
                             if loaddata:
                                 dictmetrics, dicttechnicalcriteria  =  rest_service_aip.get_qualitymetrics_results(domain.name, objapp.id, objsnapshot.snapshotid, tqiqm=tqiqm, criticalonly=False, modules="$all", nbrows=nbrows)                                
-
                                 logger.info('Extracting the technical criteria contributors')
-                                for item in dicttechnicalcriteria:
-                                    tciterator = dicttechnicalcriteria[item]
-                                    json_metriccontributions = None
+                                for item_tc in dicttechnicalcriteria:
                                     if loaddata:
-                                        json_metriccontributions = rest_service_aip.get_metric_contributions_json(domain.name, tciterator.id, objsnapshot.snapshotid)
-                                    if json_metriccontributions != None:
-                                        for contr in json_metriccontributions['gradeContributors']:
-                                            tccontribution = Contribution()
-                                            tccontribution.parentmetricname = json_metriccontributions['name']
-                                            tccontribution.parentmetricid = json_metriccontributions['key']
-                                            tccontribution.metricname = contr['name']
-                                            tccontribution.metricid = contr['key']
-                                            tccontribution.critical = contr['critical']
-                                            tccontribution.weight = contr['weight']
-                                            # add only the one that have results
-                                            listtccontributions.append(tccontribution)
-                                    json_metriccontributions = None
+                                        tciterator = dicttechnicalcriteria[item_tc]
+                                        for item in rest_service_aip.get_metric_contributions(domain.name, tciterator.id, objsnapshot.snapshotid):
+                                            listtccontributions.append(item)
                                 logger.info('Extracting the business criteria contributors')
                                 for bcid in bcids:
-                                    json_metriccontributions = None
-                                    if loaddata:                                            
-                                        json_metriccontributions = rest_service_aip.get_metric_contributions_json(domain.name, bcid, objsnapshot.snapshotid)
-                                    if json_metriccontributions != None:
-                                        for contr in json_metriccontributions['gradeContributors']:
-                                            bccontribution = Contribution()
-                                            bccontribution.parentmetricname = json_metriccontributions['name']
-                                            bccontribution.parentmetricid = json_metriccontributions['key']
-                                            bccontribution.metricname = contr['name']
-                                            bccontribution.metricid = contr['key']
-                                            bccontribution.critical = contr['critical']
-                                            bccontribution.weight = contr['weight']
-                                            # we add only the technical criteria that have results in the contribution list
-                                            bfound = False
-                                            for tc in dicttechnicalcriteria:
-                                                if tc == bccontribution.metricid:
-                                                    bfound = True
-                                                    break 
-                                            if bfound:
-                                                listbccontributions.append(bccontribution)
-                                    json_metriccontributions = None
+                                    if loaddata:
+                                        for item in rest_service_aip.get_metric_contributions(domain.name, bcid, objsnapshot.snapshotid):
+                                            listbccontributions.append(item)
+                                        index = 0 
+                                        for cont in listbccontributions:
+                                            # if no results for this technical criteria, we remove it from the list
+                                            if dicttechnicalcriteria.get(cont.metricid) == None:
+                                                del listbccontributions[index]
+                                            index += 1
                             
                             json_violations = None
                             listviolations = []

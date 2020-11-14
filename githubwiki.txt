@@ -79,6 +79,10 @@ None
 - Only the Full application mode is covered. The legacy consolidation mode like Aggregation by Number of Artifacts, ... is not managed  
 <a name="rn"></a>
 # Release Notes
+## Version 1.1.0
+Add a column to show the quality rules that have the highest impact on technical criteria / health factors grades  
+Fix the connection to AIP Console integrated Rest API  
+The url must now include /rest   
 ## Version 1.0.3
 Minor improvements & fixes
 ## Version 1.0.2

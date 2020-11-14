@@ -1234,6 +1234,9 @@ class AIPRestAPI:
         request = domain + "/quality-indicators/" + str(metricid) + "/snapshots/" + snapshotid 
         return self.restutils.execute_requests_get(request)
 
+    def get_metric_contributions(self, domain, metricid, snapshotid):
+        return Contribution.loadlist(self.get_metric_contributions_json(domain, metricid, snapshotid))
+
     ########################################################################
     def get_qualityrules_thresholds_json(self, domain, snapshotid, qrid):
         #LogUtils.loginfo(self.restutils.logger,'Extracting the quality rules thresholds',True)
@@ -1651,6 +1654,26 @@ class Contribution:
     metricname = None
     weight = None
     critical = None
+  
+    @staticmethod
+    def loadlist(json_contributions):
+        listcontributions = []
+        if json_contributions != None:
+            for json in json_contributions['gradeContributors']:
+                listcontributions.append(Contribution.load(json, json_contributions['name'], json_contributions['key'] )) 
+        return listcontributions   
+
+    @staticmethod
+    def load(json_contribution, parentmetricname, parentmetricid):
+        x = Contribution()
+        if json_contribution != None:
+            x.parentmetricname = parentmetricname
+            x.parentmetricid = parentmetricid
+            x.metricname = json_contribution['name']
+            x.metricid = json_contribution['key']
+            x.critical = json_contribution['critical']
+            x.weight = json_contribution['weight']      
+        return x
   
 ########################################################################
     
