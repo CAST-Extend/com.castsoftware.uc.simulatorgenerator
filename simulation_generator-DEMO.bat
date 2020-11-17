@@ -13,14 +13,14 @@ REM install the additional python lib required
 "%PYTHONPATH%\Scripts\pip" install xlsxwriter
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 :: WAR params : http|https://host(:port)(/WarName)
-SET RESTAPIURL=https://demo-eu.castsoftware.com/Engineering
+SET RESTAPIURL=https://demo-eu.castsoftware.com/Engineering/rest
 SET CMD_URL=-restapiurl "%RESTAPIURL%"
 
 ::When the Engineering dashboard URL and Rest API are different, fill the below parameter 
 :: Engineering dahsboard URL  : http|https://host(:port)(/EngineeringWarName) 
-::SET EDURL=https://demo-eu.castsoftware.com/Engineering
+SET EDURL=https://demo-eu.castsoftware.com/Engineering
 SET CMD_EDURL=
-::SET CMD_EDURL=-edurl "%EDURL%"
+SET CMD_EDURL=-edurl "%EDURL%"
 
 ::SET USER=N/A
 SET USER=CIO
@@ -45,7 +45,7 @@ SET CMD_EXTENSIONINSTALLATIONFOLDER=-extensioninstallationfolder %EXTENSIONINSTA
 
 :: Application name regexp filter
 ::SET APPFILTER=Webgoat^|eComm.*
-SET APPFILTER=CRM Moder
+SET APPFILTER=eCommerce
 SET CMD_APPFILTER=
 SET CMD_APPFILTER=-applicationfilter "%APPFILTER%"
 

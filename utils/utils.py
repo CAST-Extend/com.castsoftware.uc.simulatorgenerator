@@ -1102,10 +1102,13 @@ class AIPRestAPI:
                         LogUtils.logwarning(self.restutils.logger, "Metric has no grade, removing it from the list : " + metric.name, True)
                     else:
                         if metric.type == "quality-rules":
-                            metric.threshold1 = tqiqm[''+metric.id].get("threshold1")
-                            metric.threshold2 = tqiqm[''+metric.id].get("threshold2")
-                            metric.threshold3 = tqiqm[''+metric.id].get("threshold3")
-                            metric.threshold4 = tqiqm[''+metric.id].get("threshold4")
+                            try:
+                                metric.threshold1 = tqiqm[''+metric.id].get("threshold1")
+                                metric.threshold2 = tqiqm[''+metric.id].get("threshold2")
+                                metric.threshold3 = tqiqm[''+metric.id].get("threshold3")
+                                metric.threshold4 = tqiqm[''+metric.id].get("threshold4")
+                            except KeyError:
+                                None
                             
                             json_thresholds = None
                             # loading from another place when tresholds are empty

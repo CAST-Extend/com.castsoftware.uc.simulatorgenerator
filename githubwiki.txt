@@ -24,8 +24,9 @@ This extension generates an Excel file that allows to simulate the grade impact 
 
 <a name="situation"></a>
 # In what situation should you install this extension?  
-When you want to do a grade / effort simulation  
-When you don't have access to the Cast environment, or only access trough the Engineering dashboard REST API, and not able to use Action Plan Optimizer.      
+When you want to do a grade / effort simulation and identify quickly the quick wins  
+When you don't have access to the Cast environment, or only access trough the Engineering dashboard REST API, and not able to use Dashboard Action Plan Recommendation or Action Plan Optimizer.
+When you want to understand how the grades are computed at application level
    
 <a name="aipcompatibility"></a>
 # CAST AIP versions compatibility
@@ -76,11 +77,18 @@ None
 
 <a name="limitations"></a>
 - Only the last snapshot data are exported in the Excel file  
-- Only the Full application mode is covered. The legacy consolidation mode like Aggregation by Number of Artifacts, ... is not managed  
+- Only the Full application mode is covered. The legacy consolidation mode like Aggregation by Number of Artifacts, ... is not managed
+- Since 1.1.0 when the Rules Grade / Nb violations for action is manually changed, you need to wait 3-4 seconds because of all excel formulas added in this release 
 <a name="rn"></a>
 # Release Notes
 ## Version 1.1.0
-Add a column to show the quality rules that have the highest impact on technical criteria / health factors grades  
+Rules grades :  
+- Add a column "Grade improvement priority" to show the quality rules that have the highest impact on technical criteria / health factors grades  
+- Add a column "Nb violations to fix on this rule before rule grade improvement"
+- Add a column "Nb rules to fix before TC grade improvement" when several critical rules are impacting the TC grade to 1
+- Add a column "Nb violations to fix on the TC rules before TC grade improvement", same reason as above line
+- Add a column "Technical criterion" 
+Fix the grade delta formula  
 Fix the connection to AIP Console integrated Rest API  
 The url must now include /rest   
 ## Version 1.0.3
