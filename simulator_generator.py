@@ -16,7 +16,6 @@ import requests
 import xlsxwriter
 import xml.etree.ElementTree as ET
 from utils.utils import RestUtils, AIPRestAPI, LogUtils, ObjectViolationMetric, RulePatternDetails, FileUtils, StringUtils, Metric, Contribution, Violation
-#from utils.excel_format import generate_excelfile
 from utils import excel_format
 
 '''
@@ -42,7 +41,7 @@ def init_parse_argument():
     requiredNamed.add_argument('-password', required=False, dest='password', help='Password')
     requiredNamed.add_argument('-apikey', required=False, dest='apikey', help='Api key')
     requiredNamed.add_argument('-log', required=True, dest='log', help='log file')
-    requiredNamed.add_argument('-of', required=False, dest='outputfolder', help='output folder')    
+    requiredNamed.add_argument('-of', required=True, dest='outputfolder', help='output folder')    
     requiredNamed.add_argument('-effortcsvfilepath', required=False, dest='effortcsvfilepath', help='Inputs quality rules effort csv file path (default=CAST_QualityRulesEffort.csv)')    
     requiredNamed.add_argument('-loadviolations', required=False, dest='loadviolations', help='Load the violations true/false default=false')
     requiredNamed.add_argument('-qridfilter', required=False, dest='qridfilter', help='For violations filtering, violation quality rule id regexp filter')
@@ -62,7 +61,7 @@ def init_parse_argument():
 def get_excelfilepath(outputfolder, appName):
     fpath = ''
     if outputfolder != None:
-        fpath = outputfolder + '/'
+        fpath = outputfolder
     fpath += appName + "_simulation.xlsx"
     return fpath 
 
@@ -87,6 +86,10 @@ def get_hrefid(href, separator='/'):
         id = elem    
     return id
 
+def remove_trailing_suffix (mystr, suffix='rest'):
+    if mystr.endswith(suffix):
+        return mystr[:len(mystr)-len(mystr)-1]
+
 ########################################################################
 if __name__ == '__main__':
 
@@ -104,7 +107,7 @@ if __name__ == '__main__':
     if restapiurl != None and restapiurl[-1:] == '/':
         # remove the trailing / 
         restapiurl = restapiurl[:-1] 
-    edurl = restapiurl 
+    edurl = remove_trailing_suffix(restapiurl, 'rest') 
     # the engineering dashboard url can be different from the rest api url, but if not specified we will take the same value are rest api url
     if args.edurl != None:
         edurl = args.edurl
@@ -125,7 +128,9 @@ if __name__ == '__main__':
     if extensioninstallationfolder[-1:] != '/' and extensioninstallationfolder[-1:] != '\\' :
         extensioninstallationfolder += '/'
     
-    outputfolder = args.outputfolder 
+    outputfolder = args.outputfolder
+    if not outputfolder.endswith('/') and not outputfolder.endswith('\\'):
+        outputfolder += '/'
     effortcsvfilepath = "CAST_QualityRulesEffort.csv"
     if args.effortcsvfilepath != None:
         effortcsvfilepath = args.effortcsvfilepath 
@@ -180,28 +185,13 @@ if __name__ == '__main__':
         except:
             None 
         
-        protocol = 'Undefined'
-        host = 'Undefined'
-        warname = 'Undefined'
-        
-        # split the URL to extract the warname, host, protocol ... 
-        rexURL = "(([hH][tT][tT][pP][sS]*)[:][/][/]([A-Za-z0-9_:\.-]+)([/]([A-Za-z0-9_\.-]+))*[/]*)"
-        m0 = re.search(rexURL, restapiurl)
-        if m0:
-            protocol = m0.group(2)
-            host = m0.group(3)
-            warname = m0.group(5)
-    
         # log params
         logger.info('********************************************')
         LogUtils.loginfo(logger,'log script_version='+script_version,True)
         logger.info('python version='+sys.version)
         logger.info('****************** params ******************')
         logger.info('restapiurl='+restapiurl)
-        logger.info('edurl='+edurl)        
-        logger.info('host='+host)
-        logger.info('protocol='+protocol)
-        logger.info('warname='+str(warname))
+        logger.info('edurl='+str(edurl))        
         logger.info('user='+str(user))
         if password == None or password == "N/A":
             logger.info('password=' + password)

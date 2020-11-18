@@ -405,8 +405,8 @@ def format_table_bc_grades(workbook,worksheet,table,format,loadviolations):
     worksheet.conditional_format(range_to_format, {'type': 'cell','criteria': '<','value': -0.000001, 'format':   format.format_red_percentage})
 
     worksheet.set_column('A:A', 20, None) # Application column
-    worksheet.set_column('B:B', 32, format.format_align_left) # BC name
-    worksheet.set_column('C:C', 7.5, format.format_align_left) # Metric Id
+    worksheet.set_column('B:B', 32, None) # BC name
+    worksheet.set_column('C:C', 7.5, None) # Metric Id
     worksheet.set_column('D:D', 11, format.format_float_with_2decimals) # Grade 
     worksheet.set_column('E:E', 11, format.format_float_with_2decimals) # Simulated grade 
     # group and hide columns lowest critical grade and weighted average

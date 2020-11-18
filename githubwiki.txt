@@ -25,8 +25,8 @@ This extension generates an Excel file that allows to simulate the grade impact 
 <a name="situation"></a>
 # In what situation should you install this extension?  
 When you want to do a grade / effort simulation and identify quickly the quick wins  
-When you don't have access to the Cast environment, or only access trough the Engineering dashboard REST API, and not able to use Dashboard Action Plan Recommendation or Action Plan Optimizer.
-When you want to understand how the grades are computed at application level
+When you don't have access to the Cast environment, or only access trough the Engineering dashboard REST API, and not able to use Dashboard Action Plan Recommendation or Action Plan Optimizer.  
+When you want to understand how the grades are computed at application level  
    
 <a name="aipcompatibility"></a>
 # CAST AIP versions compatibility
@@ -42,23 +42,23 @@ You need to configure either the batch file provided, or the command line runnin
 You need to provide the CAST Engineering Dashboard URL and credentials.
 <a name="operation"></a>
 # Operation instructions
-Requires a Python runtime 3.6 and 3 python libraries (that are installed by pip as the first step of the batch)
-Run the batch file or the command line running the python script to generate the Excel file
+Requires a Python runtime 3.6 and 3 python libraries (that are installed by pip as the first step of the batch).  
+Run the batch file or the command line running the python script to generate the Excel file.  
 
 <a name="expect"></a>
 # What results can you expect?
 For each application, and only for the last snapshot : 
-1 Excel file named <Application name>_simulation.xlsx is generated
-The remediation efforts are pre-loaded from CAST_QualityRulesEffort.csv file into the Excel, but can be modified in the Excel file.
-By default only the violations are not loaded, but you have an option to load them. 
+1 Excel file named <Application name>_simulation.xlsx is generated.  
+The remediation efforts are pre-loaded from CAST_QualityRulesEffort.csv file into the Excel, but can be modified in the Excel file.  
+By default only the violations are not loaded, but you have an option to load them.   
+  
+You can change the number of violations that will be fixed and you will have the grade and efforts simulations computed in the Excel file.   
 
-You can change the number of violations that will be fixed and you will have the grade and efforts simulations computed in the Excel file. 
-
-Parameter available :   
+Parameters available :     
 - Application name (regexp): -applicationfilter, if Empty all the application that are configured in the different engineering domains will be processed  
-- Load violations: -loadviolations True/False default False
+- Load violations: -loadviolations True/False default False  
 - Quality rule id (regexp): -qridfilter  
-- Quality rule name (regexp): -qrnamefilter 
+- Quality rule name (regexp): -qrnamefilter  
 - Business criterion: -businesscriterionfilter (60017,60016,60013,60014,60011,60012), can be a multiple value, separated with comma, default "Empty" (All)  
 - Technology: -technofilter List of technologies separated by a comma, default "Empty" (All)  
 - Log level: -loglevel INFO/DEBUG, default INFO  
@@ -83,14 +83,15 @@ None
 # Release Notes
 ## Version 1.1.0
 Rules grades :  
-- Add a column "Grade improvement priority" to show the quality rules that have the highest impact on technical criteria / health factors grades  
-- Add a column "Nb violations to fix on this rule before rule grade improvement"
-- Add a column "Nb rules to fix before TC grade improvement" when several critical rules are impacting the TC grade to 1
-- Add a column "Nb violations to fix on the TC rules before TC grade improvement", same reason as above line
-- Add a column "Technical criterion" 
+Add a column "Grade improvement priority" to show the quality rules that have the highest impact on technical criteria / health factors grades    
+Add a column "Nb violations to fix on this rule before rule grade improvement"  
+Add a column "Nb rules to fix before TC grade improvement" when several critical rules are impacting the TC grade to 1  
+Add a column "Nb violations to fix on the TC rules before TC grade improvement", same reason as above line  
+Add a column "Technical criterion" 
 Fix the grade delta formula  
 Fix the connection to AIP Console integrated Rest API  
-The url must now include /rest   
+The url must now include /rest  
+Simplify the template batch file  
 ## Version 1.0.3
 Minor improvements & fixes
 ## Version 1.0.2
