@@ -15,7 +15,7 @@ import requests
 
 import xlsxwriter
 import xml.etree.ElementTree as ET
-from utils.utils import RestUtils, AIPRestAPI, LogUtils, ObjectViolationMetric, RulePatternDetails, FileUtils, StringUtils, Metric, Contribution, Violation
+from utils.utils import RestUtils, AIPRestAPI, LogUtils, ObjectViolationMetric, RulePatternDetails, FileUtils, StringUtils, Metric, Contribution, Violation, ViolationFilter
 from utils import excel_format
 
 '''
@@ -43,6 +43,7 @@ def init_parse_argument():
     requiredNamed.add_argument('-log', required=True, dest='log', help='log file')
     requiredNamed.add_argument('-of', required=True, dest='outputfolder', help='output folder')    
     requiredNamed.add_argument('-effortcsvfilepath', required=False, dest='effortcsvfilepath', help='Inputs quality rules effort csv file path (default=CAST_QualityRulesEffort.csv)')    
+    requiredNamed.add_argument('-loadmodules', required=False, dest='loadmodules', help='Load the modules true/false default=false')
     requiredNamed.add_argument('-loadviolations', required=False, dest='loadviolations', help='Load the violations true/false default=false')
     requiredNamed.add_argument('-qridfilter', required=False, dest='qridfilter', help='For violations filtering, violation quality rule id regexp filter')
     requiredNamed.add_argument('-qrnamefilter', required=False, dest='qrnamefilter', help='For violations filtering, violation quality rule name regexp filter')
@@ -74,23 +75,6 @@ def checkoutputfilelocked(logger, filepath):
     return False
 
 ########################################################################
-  
-# extract the last element that is the id
-def get_hrefid(href, separator='/'):
-    if href == None or separator == None:
-        return None
-    id = ""
-    hrefsplit = href.split('/')
-    for elem in hrefsplit:
-        # the last element is the id
-        id = elem    
-    return id
-
-def remove_trailing_suffix (mystr, suffix='rest'):
-    if mystr.endswith(suffix):
-        return mystr[:len(mystr)-len(mystr)-1]
-
-########################################################################
 if __name__ == '__main__':
 
     global logger
@@ -107,7 +91,7 @@ if __name__ == '__main__':
     if restapiurl != None and restapiurl[-1:] == '/':
         # remove the trailing / 
         restapiurl = restapiurl[:-1] 
-    edurl = remove_trailing_suffix(restapiurl, 'rest') 
+    edurl = StringUtils.remove_trailing_suffix(restapiurl, 'rest') 
     # the engineering dashboard url can be different from the rest api url, but if not specified we will take the same value are rest api url
     if args.edurl != None:
         edurl = args.edurl
@@ -135,9 +119,16 @@ if __name__ == '__main__':
     if args.effortcsvfilepath != None:
         effortcsvfilepath = args.effortcsvfilepath 
 
+    loadmodules = False
+    if args.loadmodules != None and args.loadmodules in ('True','true'):
+        loadmodules = True    
+
     loadviolations = False
     if args.loadviolations != None and args.loadviolations in ('True','true'):
         loadviolations = True                                  
+
+
+    
     qridfilter = args.qridfilter
     qrnamefilter = args.qrnamefilter
     criticalrulesonlyfilter = False
@@ -176,7 +167,7 @@ if __name__ == '__main__':
         script_version = 'Unknown'
         try:
             pluginfile = extensioninstallationfolder + 'plugin.nuspec'
-            LogUtils.loginfo(logger,pluginfile,True)
+            LogUtils.logdebug(logger,pluginfile,True)
             tree = ET.parse(pluginfile)
             root = tree.getroot()
             namespace = "{http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd}"
@@ -187,7 +178,7 @@ if __name__ == '__main__':
         
         # log params
         logger.info('********************************************')
-        LogUtils.loginfo(logger,'log script_version='+script_version,True)
+        LogUtils.loginfo(logger,'version='+script_version,True)
         logger.info('python version='+sys.version)
         logger.info('****************** params ******************')
         logger.info('restapiurl='+restapiurl)
@@ -208,6 +199,7 @@ if __name__ == '__main__':
         logger.info('nbrows='+str(nbrows))
         logger.info('output folder='+str(outputfolder))
         logger.info('effortcsvfilepath='+str(effortcsvfilepath))
+        logger.info('loadmodules='+str(loadmodules))
         logger.info('loadviolations='+str(loadviolations))
         logger.info('qridfilter='+str(qridfilter))
         logger.info('qrnamefilter='+str(qrnamefilter))
@@ -215,6 +207,11 @@ if __name__ == '__main__':
         logger.info('businesscriterionfilter='+str(businesscriterionfilter))
         logger.info('technofilter='+str(technofilter)) 
         logger.info('********************************************')
+        
+        if loadmodules and loadviolations:
+            message = 'Aborting : please select one of the 2 options : loadmodules or loadviolations !'
+            LogUtils.logerror(logger, message, True)
+            raise ValueError(message) 
         
         LogUtils.loginfo(logger, 'Initialization', True) 
         rest_utils = RestUtils(logger, restapiurl, RestUtils.CLIENT_REQUESTS, user, password, apikey, uselocalcache=None, cachefolder=None, extensionid='com.castsoftware.uc.simulatorgenerator')
@@ -263,6 +260,7 @@ if __name__ == '__main__':
                         dicremediationabacus = {}
                         # applications health factors for last snapshot
                         if loaddata:
+                            """
                             logger.info('Extracting the applications business criteria grades for last snapshot')
                             json_bc_grades = rest_service_aip.get_businesscriteria_grades_json(domain.name)
                             if json_bc_grades != None:
@@ -279,7 +277,7 @@ if __name__ == '__main__':
                                         else:
                                             listbusinesscriteria.append(businesscriterion)
                             json_bc_grades = None
-
+                            """
                             logger.info('Loading the remediation effort from file ' + effortcsvfilepath)
                             csvdelimiter = ";"
                             csvquotechar='"'
@@ -310,206 +308,69 @@ if __name__ == '__main__':
                             listtccontributions = []
                             dictapsummary = {}
                             dictaptriggers = {}
-                            
                             tqiqm = {}
-                            if not loaddata:
-                                logger.info("NOT Extracting the snapshot quality model")                                           
-                            else:
-                                try:
+                            dictmetrics = {}
+                            dicttechnicalcriteria = {}                            
+                            
+                            try:
+                                if not loaddata:
+                                    logger.info("NOT Extracting the snapshot quality model")                                           
+                                else:
+                                    logger.info("Extracting the snapshot quality model")
                                     tqiqm = rest_service_aip.get_snapshot_tqi_quality_model(domain.name, objsnapshot.snapshotid)
-                                except:
-                                    LogUtils.logwarning(logger, 'Not able to extract the TQI quality model ***',True)                                       
+                            except:
+                                LogUtils.logwarning(logger, 'Not able to extract the TQI quality model ***',True)
                                     
-                            try:    
-                                json_apsummary = None
+                            try:
                                 if loaddata:
                                     logger.info("Extracting the action plan summary")
-                                    json_apsummary = rest_service_aip.get_actionplan_summary_json(domain.name, objapp.id, objsnapshot.snapshotid)
-                                if json_apsummary != None:
-                                    for qrap in json_apsummary:
-                                        qrhref = qrap['rulePattern']['href']
-                                        qrid = get_hrefid(qrhref)
-                                        addedissues = 0
-                                        pendingissues = 0
-                                        try:
-                                            addedissues  = qrap['addedIssues']
-                                        except KeyError:
-                                            logger.warning('Error in extracting the addedIssues')             
-                                        try:
-                                            pendingissues  = qrap['pendingIssues']
-                                        except KeyError:
-                                            logger.warning('Error in extracting the pendingIssues')                                                    
-                                        numberofactions = addedissues + pendingissues
-                                        dictapsummary.update({qrid:numberofactions})
-                                json_aptriggers = None
+                                    dictapsummary = rest_service_aip.get_actionplan_summary(domain.name, objapp.id, objsnapshot.snapshotid)
                             except:
                                 LogUtils.logwarning(logger, 'Not able to extract the action plan summary ***',True)                                        
                             try:                                     
                                 if loaddata:
                                     logger.info("Extracting the action plan triggers")
-                                    json_aptriggers = rest_service_aip.get_actionplan_triggers_json(domain.name, objapp.id, objsnapshot.snapshotid)
-                                if json_aptriggers != None:
-                                    for qrap in json_aptriggers:
-                                        qrhref = qrap['rulePattern']['href']
-                                        qrid = get_hrefid(qrhref)
-                                        active = qrap['active']
-                                        dictaptriggers.update({qrid:active})
-                                json_aptriggers = None
-                                 
+                                    dictaptriggers = rest_service_aip.get_actionplan_triggers(domain.name, objapp.id, objsnapshot.snapshotid)
                             except:
                                 LogUtils.logwarning(logger, 'Not able to extract the action plan triggers ***',True)
                             
-                            dictmetrics = {}
-                            dicttechnicalcriteria = {}
-                            json_qr_results = None
                             if loaddata:
-                                dictmetrics, dicttechnicalcriteria  =  rest_service_aip.get_qualitymetrics_results(domain.name, objapp.id, objsnapshot.snapshotid, tqiqm=tqiqm, criticalonly=False, modules="$all", nbrows=nbrows)                                
-                                logger.info('Extracting the technical criteria contributors')
+                                logger.info('Extracting the quality results per application and per module (quality-rules, quality-measures, quality-distributions, technical-criteria, business-criteria) ')
+                                strmodules_filter = None
+                                if loadmodules: 
+                                    strmodules_filter = "$all" 
+                                dictmetrics, dicttechnicalcriteria, listbusinesscriteria, dictmodules = rest_service_aip.get_qualitymetrics_results(domain.name, objapp.id, objsnapshot.snapshotid, tqiqm=tqiqm, criticalonly=False, modules=strmodules_filter, nbrows=nbrows)                                
+                                logger.info('Extracting the technical criteria contributors at application level')
+                                
+                                #TODO:Keep this section to collect the information for the old versions of Rest API, because in the latest versions select=aggregators in the previous REST call is already providing this 
                                 for item_tc in dicttechnicalcriteria:
-                                    if loaddata:
-                                        tciterator = dicttechnicalcriteria[item_tc]
-                                        for item in rest_service_aip.get_metric_contributions(domain.name, tciterator.id, objsnapshot.snapshotid):
-                                            listtccontributions.append(item)
-                                logger.info('Extracting the business criteria contributors')
+                                    tciterator = dicttechnicalcriteria[item_tc]
+                                    for item in rest_service_aip.get_metric_contributions(domain.name, tciterator.id, objsnapshot.snapshotid):
+                                        listtccontributions.append(item)
+                                logger.info('Extracting the business criteria contributors at application level')
                                 for bcid in bcids:
-                                    if loaddata:
-                                        for item in rest_service_aip.get_metric_contributions(domain.name, bcid, objsnapshot.snapshotid):
-                                            listbccontributions.append(item)
-                                        index = 0 
-                                        for cont in listbccontributions:
-                                            # if no results for this technical criteria, we remove it from the list
-                                            if dicttechnicalcriteria.get(cont.metricid) == None:
-                                                del listbccontributions[index]
-                                            index += 1
+                                    for item in rest_service_aip.get_metric_contributions(domain.name, bcid, objsnapshot.snapshotid):
+                                        listbccontributions.append(item)
+                                    index = 0 
+                                    for cont in listbccontributions:
+                                        # if no results for this technical criteria, we remove it from the list
+                                        if dicttechnicalcriteria.get(cont.metricid) == None:
+                                            del listbccontributions[index]
+                                        index += 1
                             
                             json_violations = None
                             listviolations = []
                             if loaddata and loadviolations: 
                                 LogUtils.loginfo(logger,'Extracting violations',True)
-                                LogUtils.loginfo(logger,'Loading violations & components data from the REST API',True)
-                                json_violations = rest_service_aip.get_snapshot_violations_json(domain.name, objapp.id, objsnapshot.snapshotid, criticalrulesonlyfilter, None, businesscriterionfilter, technofilter, nbrows)                                            
-                            if json_violations != None:
-                                iCouterRestAPIViolations = 0
-                                lastProgressReported = None
-                                for violation in json_violations:
-                                    objviol = Violation()
-                                    iCouterRestAPIViolations += 1
-                                    currentviolurl = ''
-                                    violations_size = len(json_violations)
-                                    imetricprogress = int(100 * (iCouterRestAPIViolations / violations_size))
-                                    if iCouterRestAPIViolations==1 or iCouterRestAPIViolations==violations_size or iCouterRestAPIViolations%500 == 0:
-                                        LogUtils.loginfo(logger,"processing violation " + str(iCouterRestAPIViolations) + "/" + str(violations_size)  + ' (' + str(imetricprogress) + '%)',True)
-                                    try:
-                                        objviol.qrname = violation['rulePattern']['name']
-                                    except KeyError:
-                                        qrname = None    
-                                           
-                                    try:                                    
-                                        qrrulepatternhref = violation['rulePattern']['href']
-                                    except KeyError:
-                                        qrrulepatternhref = None
-                                                                                    
-                                    qrrulepatternsplit = qrrulepatternhref.split('/')
-                                    for elem in qrrulepatternsplit:
-                                        # the last element is the id
-                                        objviol.qrid = elem                                            
-                                    
-                                    # critical contribution
-                                    objviol.qrcritical = '<Not extracted>'
-                                    try:
-                                        qrdetails = tqiqm[objviol.qrid]
-                                        if tqiqm != None and qrdetails != None and qrdetails.get("critical") != None:
-                                            objviol.critical = str(qrdetails.get("critical"))
-                                    except KeyError:
-                                        LogUtils.logwarning(logger, 'Could not find the critical contribution for %s'% str(objviol.qrid), True)
-                                        
-                                    # filter on quality rule id or name, if the filter match
-                                    if qridfilter != None and not re.match(qridfilter, str(qrid)):
-                                        continue
-                                    if qrnamefilter != None and not re.match(qrnamefilter, qrname):
-                                        continue
-                                    actionPlan = violation['remedialAction']
-                                    try:               
-                                        objviol.hasActionPlan = actionPlan != None
-                                    except KeyError:
-                                        logger.warning('Not able to extract the action plan')
-                                    if objviol.hasActionPlan:
-                                        try:               
-                                            objviol.actionplanstatus = actionPlan['status']
-                                            objviol.actionplantag = actionPlan['tag']
-                                            objviol.actionplancomment = actionPlan['comment']
-                                        except KeyError:
-                                            logger.warning('Not able to extract the action plan details')
-                                    try:                                    
-                                        objviol.hasExclusionRequest = violation['exclusionRequest'] != None
-                                    except KeyError:
-                                        logger.warning('Not able to extract the exclusion request')
-                                    # filter the violations already in the exclusion list 
-                                    try:                                    
-                                        objviol.violationstatus = violation['diagnosis']['status']
-                                    except KeyError:
-                                        logger.warning('Not able to extract the violation status')
-                                    try:
-                                        componentHref = violation['component']['href']
-                                    except KeyError:
-                                        componentHref = None
-
-                                    objviol.componentid = ''
-                                    rexcompid = "/components/([0-9]+)/snapshots/"
-                                    m0 = re.search(rexcompid, componentHref)
-                                    if m0: 
-                                        objviol.componentid = m0.group(1)
-                                    if qrrulepatternhref != None and componentHref != None:
-                                        objviol.id = qrrulepatternhref+'#'+componentHref
-                                    try:
-                                        objviol.componentShortName = violation['component']['shortName']
-                                    except KeyError:
-                                        logger.warning('Not able to extract the componentShortName')                                     
-                                    try:
-                                        objviol.componentNameLocation = violation['component']['name']
-                                    except KeyError:
-                                        logger.warning('Not able to extract the componentNameLocation')
-                                    # filter on component name location
-                                    try:
-                                        objviol.componentstatus = violation['component']['status']
-                                    except KeyError:
-                                        componentStatus = None                                            
-                                    try:
-                                        findingsHref = violation['diagnosis']['findings']['href']
-                                    except KeyError:
-                                        findingsHref = None                                            
-                                    try:
-                                        componentTreeNodeHref = violation['component']['treeNodes']['href']
-                                    except KeyError:
-                                        componentTreeNodeHref = None                                        
-                                    try:
-                                        sourceCodesHref = violation['component']['sourceCodes']['href']
-                                    except KeyError:
-                                        sourceCodesHref = None
-                                    
-                                    try:
-                                        propagationRiskIndex = violation['component']['propagationRiskIndex']
-                                    except KeyError:
-                                        propagationRiskIndex = None                                            
-                            
-                                    firsttechnicalcriterionid = '#N/A#'
-                                    for tcc in listtccontributions:
-                                        if tcc.metricid ==  objviol.qrid:
-                                            firsttechnicalcriterionid = tcc.parentmetricid
-                                            break 
-                                    currentviolfullurl = edurl + '/engineering/index.html#' + objsnapshot.href 
-                                    currentviolfullurl += '/business/60017/qualityInvestigation/0/60017/' 
-                                    currentviolfullurl += firsttechnicalcriterionid + '/' + objviol.qrid + '/' + objviol.componentid
-                                    objviol.url = currentviolfullurl
-                            
-                                    listviolations.append(objviol)
-                                
-                            # generated csv file if required                                    
+                                LogUtils.loginfo(logger,'Loading violations from the REST API',True)
+                                violationfilter = ViolationFilter(criticalrulesonlyfilter, businesscriterionfilter, technofilter, None, qridfilter, qrnamefilter, nbrows)
+                                listviolations = rest_service_aip.get_snapshot_violations(domain.name, objapp.id, objsnapshot.snapshotid, edurl,objsnapshot.href, tqiqm, listtccontributions, violationfilter)                                            
+                            # generate output file                                    
                             fpath = get_excelfilepath(outputfolder, objapp.name)
                             LogUtils.loginfo(logger,"Generating xlsx file " + fpath,True)
                             
-                            excel_format.generate_excelfile(logger, fpath, objapp.name, objsnapshot.version, objsnapshot.isodate, loadviolations, listbusinesscriteria, dicttechnicalcriteria, listbccontributions, listtccontributions, dictmetrics, dictapsummary, dicremediationabacus, listviolations, broundgrades, dictaptriggers)
-                            json_qr_results = None
+                            excel_format.generate_excelfile(logger, fpath, objapp.name, objsnapshot.version, objsnapshot.isodate, loadviolations, listbusinesscriteria, dicttechnicalcriteria, listbccontributions, listtccontributions, dictmetrics, dictapsummary, dicremediationabacus, listviolations, broundgrades, dictaptriggers, dictmodules)
+
                             # keep only last snapshot
                             break
                                         

@@ -81,6 +81,8 @@ None
 - Since 1.1.0 when the Rules Grade / Nb violations for action is manually changed, you need to wait 3-4 seconds because of all excel formulas added in this release 
 <a name="rn"></a>
 # Release Notes
+## Version 1.2.0
+Add the option to have the simulation at the module level
 ## Version 1.1.0
 Rules grades :  
 Add a column "Grade improvement priority" to show the quality rules that have the highest impact on technical criteria / health factors grades    

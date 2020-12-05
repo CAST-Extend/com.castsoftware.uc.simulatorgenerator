@@ -1,16 +1,22 @@
 @echo off
 
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-REM configure python path if not defined
-REM min version to use is Python 3.6
-SET PYTHON_PATH_IF_NOT_DEF_IN_ENV=C:\Python\Python37
-IF "%PYTHONPATH%"=="" SET PYTHONPATH=%PYTHON_PATH_IF_NOT_DEF_IN_ENV%
-"%PYTHONPATH%\python" -V
+REM configure python path, not required if python is on the path
+SET PYTHONPATH=
+REM SET PYTHONPATH=C:\Python\Python37\
+SET PYTHONCMD=python
+IF NOT "%PYTHONPATH%" == "" SET PYTHONCMD=%PYTHONPATH%\python
+
+ECHO =================================
+"%PYTHONCMD%" -V
+ECHO =================================
+
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 REM install the additional python lib required
-"%PYTHONPATH%\Scripts\pip" install pandas
-"%PYTHONPATH%\Scripts\pip" install requests 
-"%PYTHONPATH%\Scripts\pip" install xlsxwriter
+REM IF NOT "%PYTHONPATH%" == "" "%PYTHONPATH%\Scripts\pip" install pandas
+REM IF NOT "%PYTHONPATH%" == "" "%PYTHONPATH%\Scripts\pip" install requests 
+REM IF NOT "%PYTHONPATH%" == "" "%PYTHONPATH%\Scripts\pip" install xlsxwriter
+
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 :: REST API URL : http|https://host(:port)(/WarName)/rest
@@ -31,6 +37,9 @@ SET PASSWORD=cast
 ::SET APPFILTER=Webgoat^|eComm.*
 SET APPFILTER=Webgoat
 
+:: [Optional] Load modules ? default = false
+SET LOADMODULES=false
+
 :: [Optional] Inputs CSV file containing the quality rules efforts (default is CAST_QualityRulesEffort.csv)
 ::SET EFFORTFILEPATH=C:/Temp/CAST_QualityRulesEffort.csv
 
@@ -38,7 +47,7 @@ SET APPFILTER=Webgoat
 :: This section contains only parameters related to the Violations tab
 
 :: [Optional] Load violations in a Violations tab ? default = false
-::SET LOADVIOLATIONS=true
+SET LOADVIOLATIONS=false
 
 :: [Optional] Quality rule id regexp filter
 ::SET QRIDFILTER=7802|7804
@@ -58,8 +67,7 @@ SET APPFILTER=Webgoat
 
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 REM Build the command line
-::SET CMD="%PYTHONPATH%\python" "%~dp0simulator_generator.py" %CMD_URL% %CMD_USER% %CMD_PASSWORD% %CMD_APIKEY% %CMD_LOGFILE% %CMD_OUTPUTFOLDER% %CMD_APPFILTER% %CMD_NBROWS% %CMD_EFFORTFILEPATH% %CMD_LOADVIOLATIONS% %CMD_QRIDFILTER% %CMD_QRNAMEFILTER% %CMD_CRITICALONLYFILTER% %CMD_BCFILTER% %CMD_TECHNOFILTER% %CMD_EXTENSIONINSTALLATIONFOLDER%
-SET CMD="%PYTHONPATH%\python" "%~dp0simulator_generator.py" 
+SET CMD="%PYTHONCMD%" "%~dp0simulator_generator.py" 
 
 IF DEFINED RESTAPIURL 				SET CMD=%CMD% -restapiurl "%RESTAPIURL%"
 IF DEFINED EDURL					SET CMD=%CMD% -edurl "%EDURL%"
@@ -83,6 +91,8 @@ SET EXTENSIONINSTALLATIONFOLDER=%CURRENTFOLDER%
 SET CMD=%CMD% -extensioninstallationfolder "%EXTENSIONINSTALLATIONFOLDER%"
 
 ECHO APPFILTER=%APPFILTER%
+IF DEFINED LOADMODULES				SET CMD=%CMD% -loadmodules "%LOADMODULES%"
+IF DEFINED LOADVIOLATIONS			SET CMD=%CMD% -loadviolations "%LOADVIOLATIONS%"
 IF DEFINED APPFILTER 				SET CMD=%CMD% -applicationfilter "%APPFILTER%"
 IF DEFINED EFFORTFILEPATH			SET CMD=%CMD% -effortcsvfilepath "%EFFORTFILEPATH%"
 IF DEFINED QRIDFILTER				SET CMD=%CMD% -qridfilter %QRIDFILTER%
