@@ -10,12 +10,13 @@ import traceback
 import os
 import time
 import pandas as pd
-import numpy as np
+import numpy as np  
 import requests
 
 import xlsxwriter
 import xml.etree.ElementTree as ET
-from utils.utils import RestUtils, AIPRestAPI, LogUtils, ObjectViolationMetric, RulePatternDetails, FileUtils, StringUtils, Metric, Contribution, Violation, ViolationFilter
+from utils.utils import RestUtils, AIPRestAPI, LogUtils, ObjectViolationMetric, RulePatternDetails, FileUtils, StringUtils, Metric, Contribution, Violation, ViolationFilter,\
+    SnapshotFilter
 from utils import excel_format
 
 '''
@@ -24,8 +25,8 @@ from utils import excel_format
 '''
 ########################################################################
 
-# Total Quality Index,Security,Efficiency,Robustness,Transferability,Changeability,Coding Best Practices/Programming Practices,Documentation,Architectural Design
-bcids = ["60017","60016","60016","60014","60013","60012","60011","66031","66032","66033"]
+# Total Quality Index,Security,Efficiency,Robustness,Transferability,Changeability,Coding Best Practices/Programming Practices,Documentation,Architectural Design,Green IT
+bcids = ["60017","60016","60014","60013","60012","60011","66031","66032","66033","20140522" ]
 broundgrades = False
 ########################################################################
 
@@ -43,6 +44,7 @@ def init_parse_argument():
     requiredNamed.add_argument('-log', required=True, dest='log', help='log file')
     requiredNamed.add_argument('-of', required=True, dest='outputfolder', help='output folder')    
     requiredNamed.add_argument('-effortcsvfilepath', required=False, dest='effortcsvfilepath', help='Inputs quality rules effort csv file path (default=CAST_QualityRulesEffort.csv)')    
+    requiredNamed.add_argument('-aggregationmode', required=False, dest='aggregationmode', help='Aggregation mode FullApplication/ByNumberOfArtifacts (default=FullApplication)')    
     requiredNamed.add_argument('-loadmodules', required=False, dest='loadmodules', help='Load the modules true/false default=false')
     requiredNamed.add_argument('-loadviolations', required=False, dest='loadviolations', help='Load the violations true/false default=false')
     requiredNamed.add_argument('-qridfilter', required=False, dest='qridfilter', help='For violations filtering, violation quality rule id regexp filter')
@@ -115,6 +117,11 @@ if __name__ == '__main__':
     outputfolder = args.outputfolder
     if not outputfolder.endswith('/') and not outputfolder.endswith('\\'):
         outputfolder += '/'
+    
+    aggregationmode = 'FullApplication'
+    if args.aggregationmode != None and aggregationmode in ('FullApplication','ByNumberOfArtifacts'):
+        aggregationmode = args.aggregationmode 
+    
     effortcsvfilepath = "CAST_QualityRulesEffort.csv"
     if args.effortcsvfilepath != None:
         effortcsvfilepath = args.effortcsvfilepath 
@@ -126,8 +133,6 @@ if __name__ == '__main__':
     loadviolations = False
     if args.loadviolations != None and args.loadviolations in ('True','true'):
         loadviolations = True                                  
-
-
     
     qridfilter = args.qridfilter
     qrnamefilter = args.qrnamefilter
@@ -181,31 +186,33 @@ if __name__ == '__main__':
         LogUtils.loginfo(logger,'version='+script_version,True)
         logger.info('python version='+sys.version)
         logger.info('****************** params ******************')
-        logger.info('restapiurl='+restapiurl)
-        logger.info('edurl='+str(edurl))        
-        logger.info('user='+str(user))
+        LogUtils.loginfo(logger, 'restapiurl='+restapiurl, True)
+        LogUtils.loginfo(logger,'user='+str(user),True)
         if password == None or password == "N/A":
             logger.info('password=' + password)
         else: 
             logger.info('password=*******')
         if apikey == None or apikey== "N/A":
-            logger.info('apikey='+str(apikey))
+            logger.info('apikey=N/A')
         else:
             logger.info('apikey=*******') 
         LogUtils.loginfo(logger,'log file='+log,True)
-        logger.info('extensioninstallationfolder='+extensioninstallationfolder)
-        logger.info('log level='+loglevel)
-        logger.info('applicationfilter='+str(applicationfilter))
-        logger.info('nbrows='+str(nbrows))
-        logger.info('output folder='+str(outputfolder))
+        LogUtils.loginfo(logger, 'applicationfilter='+str(applicationfilter), True)
+        LogUtils.loginfo(logger, 'output folder='+str(outputfolder), True)
+        LogUtils.loginfo(logger,'loadmodules='+str(loadmodules), True)
+        LogUtils.loginfo(logger, 'aggregationmode='+str(aggregationmode), True)
         logger.info('effortcsvfilepath='+str(effortcsvfilepath))
-        logger.info('loadmodules='+str(loadmodules))
         logger.info('loadviolations='+str(loadviolations))
+        logger.info('****************** params ******************')
+        logger.info('edurl='+str(edurl))        
         logger.info('qridfilter='+str(qridfilter))
         logger.info('qrnamefilter='+str(qrnamefilter))
         logger.info('criticalrulesonlyfilter='+str(criticalrulesonlyfilter))
         logger.info('businesscriterionfilter='+str(businesscriterionfilter))
-        logger.info('technofilter='+str(technofilter)) 
+        logger.info('technofilter='+str(technofilter))
+        logger.info('extensioninstallationfolder='+extensioninstallationfolder)
+        logger.info('log level='+loglevel)
+        logger.info('nbrows='+str(nbrows)) 
         logger.info('********************************************')
         
         if loadmodules and loadviolations:
@@ -260,24 +267,6 @@ if __name__ == '__main__':
                         dicremediationabacus = {}
                         # applications health factors for last snapshot
                         if loaddata:
-                            """
-                            logger.info('Extracting the applications business criteria grades for last snapshot')
-                            json_bc_grades = rest_service_aip.get_businesscriteria_grades_json(domain.name)
-                            if json_bc_grades != None:
-                                for res in json_bc_grades:
-                                    for bc in res['applicationResults']:
-                                        businesscriterion = Metric()
-                                        businesscriterion.applicationName = res['application']['name'] 
-                                        businesscriterion.name = bc['reference']['name']
-                                        businesscriterion.id = bc['reference']['key']
-                                        businesscriterion.grade = bc['result']['grade']
-                                        #print('bc grade=' + str(businesscriterion.grade) + str(type(businesscriterion.grade)))
-                                        if (businesscriterion.grade == None): 
-                                            logger.warning("Business criterions has no grade, removing it from the list : " + businesscriterion.name)
-                                        else:
-                                            listbusinesscriteria.append(businesscriterion)
-                            json_bc_grades = None
-                            """
                             logger.info('Loading the remediation effort from file ' + effortcsvfilepath)
                             csvdelimiter = ";"
                             csvquotechar='"'
@@ -300,10 +289,9 @@ if __name__ == '__main__':
                         # snapshot list
                         logger.info('Loading the application snapshot')
                         listsnapshots = rest_service_aip.get_application_snapshots(domain.name, objapp.id)
+                        
                         for objsnapshot in listsnapshots:
                             logger.info("    Snapshot " + objsnapshot.href + '#' + objsnapshot.snapshotid)
-                            #listmetrics = []
-                            #listtechnicalcriteria = []
                             listbccontributions = []
                             listtccontributions = []
                             dictapsummary = {}
@@ -320,6 +308,19 @@ if __name__ == '__main__':
                                     tqiqm = rest_service_aip.get_snapshot_tqi_quality_model(domain.name, objsnapshot.snapshotid)
                             except:
                                 LogUtils.logwarning(logger, 'Not able to extract the TQI quality model ***',True)
+
+                            dict_modulesweight = None
+                            if aggregationmode != None and aggregationmode != 'FullApplication':
+                                try:
+                                    if not loaddata:
+                                        logger.info("NOT Extracting the modules weight")                                           
+                                    else:
+                                        logger.info("Extracting the modules weight")
+                                        if aggregationmode == 'ByNumberOfArtifacts':
+                                            snapshotsfilter = SnapshotFilter(None, objsnapshot.snapshotid)
+                                            dict_modulesweight = rest_service_aip.get_nb_artifacts_dict(domain.name, snapshotsfilter, "$all")
+                                except:
+                                    LogUtils.logwarning(logger, 'Not able to extract the  modules weight ***',True)
                                     
                             try:
                                 if loaddata:
@@ -340,13 +341,14 @@ if __name__ == '__main__':
                                 if loadmodules: 
                                     strmodules_filter = "$all" 
                                 dictmetrics, dicttechnicalcriteria, listbusinesscriteria, dictmodules = rest_service_aip.get_qualitymetrics_results(domain.name, objapp.id, objsnapshot.snapshotid, tqiqm=tqiqm, criticalonly=False, modules=strmodules_filter, nbrows=nbrows)                                
-                                logger.info('Extracting the technical criteria contributors at application level')
                                 
+                                logger.info('Extracting the technical criteria contributors at application level')
                                 #TODO:Keep this section to collect the information for the old versions of Rest API, because in the latest versions select=aggregators in the previous REST call is already providing this 
                                 for item_tc in dicttechnicalcriteria:
                                     tciterator = dicttechnicalcriteria[item_tc]
                                     for item in rest_service_aip.get_metric_contributions(domain.name, tciterator.id, objsnapshot.snapshotid):
                                         listtccontributions.append(item)
+
                                 logger.info('Extracting the business criteria contributors at application level')
                                 for bcid in bcids:
                                     for item in rest_service_aip.get_metric_contributions(domain.name, bcid, objsnapshot.snapshotid):
@@ -369,7 +371,7 @@ if __name__ == '__main__':
                             fpath = get_excelfilepath(outputfolder, objapp.name)
                             LogUtils.loginfo(logger,"Generating xlsx file " + fpath,True)
                             
-                            excel_format.generate_excelfile(logger, fpath, objapp.name, objsnapshot.version, objsnapshot.isodate, loadviolations, listbusinesscriteria, dicttechnicalcriteria, listbccontributions, listtccontributions, dictmetrics, dictapsummary, dicremediationabacus, listviolations, broundgrades, dictaptriggers, dictmodules)
+                            excel_format.generate_excelfile(logger, fpath, objapp.name, objsnapshot.version, objsnapshot.isodate, loadviolations, listbusinesscriteria, dicttechnicalcriteria, listbccontributions, listtccontributions, dictmetrics, dictapsummary, dicremediationabacus, listviolations, broundgrades, dictaptriggers, dictmodules, dict_modulesweight)
 
                             # keep only last snapshot
                             break

@@ -56,6 +56,8 @@ You can change the number of violations that will be fixed and you will have the
 
 Parameters available :     
 - Application name (regexp): -applicationfilter, if Empty all the application that are configured in the different engineering domains will be processed  
+- Load modules : -loadmodules True/False, default False, loads the grades at the module level  
+- Aggregation mode : -aggregationmode FullApplication/ByNumberOfArtifacts, default=FullApplication  
 - Load violations: -loadviolations True/False default False  
 - Quality rule id (regexp): -qridfilter  
 - Quality rule name (regexp): -qrnamefilter  
@@ -77,10 +79,14 @@ None
 
 <a name="limitations"></a>
 - Only the last snapshot data are exported in the Excel file  
-- Only the Full application mode is covered. The legacy consolidation mode like Aggregation by Number of Artifacts, ... is not managed
-- Since 1.1.0 when the Rules Grade / Nb violations for action is manually changed, you need to wait 3-4 seconds because of all excel formulas added in this release 
+- Only the Full application aggregation mode and also aggregation by number of artifacts are covered. The other legacy consolidation mode like Aggregation by Number of Lines of code, ... are not managed
+- Since 1.1.0 when the Rules Grade / Nb violations for action is manually changed, you need to wait 3-4 seconds (or type enter and it will be more quick to answer)
+- For the Aggregation by number of artifacts, the Grade improvement pritority/opportunity are not correct, since not using the module weights. 
 <a name="rn"></a>
 # Release Notes
+## Version 1.2.1
+Add the option to have the simulation for legacy module aggregation by Number of Artifacts (default option is still the Full Application mode), using at the application level a grade that is a module weighted grade by number of artifacts.  
+Minor fixes
 ## Version 1.2.0
 Add the option to have the simulation at the module level
 ## Version 1.1.0

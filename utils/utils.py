@@ -305,7 +305,7 @@ class RestUtils:
             request_headers.update({'accept':'application/json'})        
             try:
                 self.session = requests.session()
-                if self.user != None and self.password != None and self.user != 'N/A' and self.user != 'N/A':
+                if self.user != None and self.password != None and self.user != 'N/A' and self.password != 'N/A':
                     self.logger.info ('Using user and password')
                     #we need to base 64 encode it 
                     #and then decode it to acsii as python 3 stores it as a byte string
@@ -521,6 +521,14 @@ class Server:
         
 ########################################################################
 
+# snapshot filter class
+class SnapshotFilter:
+    def __init__(self, snapshot_index, snapshot_ids):
+        self.snapshot_index = snapshot_index
+        self.snapshot_ids = snapshot_ids
+
+########################################################################
+
 # snapshot class
 class Snapshot:
     def __init__(self, href=None, domainname=None, applicationid=None, applicationname=None, snapshotid=None, isodate=None, version=None):
@@ -570,12 +578,25 @@ class Snapshot:
 
             x.applicationid = -1
             x.snapshotid = -1
-            rexappsnapid = "([A-Z0-9_]+)/applications/([0-9]+)/snapshots/([0-9]+)"
+            """rexappsnapid = "([-A-Z0-9_]+)/applications/([0-9]+)/snapshots/([0-9]+)"
             m0 = re.search(rexappsnapid, x.href)
             if m0: 
                 x.domainname = m0.group(1)
                 x.applicationid = m0.group(2)
                 x.snapshotid = m0.group(3)
+            """
+            rex = "/snapshots/([0-9]+)"
+            m0 = re.search(rex, x.href)
+            if m0: 
+                x.snapshotid = m0.group(1)
+            rex = "/applications/([0-9]+)/"
+            m0 = re.search(rex, x.href)
+            if m0: 
+                x.applicationid = m0.group(1)      
+            rex = "(.*)/applications"
+            m0 = re.search(rex, x.href)
+            if m0: 
+                x.domainname = m0.group(1)      
         return x
     @staticmethod
     def loadlist(json_snapshots):
@@ -782,7 +803,7 @@ class AIPRestAPI:
         return self.restutils.execute_requests_get(request)
     
     def get_application_snapshot_modules_json(self, domainname, applicationid, snapshotid):
-        request = domainname + "/applications/" + applicationid + "/snapshots/" + snapshotid + "/modules" 
+        request = domainname + "/applications/" + str(applicationid) + "/snapshots/" + str(snapshotid) + "/modules" 
         return self.restutils.execute_requests_get(request)    
     
     def get_application_snapshots(self, domainname, applicationid):
@@ -1228,6 +1249,8 @@ class AIPRestAPI:
             
             try:
                 metric.type = json_metric['type']
+                #if metric.type != "quality-rules":
+                #    print("not a qr")
             except KeyError:
                 None
             try:
@@ -1254,36 +1277,49 @@ class AIPRestAPI:
         if json_metric == None or json_metric['result']== None or json_metric['result']['grade'] == None:
             None
         """
+        hasresult = False
         try:
-            metric.grade = json_metric['result']['grade']
+            hasresult = json_metric['result'] != None
         except:
-            # if there is no grade, we return None and skip this metric
-            self.restutils.logger.warning("Skipping metric %s because grade is empty" % str(metric.name))
-            return None
-        try:
-            metric.failedchecks = json_metric['result']['violationRatio']['failedChecks']
-        except KeyError:
-            None                                                          
-        try:
-            metric.successfulchecks = json_metric['result']['violationRatio']['successfulChecks']
-        except KeyError:
-            None                                                             
-        try:
-            metric.totalchecks = json_metric['result']['violationRatio']['totalChecks']
-        except KeyError:
-            None                                                         
-        try:
-            metric.ratio = json_metric['result']['violationRatio']['ratio']
-        except KeyError:
-            None                                                            
-        try:
-            metric.addedviolations = json_metric['result']['evolutionSummary']['addedViolations']                                              
-        except KeyError:
-            None   
-        try:
-            metric.removedviolations = json_metric['result']['evolutionSummary']['removedViolations']
-        except KeyError:
-            None      
+            None
+
+        if hasresult:        
+            try:
+                metric.grade = json_metric['result']['grade']
+            except:
+                self.restutils.logger.warning("Metric %s has an empty grade " % str(metric.name))
+                # if there is no grade for the modules, we skip
+                # we don't skip for the application metric, even if it's not normal but we might have a grade for the module and we want to process in this case
+                if parent_metric != None:
+                    return None
+                    
+            try:
+                metric.failedchecks = json_metric['result']['violationRatio']['failedChecks']
+            except KeyError:
+                None                                                          
+            try:
+                metric.successfulchecks = json_metric['result']['violationRatio']['successfulChecks']
+            except KeyError:
+                None                                                             
+            try:
+                metric.totalchecks = json_metric['result']['violationRatio']['totalChecks']
+            except KeyError:
+                None                                                         
+            try:
+                metric.ratio = json_metric['result']['violationRatio']['ratio']
+            except KeyError:
+                None
+                
+            if  metric.ratio == None:
+                self.restutils.logger.warning("Metric %s has an empty compliance ratio " % str(metric.name))                                                           
+            try:
+                metric.addedviolations = json_metric['result']['evolutionSummary']['addedViolations']                                              
+            except KeyError:
+                None   
+            try:
+                metric.removedviolations = json_metric['result']['evolutionSummary']['removedViolations']
+            except KeyError:
+                None      
               
         return metric
 
@@ -1316,8 +1352,9 @@ class AIPRestAPI:
                 
                 if metric.type in ("quality-measures","quality-distributions","quality-rules"):
                     if (metric.grade == None): 
-                        LogUtils.logwarning(self.restutils.logger, "Metric has no grade, removing it from the list : " + metric.name, True)
-                    else:
+                        LogUtils.logwarning(self.restutils.logger, "Metric has no grade : " + metric.name, True)
+                    #else:
+                    if 1==1:
                         if metric.type == "quality-rules":
                             try:
                                 metric.threshold1 = tqiqm[''+metric.id].get("threshold1")
@@ -1382,21 +1419,56 @@ class AIPRestAPI:
 
     ########################################################################
     def get_loc_json(self, domain, snapshotsfilter=None):
-        return self.get_sizing_measures_by_id(domain, Metric.TS_LOC, snapshotsfilter)
+        return self.get_sizing_measures_by_id_json(domain, Metric.TS_LOC, snapshotsfilter)
+  
+    ########################################################################
+    def get_nb_artifacts_json(self, domain, snapshotsfilter=None, modules=None):
+        return self.get_sizing_measures_by_id_json(domain, Metric.TS_NB_ARTIFACTS, snapshotsfilter, modules)
+  
+    ########################################################################
+    def get_nb_artifacts_dict(self, domain, snapshotsfilter=None, modules=None):
+        dict_nb_art = None
+        json_nb_art = self.get_sizing_measures_by_id_json(domain, Metric.TS_NB_ARTIFACTS, snapshotsfilter, modules)
+        if json_nb_art != None:
+            dict_nb_art = {}
+            try:
+                for res_mod1 in json_nb_art:
+                    for res_mod2 in res_mod1['applicationResults']:
+                        for res_mod3 in res_mod2['moduleResults']:
+                            module_name = res_mod3['moduleSnapshot']['name']
+                            module_weight = res_mod3['result']['value']
+                            dict_nb_art[module_name] = module_weight
+                    break
+            except KeyError:
+                None
+        return dict_nb_art   
   
     ########################################################################
     def get_afp_json(self, domain, snapshotsfilter=None):
-        return self.get_sizing_measures_by_id(domain, Metric.FS_AFP, snapshotsfilter)
+        return self.get_sizing_measures_by_id_json(domain, Metric.FS_AFP, snapshotsfilter)
   
     ########################################################################
     def get_tqi_json(self, domain, snapshotsfilter=None):
-        return self.get_quality_indicators_by_id(domain, Metric.BC_TQI, snapshotsfilter)  
+        return self.get_quality_indicators_by_id_json(domain, Metric.BC_TQI, snapshotsfilter)  
     
     ########################################################################
-    def get_sizing_measures_by_id_json(self, domain, metricids, snapshotsfilter=None):
-        if snapshotsfilter == None:
-            snapshotsfilter = AIPRestAPI.FILTER_SNAPSHOTS_LAST
-        request = domain + "/results?sizing-measures=(" + str(metricids) + ")&snapshots="+snapshotsfilter
+    def get_sizing_measures_by_id_json(self, domain, metricids, snapshotsfilter=None, modules=None):
+        snapshot_index = None 
+        snapshot_ids = None
+        if snapshotsfilter != None:
+            if snapshotsfilter.snapshot_index != None:
+                snapshot_index = snapshotsfilter.snapshot_index
+            if snapshotsfilter.snapshot_ids != None:
+                snapshot_ids = snapshotsfilter.snapshot_ids
+        if snapshot_index == None and snapshot_ids == None:
+            snapshot_index == AIPRestAPI.FILTER_SNAPSHOTS_LAST
+        request = domain + "/results?sizing-measures=(" + str(metricids) + ")"
+        if snapshot_index != None:
+            request += "&snapshots=" + snapshot_index
+        if snapshot_ids != None:
+            request += "&snapshot-ids=" + snapshot_ids            
+        if modules != None:
+            request += "&modules=" + modules
         return self.restutils.execute_requests_get(request)
 
     ########################################################################
@@ -1851,9 +1923,12 @@ class Metric:
     
     # Technical sizes metrics
     TS_LOC="10151"
+    TS_NB_ARTIFACTS="10152"
     
     # Functional size metrics
     FS_AFP="10202"
+    
+    
     
     # Distributions metrics
     DIST_CYCLOMATIC_COMPLEXITY = "65501"

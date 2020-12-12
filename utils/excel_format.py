@@ -48,7 +48,8 @@ class ExcelFormat:
     const_TAB_MOD_TC_GRADES = 'Modules TC Grades'
     const_TAB_MOD_RULES_GRADES = 'Modules Rules Grades'
     const_TAB_MOD_BC_CONTRIBUTIONS = 'Modules BC contributions'    
-    const_TAB_MOD_TC_CONTRIBUTIONS = 'Modules TC contributions'    
+    const_TAB_MOD_TC_CONTRIBUTIONS = 'Modules TC contributions'
+    const_TAB_MOD_WEIGHT = 'Modules weight'
     
     format_percentage = None
     format_int_thousands = None
@@ -73,6 +74,7 @@ tab_mod_tc_grade        = ExcelFormat.const_TAB_MOD_TC_GRADES
 tab_mod_rule_grade      = ExcelFormat.const_TAB_MOD_RULES_GRADES
 tab_mod_bc_cont         = ExcelFormat.const_TAB_MOD_BC_CONTRIBUTIONS
 tab_mod_tc_cont         = ExcelFormat.const_TAB_MOD_TC_CONTRIBUTIONS
+tab_mod_weigth          = ExcelFormat.const_TAB_MOD_WEIGHT
 tab_remd                = ExcelFormat.const_TAB_REMEDIATION_EFFORT
 
 ###############################################################################
@@ -98,17 +100,25 @@ def get_df_readme(logger, loadviolations):
     return df_readme
 ###############################################################################
 
-bc_grades_commonheader = "Business criterion;Metric Id;Grade;Simulation grade;Lowest critical grade;Weighted average of Technical criteria; Delta\n"
+bc_grades_commonheader = "Business criterion;Metric Id;Grade;Simulation grade;Lowest critical grade;Weighted average of Technical criteria; Delta"
 app_bc_grades_header = "Application name;" + bc_grades_commonheader
 mod_bc_grades_header = "Module Name;" + bc_grades_commonheader
+###############################################################################
+
+def get_grade_for_display(broundgrades, grade):
+    if grade == None:
+        return ""
+    return str(round_grades(broundgrades, grade))
+    
 ###############################################################################
 
 def get_df_app_bc_grades(logger, appName, snapshotversion, snapshotdate, listbusinesscriteria, loadviolations):
     df_app_bc_grades = None
     str_df_app_bc_grades = app_bc_grades_header
+    str_df_app_bc_grades += "\n"
     for bc in listbusinesscriteria:
-        if bc.applicationName == appName and not bc.name == 'SEI Maintainability':
-            str_df_app_bc_grades += appName + ";" + bc.name + ";" + bc.id + ";" + str(round_grades(broundgrades, bc.grade)) + ";;;;"
+        if bc.applicationName == appName and not bc.name in ('SEI Maintainability'):#, 'Green IT'):
+            str_df_app_bc_grades += appName + ";" + bc.name + ";" + bc.id + ";" + get_grade_for_display(broundgrades, bc.grade) + ";;;;"
             str_df_app_bc_grades += '\n'
     
     
@@ -140,18 +150,19 @@ def get_df_app_bc_grades(logger, appName, snapshotversion, snapshotdate, listbus
 
 ###############################################################################
 
-tc_grades_commonheader = "Technical criterion name;Metric Id;Grade;Simulation grade;Lowest critical grade;Weighted average of quality rules;Delta grade (%)\n"
+tc_grades_commonheader = "Technical criterion name;Metric Id;Grade;Simulation grade;Lowest critical grade;Weighted average of quality rules;Delta grade (%)"
 app_tc_grades_header = "Key;Application name;" + tc_grades_commonheader 
 mod_tc_grades_header = "Key;Module name;" + tc_grades_commonheader
 ###############################################################################
 
 def get_df_app_tc_grades(logger, appName, dictechnicalcriteria):
     df_app_tc_grades = None
-    str_df_tc_grades = app_tc_grades_header
+    str_df_tc_grades = app_tc_grades_header + '\n'
+    
     for tc in dictechnicalcriteria:
         #print('tc grade 2=' + str(tc.grade) + str(type(tc.grade)))
         otc = dictechnicalcriteria[tc]
-        str_line = ';' + appName + ';' + otc.name + ';' + str(otc.id) + ';'+ str(round_grades(broundgrades,otc.grade)) + ';;;;' + '\n'
+        str_line = ';' + appName + ';' + otc.name + ';' + str(otc.id) + ';'+ get_grade_for_display(broundgrades, otc.grade) + ';;;;' + '\n'
         str_df_tc_grades += str_line
     try: 
         str_df_tc_grades = StringUtils.remove_unicode_characters(str_df_tc_grades)
@@ -161,39 +172,50 @@ def get_df_app_tc_grades(logger, appName, dictechnicalcriteria):
     return df_app_tc_grades
 
 ###############################################################################
-def get_df_mod_tc_grades(logger, dict_modules):
+def get_df_mod_tc_grades(logger, dict_modules, dict_modulesweight = None):
     df_mod_tc_grades = None
-    str_df_tc_grades = mod_tc_grades_header
+    str_df_mod_tc_grades = mod_tc_grades_header
+    if dict_modulesweight != None:
+        str_df_mod_tc_grades += ';Module weight;Module weighted grade'
+    str_df_mod_tc_grades += '\n'
 
     for module_name in dict_modules:
         module_metrics = dict_modules[module_name]
         for otc in module_metrics:
             if otc.type not in (type_technical_criteria):
                 continue
-            str_line = ';' + module_name + ';' + otc.name + ';' + str(otc.id) + ';'+ str(round_grades(broundgrades,otc.grade)) + ';;;;' + '\n'
-            str_df_tc_grades += str_line    
+            str_line = ';' + module_name + ';' + otc.name + ';' + str(otc.id) + ';'+ get_grade_for_display(broundgrades, otc.grade) + ';;;;'
+            if dict_modulesweight != None:
+                str_line += ';;'  
+            str_line +=  '\n'
+            str_df_mod_tc_grades += str_line    
     try: 
-        str_df_tc_grades = StringUtils.remove_unicode_characters(str_df_tc_grades)
+        str_df_tc_grades = StringUtils.remove_unicode_characters(str_df_mod_tc_grades)
         df_mod_tc_grades = pd.read_csv(StringIO(str_df_tc_grades), sep=";",engine='python',quoting=csv.QUOTE_NONE)
     except: 
-        LogUtils.logerror(logger,'csv.Error: unexpected end of data : df_mod_tc_grades %s ' % str_df_tc_grades,True)
+        LogUtils.logerror(logger,'csv.Error: unexpected end of data : str_df_mod_tc_grades %s ' % str_df_mod_tc_grades,True)
     return df_mod_tc_grades
 
 ###############################################################################
-def get_df_mod_bc_grades(logger, dict_modules):
-
+def get_df_mod_bc_grades(logger, dict_modules, dict_modulesweight=None):
     df_mod_bc_grades = None
     str_df_mod_bc_grades = mod_bc_grades_header
-
+    if dict_modulesweight != None:
+        str_df_mod_bc_grades += ';Module weight;Module weighted grade'
+    str_df_mod_bc_grades += '\n'
+    
     for module_name in dict_modules:
         module_metrics = dict_modules[module_name]
-        for otc in module_metrics:
-            if otc.type not in (type_business_criteria):
+        for obc in module_metrics:
+            if obc.type not in (type_business_criteria):
                 continue
-            if otc.name == 'SEI Maintainability':
+            if obc.name in ( 'SEI Maintainability'):#, 'Green IT'):
                 continue
             str_line = ''
-            str_line += module_name + ';' + otc.name + ';' + str(otc.id) + ';'+ str(round_grades(broundgrades,otc.grade)) + ';;;;' + '\n'
+            str_line += module_name + ';' + obc.name + ';' + str(obc.id) + ';'+ get_grade_for_display(broundgrades, obc.grade) + ';;;;'
+            if dict_modulesweight != None:
+                str_line += ';;'            
+            str_line += '\n'
             str_df_mod_bc_grades += str_line    
     try: 
         str_df_mod_bc_grades = StringUtils.remove_unicode_characters(str_df_mod_bc_grades)
@@ -203,14 +225,15 @@ def get_df_mod_bc_grades(logger, dict_modules):
     return df_mod_bc_grades
 ###############################################################################
 
-rule_grades_commonheader = "Snapshot Date;Snapshot version;Metric Name;Metric Id;Metric Type;Critical;Grade;Simulation grade;Grade Delta;Grade Delta (%);Nb of violations;Nb violations for action;Remaining violations;Unit effort (man.hours);Total effort (man.hours);Total effort (man.days);Total Checks;Compliance ratio;New compliance ratio;Thres.1;Thres.2;Thres.3;Thres.4;Educate (Mark for ...);Violations extracted;Grade improvement priority;Nb violations to fix on this rule before rule grade improvement;Nb rules to fix before TC grade improvement;Nb violations  to fix on the TC  rules before TC grade improvement;Technical criteria;Business criteria\n"
+rule_grades_commonheader = "Snapshot Date;Snapshot version;Metric Name;Metric Id;Metric Type;Critical;Grade;Simulation grade;Grade Delta;Grade Delta (%);Nb of violations;Nb violations for action;Remaining violations;Unit effort (man.hours);Total effort (man.hours);Total effort (man.days);Total Checks;Compliance ratio;New compliance ratio;Thres.1;Thres.2;Thres.3;Thres.4;Educate (Mark for ...);Violations extracted;Grade improvement priority;Nb violations to fix on this rule before rule grade improvement;Nb rules to fix before TC grade improvement;Nb violations  to fix on the TC  rules before TC grade improvement;Technical criteria;Business criteria"
 app_rule_grades_header = "Key;Application name;" + rule_grades_commonheader
 mod_rule_grades_header = "Key;Module name;" + rule_grades_commonheader
 
 ###############################################################################
 def get_df_app_rules_grades(logger, appName, snapshotdate, snapshotversion, dictmetrics, listtccontributions, listbccontributions, dictapsummary=None, dictaptriggers=None):
     df_app_rules_grades = None
-    str_df_rules_grades = app_rule_grades_header
+    str_df_rules_grades = app_rule_grades_header + '\n'
+    
     for metric in dictmetrics:
         oqr = dictmetrics[metric]
         if oqr.type not in (type_quality_rules,type_quality_distributions,type_quality_measuree):
@@ -218,6 +241,7 @@ def get_df_app_rules_grades(logger, appName, snapshotdate, snapshotversion, dict
         str_line = ';'
         str_line += appName
         str_line = get_def_rule_grade_line(logger, str_line, snapshotdate, snapshotversion, oqr, listtccontributions, listbccontributions, dictapsummary, dictaptriggers)
+        str_line += '\n'
         str_df_rules_grades += str_line
     #logger.debug(str_df_rules_grades)
     try: 
@@ -237,8 +261,10 @@ def get_def_rule_grade_line(logger, str_line, snapshotdate, snapshotversion, oqr
         #str_line += ";" + str(oqr.type)
         str_line += ";" + str(oqr.type) 
         
-        str_line += ";" + str(oqr.critical) 
-        str_line += ";" + str(round_grades(broundgrades,oqr.grade)) 
+        str_line += ";" + str(oqr.critical)
+        #print("qr grade=" + get_grade_for_display(broundgrades, oqr.grade)) 
+        str_line += ";" + get_grade_for_display(broundgrades, oqr.grade) 
+        
         #simulation grade, grade delta%, grade delta%
         str_line += ';;;' 
         #failed checks
@@ -258,7 +284,8 @@ def get_def_rule_grade_line(logger, str_line, snapshotdate, snapshotversion, oqr
             str_line += str(oqr.totalchecks) 
         #compliance ratio
         str_line += ';'
-        if oqr.totalchecks != None:
+        if oqr.ratio != None:
+            #print("compl ratio grade=" + str(oqr.ratio))
             str_line += str(oqr.ratio)
         #new compliance ratio
         str_line += ';'
@@ -302,14 +329,18 @@ def get_def_rule_grade_line(logger, str_line, snapshotdate, snapshotversion, oqr
         if str_bus_criteria.endswith(','):
             str_bus_criteria = str_bus_criteria[:-1]        
         str_line += str_bus_criteria        
-        str_line += '\n'    
         return str_line
 
 ###############################################################################
 
-def get_df_mod_rules_grades(logger, snapshotdate, snapshotversion, dict_modules, listtccontributions, listbccontributions, dictapsummary = None, dictaptriggers = None):
+def get_df_mod_rules_grades(logger, snapshotdate, snapshotversion, dict_modules, listtccontributions, listbccontributions, dictapsummary = None, dictaptriggers = None, dict_modulesweight=None):
     df_mod_rules_grades = None
+    
     str_df_mod_rules_grades = mod_rule_grades_header
+    if dict_modulesweight != None:
+        str_df_mod_rules_grades += ';Module weight;Module weighted grade'
+    str_df_mod_rules_grades += '\n'    
+    
     for module_name in dict_modules:
         module_metrics = dict_modules[module_name]
         for oqr in module_metrics:
@@ -319,13 +350,16 @@ def get_df_mod_rules_grades(logger, snapshotdate, snapshotversion, dict_modules,
             str_line = ';'
             str_line += module_name
             str_line = get_def_rule_grade_line(logger, str_line, snapshotdate, snapshotversion, oqr, listtccontributions, listbccontributions, dictapsummary, dictaptriggers)
+            if dict_modulesweight != None:
+                str_line += ';;'            
+            str_line += '\n'
             str_df_mod_rules_grades += str_line
     #logger.debug(str_df_mod_rules_grades)
     try: 
         str_df_mod_rules_grades = StringUtils.remove_unicode_characters(str_df_mod_rules_grades)
         df_mod_rules_grades = pd.read_csv(StringIO(str_df_mod_rules_grades), sep=";",engine='python',quoting=csv.QUOTE_NONE)
     except: 
-        LogUtils.logerror(logger,'csv.Error: unexpected end of data : df_mod_rules_grades %s ' % df_mod_rules_grades,True)
+        LogUtils.logerror(logger,'csv.Error: unexpected end of data : df_mod_rules_grades %s ' % str_df_mod_rules_grades,True)
     return df_mod_rules_grades
 
 ###############################################################################
@@ -351,10 +385,10 @@ def get_df_mod_bc_contribution(logger, dict_modules, listbccontributions):
                 str_df_mod_bc_cont += '\n'
     #logger.debug(str_df)
     try: 
-        str_df = StringUtils.remove_unicode_characters(str_df_mod_bc_cont)
+        str_df_mod_bc_cont = StringUtils.remove_unicode_characters(str_df_mod_bc_cont)
         df_mod_bc_cont = pd.read_csv(StringIO(str_df_mod_bc_cont), sep=";",engine='python',quoting=csv.QUOTE_NONE)
     except: 
-        LogUtils.logerror(logger,'csv.Error: unexpected end of data : df_mod_bc_contributions %s ' % str_df,True)
+        LogUtils.logerror(logger,'csv.Error: unexpected end of data : df_mod_bc_contributions %s ' % str_df_mod_bc_cont,True)
     return df_mod_bc_cont
 
 ###############################################################################
@@ -382,11 +416,26 @@ def get_df_mod_tc_contribution(logger, dict_modules, listtccontributions):
                 str_df_mod_tc_cont += '\n'
     #logger.debug(str_df)
     try: 
-        str_df = StringUtils.remove_unicode_characters(str_df_mod_tc_cont)
+        str_df_mod_tc_cont = StringUtils.remove_unicode_characters(str_df_mod_tc_cont)
         df_mod_tc_cont = pd.read_csv(StringIO(str_df_mod_tc_cont), sep=";",engine='python',quoting=csv.QUOTE_NONE)
     except: 
-        LogUtils.logerror(logger,'csv.Error: unexpected end of data : df_mod_tc_contributions %s ' % str_df,True)
+        LogUtils.logerror(logger,'csv.Error: unexpected end of data : df_mod_tc_contributions %s ' % str_df_mod_tc_cont,True)
     return df_mod_tc_cont
+
+###############################################################################
+
+def get_df_mod_weight(logger, dict_modulesweight):
+    df_mod_weight = None
+    str_df_mod_weight = 'Module;Nb artifacts\n'
+    for mod in dict_modulesweight:
+        str_df_mod_weight += str(mod) + ';' + str(dict_modulesweight[mod]) + '\n'
+    #logger.debug(str_df)
+    try: 
+        str_df_mod_weight = StringUtils.remove_unicode_characters(str_df_mod_weight)
+        df_mod_weight = pd.read_csv(StringIO(str_df_mod_weight), sep=";",engine='python',quoting=csv.QUOTE_NONE)
+    except: 
+        LogUtils.logerror(logger,'csv.Error: unexpected end of data : str_df_mod_weight %s ' % str_df_mod_weight,True)
+    return df_mod_weight
 
 ###############################################################################
 def get_df_app_violations(logger, loadviolations, listviolations):
@@ -455,10 +504,12 @@ def get_df_app_tc_contribution(logger, appName, listtccontributions, dictmetrics
     str_df_tc_contribution = get_tc_contribution_header()
     # for each contribution TC/QR 
     for tcc in listtccontributions:
+        #print(str(tcc.metricid))
         QRhasresults = False
         for met in dictmetrics:
             if str(met) == str(tcc.metricid): 
                 QRhasresults = True
+                break
         # keep only the quality metrics that have metrics that have results 
         if QRhasresults:
             #print (tcc.metricid)
@@ -503,7 +554,7 @@ def get_df_remediationeffort(logger, dictmetrics, dicremediationabacus):
 
 ###############################################################################
 
-def generate_excelfile(logger, filepath, appName, snapshotversion, snapshotdate, loadviolations, listbusinesscriteria, dictechnicalcriteria, listbccontributions, listtccontributions, dictmetrics, dictapsummary, dicremediationabacus, listviolations, broundgrades, dictaptriggers, dictmodules=None):
+def generate_excelfile(logger, filepath, appName, snapshotversion, snapshotdate, loadviolations, listbusinesscriteria, dictechnicalcriteria, listbccontributions, listtccontributions, dictmetrics, dictapsummary, dicremediationabacus, listviolations, broundgrades, dictaptriggers, dictmodules=None,dict_modulesweight=None):
     format = ExcelFormat()
     pd.options.display.float_format = format.const_float_format.format
     
@@ -526,15 +577,17 @@ def generate_excelfile(logger, filepath, appName, snapshotversion, snapshotdate,
     #######################################################################################################################
     # Data for the module BC Grades Tab
     if dictmodules:
-        df_mod_bc_grades = get_df_mod_bc_grades(logger, dictmodules)
+        df_mod_bc_grades = get_df_mod_bc_grades(logger, dictmodules, dict_modulesweight)
         # Data for the module TC Grades Tab
-        df_mod_tc_grades = get_df_mod_tc_grades(logger, dictmodules)
+        df_mod_tc_grades = get_df_mod_tc_grades(logger, dictmodules, dict_modulesweight)
         # Data for the modules Rules Grades Tab
-        df_mod_rules_grades = get_df_mod_rules_grades(logger, snapshotdate, snapshotversion, dictmodules, listtccontributions, listbccontributions)  
+        df_mod_rules_grades = get_df_mod_rules_grades(logger, snapshotdate, snapshotversion, dictmodules, listtccontributions, listbccontributions, None, None, dict_modulesweight)  
         # Data for the cBC Contributions Tab
         df_mod_bc_contribution = get_df_mod_bc_contribution(logger, dictmodules, listbccontributions)
         # Data for the mod TC Contributions Tab
         df_mod_tc_contribution = get_df_mod_tc_contribution(logger, dictmodules, listtccontributions)
+        if dict_modulesweight != None:
+            df_mod_weight = get_df_mod_weight(logger, dict_modulesweight)
     #######################################################################################################################
     # Data for the Remediation Tab
     df_remediationeffort = get_df_remediationeffort(logger, dictmetrics, dicremediationabacus)
@@ -559,7 +612,8 @@ def generate_excelfile(logger, filepath, appName, snapshotversion, snapshotdate,
             df_mod_rules_grades.to_excel(writer, sheet_name=format.const_TAB_MOD_RULES_GRADES, index=False)
             df_mod_bc_contribution.to_excel(writer, sheet_name=format.const_TAB_MOD_BC_CONTRIBUTIONS, index=False) 
             df_mod_tc_contribution.to_excel(writer, sheet_name=format.const_TAB_MOD_TC_CONTRIBUTIONS, index=False)        
-        
+            if dict_modulesweight != None:
+                df_mod_weight.to_excel(writer, sheet_name=format.const_TAB_MOD_WEIGHT, index=False)        
         df_remediationeffort.to_excel(writer, sheet_name=format.const_TAB_REMEDIATION_EFFORT, index=False) 
 
         workbook = writer.book
@@ -584,13 +638,13 @@ def generate_excelfile(logger, filepath, appName, snapshotversion, snapshotdate,
         # Application
         
         worksheet = writer.sheets[format.const_TAB_APP_BC_GRADES]
-        format_table_bc_grades(workbook,worksheet,df_app_bc_grades,format,loadviolations, 'Application')   
+        format_table_bc_grades(workbook,worksheet,df_app_bc_grades,format,loadviolations, 'Application', dict_modulesweight)   
     
         worksheet = writer.sheets[format.const_TAB_APP_TC_GRADES]
-        format_table_tc_grades(workbook,worksheet,df_app_tc_grades,format, 'Application')  
+        format_table_tc_grades(workbook,worksheet,df_app_tc_grades,format, 'Application', dict_modulesweight)  
     
         worksheet = writer.sheets[format.const_TAB_APP_RULES_GRADES]
-        format_table_rules_grades(workbook,worksheet,df_app_rules_grades,format,'Application',loadviolations, listmetricsinviolations, dictmodules != None)  
+        format_table_rules_grades(workbook,worksheet,df_app_rules_grades,format,'Application',loadviolations, listmetricsinviolations, dictmodules != None, dict_modulesweight)  
     
         if loadviolations:
             worksheet = writer.sheets[format.const_TAB_APP_VIOLATIONS]
@@ -606,19 +660,23 @@ def generate_excelfile(logger, filepath, appName, snapshotversion, snapshotdate,
         # Modules
         if dictmodules:
             worksheet = writer.sheets[format.const_TAB_MOD_BC_GRADES]
-            format_table_bc_grades(workbook,worksheet,df_mod_bc_grades,format,False,'Module')
+            format_table_bc_grades(workbook,worksheet,df_mod_bc_grades,format,False,'Module', dict_modulesweight)
             
             worksheet = writer.sheets[format.const_TAB_MOD_TC_GRADES]
-            format_table_tc_grades(workbook,worksheet,df_mod_tc_grades,format,'Module')
+            format_table_tc_grades(workbook,worksheet,df_mod_tc_grades,format,'Module', dict_modulesweight)
             
             worksheet = writer.sheets[format.const_TAB_MOD_RULES_GRADES]
-            format_table_rules_grades(workbook,worksheet,df_mod_rules_grades,format,'Module')
+            format_table_rules_grades(workbook,worksheet,df_mod_rules_grades,format,'Module', None, None, None, dict_modulesweight)
             
             worksheet = writer.sheets[format.const_TAB_MOD_BC_CONTRIBUTIONS]
             format_table_bc_contribution(workbook,worksheet,df_mod_bc_contribution,format,'Module')
             
             worksheet = writer.sheets[format.const_TAB_MOD_TC_CONTRIBUTIONS]
             format_table_tc_contribution(workbook,worksheet,df_mod_tc_contribution,format,'Module')
+            
+            if dict_modulesweight != None:
+                worksheet = writer.sheets[format.const_TAB_MOD_WEIGHT]
+                format_table_mod_weight(workbook,worksheet,df_mod_weight,format)
             
         worksheet = writer.sheets[format.const_TAB_REMEDIATION_EFFORT]        
         format_table_remediation_effort(workbook,worksheet,df_remediationeffort,format)  
@@ -660,7 +718,7 @@ def excel_round(formula,decimals):
 
 ########################################################################
 
-def format_table_bc_grades(workbook,worksheet,table,format,loadviolations, level='Application'):
+def format_table_bc_grades(workbook,worksheet,table,format,loadviolations, level='Application', dict_modulesweight=None):
     if level == 'Application':
         worksheet.set_tab_color(format.const_color_light_blue)
         tab_bc_cont = tab_app_bc_cont
@@ -683,16 +741,14 @@ def format_table_bc_grades(workbook,worksheet,table,format,loadviolations, level
     else: 
         nb_rows = len(table.index.values)+1 - 15
     
-    col_to_format = colnum_string(len(table.columns) + 1 + offset)    
-
-
-    start = "H2"
+    col_to_format = 'H'    
+    start = col_to_format + '2'
     #define the range to be formated in excel format
-    range_to_format = "{}:{}{}".format(start,col_to_format,nb_rows)
+    range_to_format = "{}:{}{}".format(start, col_to_format, nb_rows)
     #print("range {}".format(range_to_format))
     
-    worksheet.conditional_format(range_to_format, {'type': 'cell','criteria': '>','value': 0.000001, 'format':   format.format_green_percentage})
-    worksheet.conditional_format(range_to_format, {'type': 'cell','criteria': '<','value': -0.000001, 'format':   format.format_red_percentage})
+    worksheet.conditional_format(range_to_format, {'type': 'cell','criteria': '>','value': 0.001, 'format':   format.format_green_percentage})
+    worksheet.conditional_format(range_to_format, {'type': 'cell','criteria': '<','value': -0.001, 'format':   format.format_red_percentage})
 
     worksheet.set_column('A:A', 20, None) # Application column
     worksheet.set_column('B:B', 32, None) # BC name
@@ -705,14 +761,27 @@ def format_table_bc_grades(workbook,worksheet,table,format,loadviolations, level
     # group and hide columns lowest critical grade and weighted average
     #worksheet.set_column('F:F', None, None, {'level': 1, 'collapsed': True})
     #worksheet.set_column('G:G', None, None, {'level': 1, 'collapsed': True})    
-    worksheet.set_column('H:H', 11, format.format_percentage) # delta %  
-    last_column = 'H'
-    worksheet.autofilter('A1:' + last_column + str(nb_rows))      
+    worksheet.set_column('H:H', 11, format.format_percentage) # delta %
+ 
+    if level == 'Module' and dict_modulesweight != None:
+        worksheet.set_column('I:I', 11, format.format_float_with_2decimals) # Module weight
+        worksheet.set_column('J:J', 15, format.format_float_with_2decimals) # Module weighted grade 
+        last_column = 'J'
+    else:
+        last_column = 'H'
+    worksheet.autofilter('A1:' + last_column + str(nb_rows))     
     
     # Create a for loop to start writing the formulas to each row
     for row_num in range(1,nb_rows):
         # simulation grade
-        worksheet.write_formula(row_num, 5-1, round_grades(broundgrades,'=IF(F%d=0,G%d,MIN(F%d,G%d))') % (row_num + 1, row_num + 1, row_num + 1, row_num + 1))
+        
+        if level == 'Module' or (level == 'Application' and dict_modulesweight == None):
+            # aggregation = full application
+            worksheet.write_formula(row_num, 5-1, round_grades(broundgrades,'=IF(F%d=0,G%d,MIN(F%d,G%d))') % (row_num + 1, row_num + 1, row_num + 1, row_num + 1))
+        elif level == 'Application' and dict_modulesweight != None:
+            # aggregation = module weighted average
+            worksheet.write_formula(row_num, 5-1, round_grades(broundgrades,"=_xlfn.SUMIFS('%s'!J:J,'%s'!B:B,B%s)/_xlfn.SUMIFS('%s'!I:I,'%s'!B:B,B%s)") % (tab_mod_bc_grade,tab_mod_bc_grade,row_num + 1,tab_mod_bc_grade,tab_mod_bc_grade,row_num + 1))
+
         # lowest critical
         worksheet.write_formula(row_num, 6-1,  round_grades(broundgrades,"=_xlfn.MINIFS('%s'!H:H,'%s'!C:C,C%d,'%s'!G:G,TRUE,'%s'!A:A,A%s)") % (tab_bc_cont, tab_bc_cont, row_num + 1, tab_bc_cont, tab_bc_cont, row_num + 1))
         # weighted average
@@ -725,6 +794,11 @@ def format_table_bc_grades(workbook,worksheet,table,format,loadviolations, level
         #=SUMIFS('Modules BC contributions'!I:I;'Modules BC contributions'!C:C;C2;'Modules BC contributions'!A:A;A2)/SUMIFS('Modules BC contributions'!F:F;'Modules BC contributions'!C:C;C2;'Modules BC contributions'!A:A;A2)
         # Delta %
         worksheet.write_formula(row_num, 8-1, '=($E%d-$D%d)/$D%d' % (row_num + 1, row_num + 1, row_num + 1), format.format_percentage)
+    
+        if level == 'Module' and dict_modulesweight != None:
+            worksheet.write_formula(row_num, 9-1, "=VLOOKUP(A%s,'%s'!A:B,2,FALSE)" % (row_num + 1, tab_mod_weigth), format.format_float_with_2decimals)
+            worksheet.write_formula(row_num, 10-1, "=I%s*E%s" % (row_num + 1, row_num + 1), format.format_float_with_2decimals)    
+    
     
     if level == 'Application':
         # 3 empty line + 3 lines for application name, snapshot version and date
@@ -744,7 +818,7 @@ def format_table_bc_grades(workbook,worksheet,table,format,loadviolations, level
             #worksheet.write_formula(row_to_format_for_summary+6, 3-1, "=SUM(Violations!P:P)")        
             #JSON removed
             #JSON modified
-    
+
     
     # Write the column headers with the defined format.
     for col_num, value in enumerate(table.columns.values):
@@ -775,7 +849,7 @@ def get_hrefid(href, separator='/'):
     
 ########################################################################    
     
-def format_table_tc_grades(workbook,worksheet,table,format, level='Application'):
+def format_table_tc_grades(workbook,worksheet,table,format, level='Application', dict_modulesweight=None):
     if level == 'Application':
         worksheet.set_tab_color(format.const_color_light_blue)
         tab_tc_cont = tab_app_tc_cont
@@ -787,15 +861,14 @@ def format_table_tc_grades(workbook,worksheet,table,format, level='Application')
     worksheet.freeze_panes(1, 0)  # Freeze the first row.
     worksheet.set_zoom(85)
 
-    offset = 1 
     nb_rows = len(table.index.values)+1
-    col_to_format = colnum_string(len(table.columns) + 1 + offset)    
 
     #define the range to be formated in excel format
-    start = "I2"
-    range_to_format = "{}:{}{}".format(start,col_to_format,nb_rows)
-    worksheet.conditional_format(range_to_format, {'type':     'cell', 'criteria': '>','value': 0.000001, 'format':   format.format_green_percentage})
-    worksheet.conditional_format(range_to_format, {'type':     'cell', 'criteria': '<','value': -0.000001, 'format':   format.format_red_percentage})
+    col_to_format = 'I'    
+    start = col_to_format + '2'
+    range_to_format = "{}:{}{}".format(start, col_to_format,nb_rows)
+    worksheet.conditional_format(range_to_format, {'type':     'cell', 'criteria': '>','value': 0.001, 'format':   format.format_green_percentage})
+    worksheet.conditional_format(range_to_format, {'type':     'cell', 'criteria': '<','value': -0.001, 'format':   format.format_red_percentage})
     
     worksheet.set_column('A:A', 10, None, {'level': 1, 'hidden': True}) #  Key        
     worksheet.set_column('B:B', 20, None) #  App name
@@ -807,14 +880,29 @@ def format_table_tc_grades(workbook,worksheet,table,format, level='Application')
     worksheet.set_column('G:G', 13, format.format_float_with_2decimals, {'level': 2, 'hidden': True}) # 
     worksheet.set_column('H:H', 19, format.format_float_with_2decimals, {'level': 2, 'hidden': True}) # 
     worksheet.set_column('I:I', 12, format.format_percentage) # 
-    last_column = 'I'
-    worksheet.autofilter('A1:' + last_column + str(nb_rows))     
+ 
+ 
+    if level == 'Module' and dict_modulesweight != None:
+        worksheet.set_column('J:J', 11, format.format_float_with_2decimals) # Module weight
+        worksheet.set_column('K:K', 15, format.format_float_with_2decimals) # Module weighted grade 
+        last_column = 'K'
+    else:
+        last_column = 'I'
+    worksheet.autofilter('A1:' + last_column + str(nb_rows))   
  
     # Create a for loop to start writing the formulas to each row
     for row_num in range(1,nb_rows):
         worksheet.write_formula(row_num, 1-1, "B%s&D%s" % (row_num + 1, row_num + 1))
+        
         #simulation grade
-        worksheet.write_formula(row_num, 6-1, round_grades(broundgrades,"=IF(G%d=0,H%d,MIN(G%d,H%d))") % (row_num + 1, row_num + 1, row_num + 1, row_num + 1), format.format_float_with_2decimals)
+        #worksheet.write_formula(row_num, 6-1, round_grades(broundgrades,"=IF(G%d=0,H%d,MIN(G%d,H%d))") % (row_num + 1, row_num + 1, row_num + 1, row_num + 1), format.format_float_with_2decimals)
+        if level == 'Module' or (level == 'Application' and dict_modulesweight == None):
+            # aggregation = full application
+            worksheet.write_formula(row_num, 6-1, round_grades(broundgrades,"=IF(G%d=0,H%d,MIN(G%d,H%d))") % (row_num + 1, row_num + 1, row_num + 1, row_num + 1), format.format_float_with_2decimals)
+        elif level == 'Application' and dict_modulesweight != None:
+            # aggregation = module weighted average
+            worksheet.write_formula(row_num, 6-1, round_grades(broundgrades,"=_xlfn.SUMIFS('%s'!K:K,'%s'!C:C,C%s)/_xlfn.SUMIFS('%s'!J:J,'%s'!C:C,C%s)") % (tab_mod_tc_grade,tab_mod_tc_grade,row_num + 1,tab_mod_tc_grade,tab_mod_tc_grade,row_num + 1))
+        
         #lowest critical rule grade
         worksheet.write_formula(row_num, 7-1, round_grades(broundgrades,"=_xlfn.MINIFS('%s'!I:I,'%s'!D:D,D%d,'%s'!H:H,TRUE,'%s'!B:B,B%s)") % (tab_tc_cont, tab_tc_cont, row_num + 1, tab_tc_cont, tab_tc_cont, row_num + 1), format.format_float_with_2decimals)
         #weighted av
@@ -824,6 +912,11 @@ def format_table_tc_grades(workbook,worksheet,table,format, level='Application')
         worksheet.write_formula(row_num, 8-1, round_grades(broundgrades,formula))
         #delta %
         worksheet.write_formula(row_num, 9-1, "=($F%d-$E%d)/$E%d" % (row_num + 1, row_num + 1, row_num + 1), format.format_percentage)
+        
+        if level == 'Module' and dict_modulesweight != None:
+            worksheet.write_formula(row_num, 10-1, "=VLOOKUP(B%s,'%s'!A:B,2,FALSE)" % (row_num + 1, tab_mod_weigth), format.format_float_with_2decimals)
+            worksheet.write_formula(row_num, 11-1, "=J%s*F%s" % (row_num + 1, row_num + 1), format.format_float_with_2decimals)            
+        
     # Write the column headers with the defined format.
     for col_num, value in enumerate(table.columns.values):
         worksheet.write(0, col_num, value, header_format) 
@@ -832,7 +925,7 @@ def format_table_tc_grades(workbook,worksheet,table,format, level='Application')
  
 ########################################################################
 
-def format_table_rules_grades(workbook,worksheet, table, format, level='Application', loadviolations=False, listmetricsinviolations = None, loadmodules=False):
+def format_table_rules_grades(workbook,worksheet, table, format, level='Application', loadviolations=False, listmetricsinviolations = None, loadmodules=False, dict_modulesweight=None):
     if level == 'Application':
         worksheet.set_tab_color(format.const_color_light_blue)
         tab_tc_cont = tab_app_tc_cont
@@ -852,16 +945,16 @@ def format_table_rules_grades(workbook,worksheet, table, format, level='Applicat
     start = col_to_format + '2'
     #define the range to be formated in excel format
     range_to_format = "{}:{}{}".format(start,col_to_format,nb_rows)
-    worksheet.conditional_format(range_to_format, {'type':'cell', 'criteria': '>', 'value': 0.000001, 'format':   format.format_green_percentage})
-    worksheet.conditional_format(range_to_format, {'type':'cell', 'criteria': '<', 'value': -0.000001, 'format':   format.format_red_percentage})   
+    worksheet.conditional_format(range_to_format, {'type':'cell', 'criteria': '>', 'value': 0.001, 'format':   format.format_green_percentage})
+    worksheet.conditional_format(range_to_format, {'type':'cell', 'criteria': '<', 'value': -0.001, 'format':   format.format_red_percentage})   
 
     # conditional formating for the number of violations for action
     col_to_format = 'N'    
     start = col_to_format + '2'
     #define the range to be formated in excel format
     range_to_format = "{}:{}{}".format(start,col_to_format,nb_rows)
-    worksheet.conditional_format(range_to_format, {'type': 'cell', 'criteria': '>', 'value': 0.000001, 'format':   format.format_green_int})
-    worksheet.conditional_format(range_to_format, {'type': 'cell', 'criteria': '<', 'value': -0.000001, 'format':   format.format_red_int})   
+    worksheet.conditional_format(range_to_format, {'type': 'cell', 'criteria': '>', 'value': 0.001, 'format':   format.format_green_int})
+    worksheet.conditional_format(range_to_format, {'type': 'cell', 'criteria': '<', 'value': -0.001, 'format':   format.format_red_int})   
 
     # conditional formating for the unit effort column
     col_to_format = 'P'    
@@ -908,7 +1001,7 @@ def format_table_rules_grades(workbook,worksheet, table, format, level='Applicat
     
     worksheet.set_column('M:M', 10, None) # Nb violations
     worksheet.set_column('N:N', 11, None) # Nb violations for action
-    worksheet.set_column('O:O', 10, None) # Reminaing vioaltions
+    worksheet.set_column('O:O', 10, None) # Remaining vioaltions
     worksheet.set_column('P:P', 11, format.format_float_with_2decimals, {'level': 3, 'hidden': False}) # Unit effort
     worksheet.set_column('Q:Q', 11, format.format_float_with_2decimals, {'level': 3, 'hidden': False}) # Total effort mh
     worksheet.set_column('R:R', 11, format.format_float_with_2decimals, {'level': 3, 'hidden': False}) # Total effort md
@@ -930,9 +1023,13 @@ def format_table_rules_grades(workbook,worksheet, table, format, level='Applicat
     worksheet.set_column('AF:AF', 50, None) # Technical criterion
     worksheet.set_column('AG:AG', 60, None) # Business criteria
     
-    last_column='AG'
-    worksheet.autofilter('A1:' + last_column + str(nb_rows))     
-
+    if level == 'Module' and dict_modulesweight != None:
+        worksheet.set_column('AH:AH', 11, format.format_float_with_2decimals) # Module weight
+        worksheet.set_column('AI:AI', 15, format.format_float_with_2decimals) # Module weighted grade 
+        last_column = 'AI'
+    else:
+        last_column='AG'
+    worksheet.autofilter('A1:' + last_column + str(nb_rows))
 
     # Create a for loop to start writing the formulas to each row
     for row_num in range(1,nb_rows):
@@ -944,9 +1041,15 @@ def format_table_rules_grades(workbook,worksheet, table, format, level='Applicat
         # formulas applicable only for quality-rules, not for quality-measures and quality-distributions 
         if metrictype == type_quality_rules:
             #simulation grade
-            formula = round_grades(broundgrades,'=IF(U%s=0,I%s,IF(U%s<=V%s/100,1,IF(U%s<W%s/100,(U%s*100-V%s)/(W%s-V%s)+1,IF(U%s<X%s/100,(U%s*100-W%s)/(X%s-W%s)+2,IF(U%s<Y%s/100,(U%s*100-X%s)/(Y%s-X%s)+3,4)))))') % (row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1)
-            
+            #formula = round_grades(broundgrades,'=IF(U%s=0,I%s,IF(U%s<=V%s/100,1,IF(U%s<W%s/100,(U%s*100-V%s)/(W%s-V%s)+1,IF(U%s<X%s/100,(U%s*100-W%s)/(X%s-W%s)+2,IF(U%s<Y%s/100,(U%s*100-X%s)/(Y%s-X%s)+3,4)))))') % (row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1)
+            if level == 'Module' or (level == 'Application' and dict_modulesweight == None):
+                # aggregation = full application
+                formula = round_grades(broundgrades,'=IF(U%s=0,I%s,IF(U%s<=V%s/100,1,IF(U%s<W%s/100,(U%s*100-V%s)/(W%s-V%s)+1,IF(U%s<X%s/100,(U%s*100-W%s)/(X%s-W%s)+2,IF(U%s<Y%s/100,(U%s*100-X%s)/(Y%s-X%s)+3,4)))))') % (row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1)
+            elif level == 'Application' and dict_modulesweight != None:
+                # aggregation = module weighted average
+                formula = round_grades(broundgrades,"=_xlfn.SUMIFS('%s'!AI:AI,'%s'!E:E,E%s)/_xlfn.SUMIFS('%s'!AH:AH,'%s'!E:E,E%s)") % (tab_mod_rule_grade,tab_mod_rule_grade,row_num + 1,tab_mod_rule_grade,tab_mod_rule_grade,row_num + 1)
             worksheet.write_formula(row_num, 10-1, formula)
+            
             #grade delta
             worksheet.write_formula(row_num, 11-1, '=$J%d-$I%d' % (row_num + 1, row_num + 1))
             #grade delta %
@@ -991,6 +1094,11 @@ def format_table_rules_grades(workbook,worksheet, table, format, level='Applicat
             worksheet.write_formula(row_num, 30-1, "=VLOOKUP(A%s,'%s'!A:Y,22,FALSE)" % (row_num + 1, tab_tc_cont))
             #Nb violations  to fix on the TC  rules before TC grade improvement
             worksheet.write_formula(row_num, 31-1, "=VLOOKUP(A%s,'%s'!A:Y,23,FALSE)" % (row_num + 1, tab_tc_cont))
+            
+            if level == 'Module' and dict_modulesweight != None:
+                worksheet.write_formula(row_num, 34-1, "=VLOOKUP(B%s,'%s'!A:B,2,FALSE)" % (row_num + 1, tab_mod_weigth), format.format_float_with_2decimals)
+                worksheet.write_formula(row_num, 35-1, "=AH%s*J%s" % (row_num + 1, row_num + 1), format.format_float_with_2decimals)                 
+            
         else:
             # simulation grade = grade
             worksheet.write_formula(row_num, 10-1, '=$I%d' % (row_num + 1))
@@ -1183,8 +1291,9 @@ def format_table_tc_contribution(workbook,worksheet,table,format, level='Applica
         worksheet.write_formula(row_num, 10 - 1, '=$I%d*$G%d' % (row_num + 1, row_num + 1))
         worksheet.write_formula(row_num, 11 - 1, '=IF(L%d,IF(H%d,1,2),IF(AND(H%d,I%d<4),3,IF(I%d<4,4,"")))' % (row_num + 1, row_num + 1, row_num + 1, row_num + 1, row_num + 1))
         
-        
-        worksheet.write_formula(row_num, 12 - 1,  "=IF(AND(H%s,O%s<P%s),IF(I%s=O%s,TRUE,FALSE),IF(AND(O%s>0,O%s<P%s),FALSE,IF(S%s=_xlfn.MAXIFS(S:S,D:D,D%s),TRUE,FALSE)))" % (row_num + 1, row_num + 1, row_num + 1, row_num + 1, row_num + 1, row_num + 1, row_num + 1, row_num + 1, row_num + 1, row_num + 1))
+        # Grade improvement opportunity
+        #worksheet.write_formula(row_num, 12 - 1,  "=IF(AND(H%s,O%s<P%s),IF(I%s=O%s,TRUE,FALSE),IF(AND(O%s>0,O%s<P%s),FALSE,IF(S%s=_xlfn.MAXIFS(S:S,D:D,D%s),TRUE,FALSE)))" % (row_num + 1, row_num + 1, row_num + 1, row_num + 1, row_num + 1, row_num + 1, row_num + 1, row_num + 1, row_num + 1, row_num + 1))
+        worksheet.write_formula(row_num, 12 - 1,  "=IF(Y%s>0,IF(AND(H%s,O%s<P%s),IF(I%s=O%s,TRUE,FALSE),IF(AND(O%s>0,O%s<P%s),FALSE,IF(S%s=_xlfn.MAXIFS(S:S,D:D,D%s),TRUE,FALSE))),FALSE)" % (row_num + 1, row_num + 1, row_num + 1, row_num + 1, row_num + 1, row_num + 1, row_num + 1, row_num + 1, row_num + 1, row_num + 1, row_num + 1))
         
         #worksheet.write_formula(row_num, 12 - 1, "=VLOOKUP(B%s,'%s'!A:H,5,FALSE)"% (row_num + 1, tab_tc_grade))
         #worksheet.write_formula(row_num, 12 - 1, "=INDIRECT(ADDRESS(MATCH(A%s&C%s,'%s'!A:A&'%s'!C:C,0),5,1,1,\"%s\"))" % (row_num + 1,row_num + 1, tab_tc_grade, tab_tc_grade, tab_tc_grade))
@@ -1208,6 +1317,26 @@ def format_table_tc_contribution(workbook,worksheet,table,format, level='Applica
     for col_num, value in enumerate(table.columns.values):
         worksheet.write(0, col_num, value, header_format)
 
+########################################################################
+
+def format_table_mod_weight(workbook,worksheet,table,format):
+    worksheet.set_tab_color(format.const_color_light_rose)
+    header_format = workbook.add_format({'bold': True,'text_wrap': True,'valign': 'middle','fg_color': format.const_color_header_columns,'border': 1}) 
+    worksheet.freeze_panes(1, 0)  # Freeze the first row.
+    worksheet.set_zoom(85)
+    
+    nb_rows = len(table.index.values)+1
+    worksheet.set_column('A:A', 50, None) # Module name
+    worksheet.set_column('B:B', 25, None) # Nb of artifacts 
+   
+    last_column = 'B'
+    worksheet.autofilter('A1:' + last_column + str(nb_rows))    
+   
+
+   
+    # Write the column headers with the defined format.
+    for col_num, value in enumerate(table.columns.values):
+        worksheet.write(0, col_num, value, header_format)
 
 
 ########################################################################

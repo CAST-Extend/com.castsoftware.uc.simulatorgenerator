@@ -40,6 +40,9 @@ SET APPFILTER=Webgoat
 :: [Optional] Load modules ? default = false
 SET LOADMODULES=false
 
+:: Aggregation mode (FullApplication/ByNumberOfArtifacts) default = FullApplication
+::SET AGGREGATIONMODE=FullApplication
+
 :: [Optional] Inputs CSV file containing the quality rules efforts (default is CAST_QualityRulesEffort.csv)
 ::SET EFFORTFILEPATH=C:/Temp/CAST_QualityRulesEffort.csv
 
@@ -92,6 +95,7 @@ SET CMD=%CMD% -extensioninstallationfolder "%EXTENSIONINSTALLATIONFOLDER%"
 
 ECHO APPFILTER=%APPFILTER%
 IF DEFINED LOADMODULES				SET CMD=%CMD% -loadmodules "%LOADMODULES%"
+IF DEFINED AGGREGATIONMODE			SET CMD=%CMD% -aggregationmode "%AGGREGATIONMODE%"
 IF DEFINED LOADVIOLATIONS			SET CMD=%CMD% -loadviolations "%LOADVIOLATIONS%"
 IF DEFINED APPFILTER 				SET CMD=%CMD% -applicationfilter "%APPFILTER%"
 IF DEFINED EFFORTFILEPATH			SET CMD=%CMD% -effortcsvfilepath "%EFFORTFILEPATH%"
