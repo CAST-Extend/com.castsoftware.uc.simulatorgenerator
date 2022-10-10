@@ -26,7 +26,10 @@ from utils import excel_format
 ########################################################################
 
 # Total Quality Index,Security,Efficiency,Robustness,Transferability,Changeability,Coding Best Practices/Programming Practices,Documentation,Architectural Design,Green IT
-bcids = ["60017","60016","60014","60013","60012","60011","66031","66032","66033","20140522" ]
+#      ISO-5055-Index, ISO-5055-Maintainability, ISO-5055-Performance-Efficiency, ISO-5055-Performance-Efficiency, ISO-5055-Security
+bcids = ["60017","60016","60014","60013","60012","60011","66031","66032","66033","20140522",
+         "1061000","1061001", "1061002", "1061003", "1061004"
+         ]
 broundgrades = False
 ########################################################################
 
@@ -340,7 +343,7 @@ if __name__ == '__main__':
                                 strmodules_filter = None
                                 if loadmodules: 
                                     strmodules_filter = "$all" 
-                                dictmetrics, dicttechnicalcriteria, listbusinesscriteria, dictmodules = rest_service_aip.get_qualitymetrics_results(domain.name, objapp.id, objsnapshot.snapshotid, tqiqm=tqiqm, criticalonly=False, modules=strmodules_filter, nbrows=nbrows)                                
+                                dictmetrics, dicttechnicalcriteria, listbusinesscriteria, dictmodules = rest_service_aip.get_qualitymetrics_results(domain.name, objapp.id, objsnapshot.snapshotid, tqiqm=tqiqm, criticalonly=False, modules=strmodules_filter, aggregationmode=aggregationmode, nbrows=nbrows)                                
                                 
                                 logger.info('Extracting the technical criteria contributors at application level')
                                 #TODO:Keep this section to collect the information for the old versions of Rest API, because in the latest versions select=aggregators in the previous REST call is already providing this 
@@ -371,7 +374,7 @@ if __name__ == '__main__':
                             fpath = get_excelfilepath(outputfolder, objapp.name)
                             LogUtils.loginfo(logger,"Generating xlsx file " + fpath,True)
                             
-                            excel_format.generate_excelfile(logger, fpath, objapp.name, objsnapshot.version, objsnapshot.isodate, loadviolations, listbusinesscriteria, dicttechnicalcriteria, listbccontributions, listtccontributions, dictmetrics, dictapsummary, dicremediationabacus, listviolations, broundgrades, dictaptriggers, dictmodules, dict_modulesweight)
+                            excel_format.generate_excelfile(logger, fpath, objapp.name, objsnapshot.version, objsnapshot.isodate, loadviolations, listbusinesscriteria, dicttechnicalcriteria, listbccontributions, listtccontributions, dictmetrics, dictapsummary, dicremediationabacus, listviolations, broundgrades, dictaptriggers, dictmodules, dict_modulesweight, aggregationmode)
 
                             # keep only last snapshot
                             break

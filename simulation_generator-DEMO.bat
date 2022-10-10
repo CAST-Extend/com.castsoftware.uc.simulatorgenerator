@@ -35,7 +35,9 @@ SET PASSWORD=cast
 
 :: [Optional] Application name regexp filter, if not defined all application will be exported
 ::SET APPFILTER=Webgoat^|eComm.*
-SET APPFILTER=Webgoat
+SET APPFILTER=eCommerce
+::HR Management with JEE
+::Webgoat
 
 :: [Optional] Load modules ? default = false
 SET LOADMODULES=false
@@ -103,11 +105,11 @@ IF DEFINED QRIDFILTER				SET CMD=%CMD% -qridfilter %QRIDFILTER%
 IF DEFINED QRNAMEFILTER				SET CMD=%CMD% -qrnamefilter "%QRNAMEFILTER%"
 IF DEFINED CRITICALONLYFILTER		SET CMD=%CMD% -criticalrulesonlyfilter "%CRITICALONLYFILTER%"
 IF DEFINED BCFILTER					SET CMD=%CMD% -businesscriterionfilter "%BCFILTER%"
-IF DEFINED CMD_TECHNOFILTER			SET CMD=%CMD% -technofilter "%TECHNOFILTER%"
+IF DEFINED TECHNOFILTER				SET CMD=%CMD% -technofilter "%TECHNOFILTER%"
 
 :: Max nbRows for the Rest API calls
 ::SET NBROWS=100000000
-IF DEFINED CMD_NBROWS				SET CMD=%CMD% -nbrows "%CMD_NBROWS%"
+IF DEFINED NBROWS					SET CMD=%CMD% -nbrows "%NBROWS%"
 
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 

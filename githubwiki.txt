@@ -84,6 +84,8 @@ None
 - For the Aggregation by number of artifacts, the Grade improvement pritority/opportunity are not correct, since not using the module weights. 
 <a name="rn"></a>
 # Release Notes
+## Version 1.2.3
+Fix an issue with the id of the Green IT index   
 ## Version 1.2.1
 Add the option to have the simulation for legacy module aggregation by Number of Artifacts (default option is still the Full Application mode), using at the application level a grade that is a module weighted grade by number of artifacts.  
 Minor fixes
