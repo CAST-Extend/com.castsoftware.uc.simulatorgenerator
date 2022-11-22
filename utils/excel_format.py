@@ -230,7 +230,7 @@ app_rule_grades_header = "Key;Application name;" + rule_grades_commonheader
 mod_rule_grades_header = "Key;Module name;" + rule_grades_commonheader
 
 ###############################################################################
-def get_df_app_rules_grades(logger, appName, snapshotdate, snapshotversion, dictmetrics, listtccontributions, listbccontributions, dictapsummary=None, dictaptriggers=None):
+def get_df_app_rules_grades(logger, appName, snapshotdate, snapshotversion, dictmetrics, listtccontributions, listbccontributions, dictapsummary=None, dictaptriggers=None, aggregationmode='FullApplication'):
     df_app_rules_grades = None
     str_df_rules_grades = app_rule_grades_header + '\n'
     
@@ -240,9 +240,10 @@ def get_df_app_rules_grades(logger, appName, snapshotdate, snapshotversion, dict
             continue
         str_line = ';'
         str_line += appName
-        str_line = get_def_rule_grade_line(logger, str_line, snapshotdate, snapshotversion, oqr, listtccontributions, listbccontributions, dictapsummary, dictaptriggers)
+        str_line, skip_line  = get_def_rule_grade_line(logger, str_line, snapshotdate, snapshotversion, oqr, listtccontributions, listbccontributions, dictapsummary, dictaptriggers, aggregationmode)
         str_line += '\n'
-        str_df_rules_grades += str_line
+        if not skip_line:
+            str_df_rules_grades += str_line
     #logger.debug(str_df_rules_grades)
     try: 
         str_df_rules_grades = StringUtils.remove_unicode_characters(str_df_rules_grades)
@@ -251,7 +252,8 @@ def get_df_app_rules_grades(logger, appName, snapshotdate, snapshotversion, dict
         LogUtils.logerror(logger,'csv.Error: unexpected end of data : df_app_rules_grades %s ' % str_df_rules_grades,True)
     return df_app_rules_grades
 ###############################################################################
-def get_def_rule_grade_line(logger, str_line, snapshotdate, snapshotversion, oqr, listtccontributions, listbccontributions, dictapsummary = None, dictaptriggers = None):
+def get_def_rule_grade_line(logger, str_line, snapshotdate, snapshotversion, oqr, listtccontributions, listbccontributions, dictapsummary = None, dictaptriggers = None, aggregationmode='FullApplication'):
+        skip_line = False
         str_line += ";" + str(snapshotdate) 
         str_line += ";" + str(snapshotversion) 
         str_line += ";" +  str(oqr.name)
@@ -263,6 +265,8 @@ def get_def_rule_grade_line(logger, str_line, snapshotdate, snapshotversion, oqr
         
         str_line += ";" + str(oqr.critical)
         #print("qr grade=" + get_grade_for_display(broundgrades, oqr.grade)) 
+        if oqr.grade == None and aggregationmode=='FullApplication':
+            skip_line = True
         str_line += ";" + get_grade_for_display(broundgrades, oqr.grade) 
         
         #simulation grade, grade delta%, grade delta%
@@ -329,11 +333,11 @@ def get_def_rule_grade_line(logger, str_line, snapshotdate, snapshotversion, oqr
         if str_bus_criteria.endswith(','):
             str_bus_criteria = str_bus_criteria[:-1]        
         str_line += str_bus_criteria        
-        return str_line
+        return str_line, skip_line
 
 ###############################################################################
 
-def get_df_mod_rules_grades(logger, snapshotdate, snapshotversion, dict_modules, listtccontributions, listbccontributions, dictapsummary = None, dictaptriggers = None, dict_modulesweight=None):
+def get_df_mod_rules_grades(logger, snapshotdate, snapshotversion, dict_modules, listtccontributions, listbccontributions, dictapsummary = None, dictaptriggers = None, dict_modulesweight=None, aggregationmode='FullApplication'):
     df_mod_rules_grades = None
     
     str_df_mod_rules_grades = mod_rule_grades_header
@@ -349,11 +353,12 @@ def get_df_mod_rules_grades(logger, snapshotdate, snapshotversion, dict_modules,
             
             str_line = ';'
             str_line += module_name
-            str_line = get_def_rule_grade_line(logger, str_line, snapshotdate, snapshotversion, oqr, listtccontributions, listbccontributions, dictapsummary, dictaptriggers)
+            str_line, skip_line = get_def_rule_grade_line(logger, str_line, snapshotdate, snapshotversion, oqr, listtccontributions, listbccontributions, dictapsummary, dictaptriggers, aggregationmode)
             if dict_modulesweight != None:
                 str_line += ';;'            
             str_line += '\n'
-            str_df_mod_rules_grades += str_line
+            if not skip_line:
+                str_df_mod_rules_grades += str_line
     #logger.debug(str_df_mod_rules_grades)
     try: 
         str_df_mod_rules_grades = StringUtils.remove_unicode_characters(str_df_mod_rules_grades)
@@ -499,7 +504,7 @@ def get_tc_contribution_header(level='Application'):
 
 ###############################################################################
 
-def get_df_app_tc_contribution(logger, appName, listtccontributions, dictmetrics):
+def get_df_app_tc_contribution(logger, appName, listtccontributions, dictmetrics, aggregationmode):
     df_app_tc_contribution = None
     str_df_tc_contribution = get_tc_contribution_header()
     # for each contribution TC/QR 
@@ -508,7 +513,13 @@ def get_df_app_tc_contribution(logger, appName, listtccontributions, dictmetrics
         QRhasresults = False
         for met in dictmetrics:
             if str(met) == str(tcc.metricid): 
-                QRhasresults = True
+                try:
+                    if aggregationmode != 'FullApplication':
+                        QRhasresults = True
+                    elif aggregationmode == 'FullApplication' and dictmetrics[met].grade != None:
+                        QRhasresults = True
+                except KeyError:
+                    None
                 break
         # keep only the quality metrics that have metrics that have results 
         if QRhasresults:
@@ -554,7 +565,7 @@ def get_df_remediationeffort(logger, dictmetrics, dicremediationabacus):
 
 ###############################################################################
 
-def generate_excelfile(logger, filepath, appName, snapshotversion, snapshotdate, loadviolations, listbusinesscriteria, dictechnicalcriteria, listbccontributions, listtccontributions, dictmetrics, dictapsummary, dicremediationabacus, listviolations, broundgrades, dictaptriggers, dictmodules=None,dict_modulesweight=None):
+def generate_excelfile(logger, filepath, appName, snapshotversion, snapshotdate, loadviolations, listbusinesscriteria, dictechnicalcriteria, listbccontributions, listtccontributions, dictmetrics, dictapsummary, dicremediationabacus, listviolations, broundgrades, dictaptriggers, dictmodules=None,dict_modulesweight=None, aggregationmode='FullApplication'):
     format = ExcelFormat()
     pd.options.display.float_format = format.const_float_format.format
     
@@ -567,13 +578,13 @@ def generate_excelfile(logger, filepath, appName, snapshotversion, snapshotdate,
     # Data for the application TC Grades Tab
     df_app_tc_grades = get_df_app_tc_grades(logger, appName, dictechnicalcriteria)
     # Data for the application Rules Grades Tab
-    df_app_rules_grades = get_df_app_rules_grades(logger, appName, snapshotdate, snapshotversion, dictmetrics, listtccontributions, listbccontributions, dictapsummary, dictaptriggers)
+    df_app_rules_grades = get_df_app_rules_grades(logger, appName, snapshotdate, snapshotversion, dictmetrics, listtccontributions, listbccontributions, dictapsummary, dictaptriggers, aggregationmode)
     # List of application violations
     df_app_violations, listmetricsinviolations = get_df_app_violations(logger, loadviolations, listviolations)
     # Data for the application BC Contributions Tab
     df_app_bc_contribution = get_df_app_bc_contribution(logger, appName, listbccontributions, dictechnicalcriteria)
     # Data for the application TC Contributions Tab
-    df_app_tc_contribution = get_df_app_tc_contribution(logger, appName, listtccontributions, dictmetrics)
+    df_app_tc_contribution = get_df_app_tc_contribution(logger, appName, listtccontributions, dictmetrics,aggregationmode)
     #######################################################################################################################
     # Data for the module BC Grades Tab
     if dictmodules:
@@ -581,7 +592,7 @@ def generate_excelfile(logger, filepath, appName, snapshotversion, snapshotdate,
         # Data for the module TC Grades Tab
         df_mod_tc_grades = get_df_mod_tc_grades(logger, dictmodules, dict_modulesweight)
         # Data for the modules Rules Grades Tab
-        df_mod_rules_grades = get_df_mod_rules_grades(logger, snapshotdate, snapshotversion, dictmodules, listtccontributions, listbccontributions, None, None, dict_modulesweight)  
+        df_mod_rules_grades = get_df_mod_rules_grades(logger, snapshotdate, snapshotversion, dictmodules, listtccontributions, listbccontributions, None, None, dict_modulesweight, aggregationmode)  
         # Data for the cBC Contributions Tab
         df_mod_bc_contribution = get_df_mod_bc_contribution(logger, dictmodules, listbccontributions)
         # Data for the mod TC Contributions Tab
@@ -1044,7 +1055,7 @@ def format_table_rules_grades(workbook,worksheet, table, format, level='Applicat
             #formula = round_grades(broundgrades,'=IF(U%s=0,I%s,IF(U%s<=V%s/100,1,IF(U%s<W%s/100,(U%s*100-V%s)/(W%s-V%s)+1,IF(U%s<X%s/100,(U%s*100-W%s)/(X%s-W%s)+2,IF(U%s<Y%s/100,(U%s*100-X%s)/(Y%s-X%s)+3,4)))))') % (row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1)
             if level == 'Module' or (level == 'Application' and dict_modulesweight == None):
                 # aggregation = full application
-                formula = round_grades(broundgrades,'=IF(U%s=0,I%s,IF(U%s<=V%s/100,1,IF(U%s<W%s/100,(U%s*100-V%s)/(W%s-V%s)+1,IF(U%s<X%s/100,(U%s*100-W%s)/(X%s-W%s)+2,IF(U%s<Y%s/100,(U%s*100-X%s)/(Y%s-X%s)+3,4)))))') % (row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1)
+                formula = round_grades(broundgrades,'=IF(U%s=0,I%s,IF(U%s<V%s/100,1,IF(U%s<W%s/100,(U%s*100-V%s)/(W%s-V%s)+1,IF(U%s<X%s/100,(U%s*100-W%s)/(X%s-W%s)+2,IF(U%s<Y%s/100,(U%s*100-X%s)/(Y%s-X%s)+3,4)))))') % (row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1,row_num + 1)
             elif level == 'Application' and dict_modulesweight != None:
                 # aggregation = module weighted average
                 formula = round_grades(broundgrades,"=_xlfn.SUMIFS('%s'!AI:AI,'%s'!E:E,E%s)/_xlfn.SUMIFS('%s'!AH:AH,'%s'!E:E,E%s)") % (tab_mod_rule_grade,tab_mod_rule_grade,row_num + 1,tab_mod_rule_grade,tab_mod_rule_grade,row_num + 1)

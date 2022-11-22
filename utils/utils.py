@@ -1323,10 +1323,11 @@ class AIPRestAPI:
               
         return metric
 
-    def get_qualitymetrics_results(self, domainname, applicationid, snapshotid, tqiqm, criticalonly, modules=None, nbrows=10000000):
+    def get_qualitymetrics_results(self, domainname, applicationid, snapshotid, tqiqm, criticalonly, modules=None, aggregationmode='FullApplication', nbrows=10000000):
         dictmetrics = {}
         dicttechnicalcriteria = {}
         listbc = []
+
         dictmodules = None
         if modules != None:
             dictmodules = {}
@@ -1337,6 +1338,7 @@ class AIPRestAPI:
             lastProgressReported = None
             for res_app in res['applicationResults']:
                 iCount += 1
+                b_has_grade = False
                 metricssize = len(res['applicationResults'])
                 imetricprogress = int(100 * (iCount / metricssize))
                 if imetricprogress in (9,19,29,39,49,59,69,79,89,99) : 
@@ -1352,7 +1354,9 @@ class AIPRestAPI:
                 
                 if metric.type in ("quality-measures","quality-distributions","quality-rules"):
                     if (metric.grade == None): 
-                        LogUtils.logwarning(self.restutils.logger, "Metric has no grade : " + metric.name, True)
+                        b_has_grade = False
+                    else:
+                        b_has_grade = True
                     #else:
                     if 1==1:
                         if metric.type == "quality-rules":
@@ -1369,7 +1373,7 @@ class AIPRestAPI:
                             if not metric.threshold1 or not metric.threshold2 or not metric.threshold3 or not metric.threshold4:
                                 #LogUtils.loginfo(logger,'Extracting the quality rules thresholds',True)
                                 json_thresholds = self.get_qualityrules_thresholds_json(domainname, snapshotid, metric.id)   
-                            if json_thresholds != None and json_thresholds['thresholds'] != None:
+                            if json_thresholds != None and json_thresholds.get('thresholds') != None and json_thresholds['thresholds'] != None:
                                 icount = 0
                                 for thres in json_thresholds['thresholds']:
                                     icount += 1
@@ -1377,7 +1381,7 @@ class AIPRestAPI:
                                     if icount == 2: metric.threshold2=thres
                                     if icount == 3: metric.threshold3=thres
                                     if icount == 4: metric.threshold4=thres
-                        dictmetrics[metric.id] = metric
+                        
                 elif metric.type == "technical-criteria":
                     #print('tc grade=' + str(metric.grade) + str(type(metric.grade)))
                     if (metric.grade == None): 
@@ -1390,9 +1394,11 @@ class AIPRestAPI:
                     else:
                         listbc.append(metric)
                 
+                b_one_module_has_grade = False
                 if modules:
                     try:
                         for res_mod in res_app['moduleResults']:
+                            
                             mod_name = res_mod['moduleSnapshot']['name'] 
                             if not dictmodules.get(mod_name):
                                 dictmodules[mod_name] = {}
@@ -1400,6 +1406,8 @@ class AIPRestAPI:
                             # skip the metrics that have no grade
                             if metric_module == None:
                                 continue
+                            if metric_module.grade != None:
+                                b_one_module_has_grade = True
                             metric_module.applicationName = res['application']['name']
                             metric_module.threshold1 = metric.threshold1
                             metric_module.threshold2 = metric.threshold2
@@ -1408,8 +1416,19 @@ class AIPRestAPI:
                             dictmodules[mod_name][metric_module] = metric_module
                     except KeyError:
                         None
-                    
-                      
+                # we add the metric only if it has a grade at application level or has grade at least at module level
+                if metric.type in ("quality-measures","quality-distributions","quality-rules"):
+                    if b_has_grade or b_one_module_has_grade:
+                        dictmetrics[metric.id] = metric  
+                    if not b_has_grade or not b_one_module_has_grade:
+                        LogUtils.logwarning(self.restutils.logger, "Metric %s" % metric.name, True)
+                    if not b_has_grade:
+                        LogUtils.logwarning(self.restutils.logger, "    has no grade at application level", True)
+                    if not b_one_module_has_grade:
+                        LogUtils.logwarning(self.restutils.logger, "    has no grade at module level", True)
+                    if not b_has_grade and not b_one_module_has_grade:
+                        LogUtils.logwarning(self.restutils.logger, "    skipping metric", True)
+                           
         return dictmetrics, dicttechnicalcriteria, listbc, dictmodules
 
     ########################################################################
@@ -1548,14 +1567,14 @@ class AIPRestAPI:
         return self.restutils.execute_requests_get(request)
 
     ########################################################################
-    def get_metric_contributions_json(self, domain, metricid, snapshotid):
+    def get_metric_contributions_json(self, domain, metricid, snapshotid):  
         request = domain + "/quality-indicators/" + str(metricid) + "/snapshots/" + snapshotid 
         return self.restutils.execute_requests_get(request)
 
     def get_metric_contributions(self, domain, metricid, snapshotid):
         return Contribution.loadlist(self.get_metric_contributions_json(domain, metricid, snapshotid))
 
-    ########################################################################
+    #################################Violation#######################################
     def get_qualityrules_thresholds_json(self, domain, snapshotid, qrid):
         #LogUtils.loginfo(self.restutils.logger,'Extracting the quality rules thresholds',True)
         request = domain + "/quality-indicators/" + str(qrid) + "/snapshots/"+ snapshotid
@@ -1565,7 +1584,7 @@ class AIPRestAPI:
     def get_businesscriteria_grades_json(self, domain, snapshotsfilter=None):
         if snapshotsfilter == None:
             snapshotsfilter = AIPRestAPI.FILTER_SNAPSHOTS_LAST        
-        request = domain + "/results?quality-indicators=(60017,60016,60014,60013,60011,60012,66031,66032,66033)&applications=($all)&snapshots=" + snapshotsfilter 
+        request = domain + "/results?quality-indicators=(60017,60016,60014,60013,60011,60012,66031,66032,66033,60013,20140522)&applications=($all)&snapshots=" + snapshotsfilter 
         return self.restutils.execute_requests_get(request)
 
     ########################################################################
