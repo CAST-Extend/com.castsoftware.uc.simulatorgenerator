@@ -695,7 +695,10 @@ def generate_excelfile(logger, filepath, appName, snapshotversion, snapshotdate,
         worksheet = writer.sheets[format.const_TAB_APP_BC_GRADES]
         worksheet.activate()
         
-        writer.save()
+        try:
+            writer.save()
+        except: 
+            LogUtils.logwarning(logger,'csv.Warning: writer.save() deprecated',True)
     
         LogUtils.loginfo(logger, 'File ' + filepath + ' generated', True)
 
