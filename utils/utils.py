@@ -54,8 +54,13 @@ class StringUtils:
     ########################################################################
     @staticmethod
     def remove_trailing_suffix (mystr, suffix='rest'):
+        # remove trailing /
+        while mystr.endswith('/'):
+            mystr = mystr[:-1]
         if mystr.endswith(suffix):
-            return mystr[:len(mystr)-len(mystr)-1]
+            return (mystr[:len(mystr)-len(suffix)-1])        
+        else:
+            return mystr
 
 ######################################################################################################################
 
@@ -995,7 +1000,7 @@ class AIPRestAPI:
                 currentviolurl = ''
                 violations_size = len(json_violations)
                 imetricprogress = int(100 * (iCouterRestAPIViolations / violations_size))
-                if iCouterRestAPIViolations==1 or iCouterRestAPIViolations==violations_size or iCouterRestAPIViolations%500 == 0:
+                if iCouterRestAPIViolations==1 or iCouterRestAPIViolations==violations_size or iCouterRestAPIViolations%3000 == 0:
                     LogUtils.loginfo(self.restutils.logger,"processing violation " + str(iCouterRestAPIViolations) + "/" + str(violations_size)  + ' (' + str(imetricprogress) + '%)',True)
                 try:
                     objviol.qrname = violation['rulePattern']['name']
@@ -1420,11 +1425,11 @@ class AIPRestAPI:
                 if metric.type in ("quality-measures","quality-distributions","quality-rules"):
                     if b_has_grade or b_one_module_has_grade:
                         dictmetrics[metric.id] = metric  
-                    if not b_has_grade or not b_one_module_has_grade:
+                    if not b_has_grade or (modules != None and not b_one_module_has_grade):
                         LogUtils.logwarning(self.restutils.logger, "Metric %s" % metric.name, True)
                     if not b_has_grade:
                         LogUtils.logwarning(self.restutils.logger, "    has no grade at application level", True)
-                    if not b_one_module_has_grade:
+                    if modules != None and not b_one_module_has_grade:
                         LogUtils.logwarning(self.restutils.logger, "    has no grade at module level", True)
                     if not b_has_grade and not b_one_module_has_grade:
                         LogUtils.logwarning(self.restutils.logger, "    skipping metric", True)

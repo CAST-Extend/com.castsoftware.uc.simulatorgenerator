@@ -39,7 +39,7 @@ class ExcelFormat:
     const_TAB_APP_BC_GRADES = 'BC Grades'
     const_TAB_APP_TC_GRADES = 'TC Grades'
     const_TAB_APP_RULES_GRADES = 'Rules Grades'
-    const_TAB_APP_VIOLATIONS = 'Violations_2'
+    const_TAB_APP_VIOLATIONS = 'Violations'
     const_TAB_APP_BC_CONTRIBUTIONS = 'BC contributions'    
     const_TAB_APP_TC_CONTRIBUTIONS = 'TC contributions'
     const_TAB_REMEDIATION_EFFORT = 'Remediation effort'
@@ -451,7 +451,15 @@ def get_df_app_violations(logger, loadviolations, listviolations):
         LogUtils.loginfo(logger,'Loading violations for excel reporting',True)
         str_df_violations = 'Quality rule name;Quality rule Id;Critical;Component name location;Selected for action;In action plan;Action plan status;Action plan tag;Action plan comment;Has exclusion request'
         str_df_violations += ';Violation status;Component status;URL;Nb actions;Nb actions added;Nb actions removed;JSON actions added;JSON actions modified;JSON actions removed;Violation id\n'
+        iindex = 0
+        violations_size = len(listviolations)
         for objviol in listviolations:
+            iindex += 1
+            #if iindex==1 or iindex==violations_size or iindex%3000 == 0:
+            iprogresspercent = int(100 * (iindex / violations_size))
+            if iindex==1 or iindex==violations_size or iindex%3000 == 0:
+                LogUtils.loginfo(logger, "Loading violation " + str(iindex) + "/" + str(violations_size)  + ' (' + str(iprogresspercent) + '%)',True)
+            #LogUtils.loginfo(logger,'  Progress : %s/%s ' %  (str(iindex), str(violations_size)))
             str_df_violations += str(objviol.qrname) + ';' + str(objviol.qrid) + ';' + str(objviol.critical) + ';' + str(objviol.componentNameLocation) + ';'+ str(objviol.hasActionPlan) + ';' + str(objviol.hasActionPlan) + ';' + str(objviol.actionplanstatus) + ';' + str(objviol.actionplantag) + ';' + str(objviol.actionplancomment) 
             str_df_violations +=  ';'+ str(objviol.hasExclusionRequest) + ';'+ str(objviol.violationstatus) + ';'+ str(objviol.componentstatus)  + ';'+ str(objviol.url) + ';;;;;;;'+ str(objviol.id) 
             str_df_violations += '\n'
@@ -459,6 +467,8 @@ def get_df_app_violations(logger, loadviolations, listviolations):
         try: 
             str_df_violations = StringUtils.remove_unicode_characters(str_df_violations)
             df_app_violations = pd.read_csv(StringIO(str_df_violations), sep=";",engine='python',quoting=csv.QUOTE_NONE) 
+            LogUtils.loginfo(logger,'Loading violations for excel reporting : DONE',True)
+            
         except: 
             LogUtils.logerror(logger,'csv.Error: unexpected end of data : df_app_violations %s ' % str_df_violations,True)
     return df_app_violations, listmetricsinviolations
@@ -606,7 +616,12 @@ def generate_excelfile(logger, filepath, appName, snapshotversion, snapshotdate,
     ###############################################################################
     logger.info("Writing data in Excel")
     #file = open(filepath, 'w')
-    with pd.ExcelWriter(filepath,engine='xlsxwriter') as writer:
+    
+    b_string_to_urls = True
+    # Avoid Excel URL limitation (approx. 65K) see https://stackoverflow.com/questions/35729737/how-can-i-get-around-excels-url-limitation
+    if loadviolations and len(df_app_violations) > 65000:
+        b_string_to_urls = False
+    with pd.ExcelWriter(filepath,engine='xlsxwriter', engine_kwargs={'options':{'strings_to_urls': b_string_to_urls}}) as writer:
         df_readme.to_excel(writer, sheet_name=format.const_TAB_README, index=False)
         
         df_app_bc_grades.to_excel(writer, sheet_name=format.const_TAB_APP_BC_GRADES, index=False)
@@ -1073,7 +1088,7 @@ def format_table_rules_grades(workbook,worksheet, table, format, level='Applicat
             # also only if we find the metric id in the list of violations
             if loadviolations:
                 if listmetricsinviolations != None and len(listmetricsinviolations) > 0 and metricid in listmetricsinviolations:
-                    formula = "=SUMIF(%s!B:B, E%d,%s!N:N)"% (tab_viol, row_num + 1, tab_viol)
+                    formula = "=SUMIF(%s!A:A, E%d,%s!N:N)"% (tab_viol, row_num + 1, tab_viol)
                     #print(formula)
                     worksheet.write_formula(row_num, 14-1, formula)
             if loadmodules:
