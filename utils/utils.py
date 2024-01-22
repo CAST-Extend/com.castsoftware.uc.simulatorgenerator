@@ -376,7 +376,7 @@ class RestUtils:
             request_headers.update({'X-XSRF-TOKEN': self.session.cookies['XSRF-TOKEN']})
         except KeyError:
             None
-        request_headers.update({'Content-Type': 'application/json'})
+        request_headers.update({'Content-Type': contenttype})
     
         LogUtils.logdebug(self.logger,'Sending ' + requesttype + ' ' + request_text + ' with contenttype=' + contenttype + ' json=' + str(inputjsonstr), False)
         #LogUtils.logdebug(self.logger,'  Request headers=' + json.dumps(request_headers) , False)
@@ -398,8 +398,10 @@ class RestUtils:
             #LogUtils.logdebug(self.logger,'  HTTP code=%s headers=%s'% (str(response.status_code), json.dumps(response.headers._store)), False)
             
             # Error
-            if response.status_code not in (200, 201):
+            if response.status_code not in (200, 201, 204):
                 LogUtils.logerror(self.logger,'HTTP(S) request failed ' + str(response.status_code) + ' :' + request_text,True)
+                if response.text != None:
+                    LogUtils.logerror(self.logger,'%s' % str(response.text), True)
                 return None
             else:
                 # get the session cookie containing JSESSION
@@ -429,8 +431,8 @@ class RestUtils:
     
     ####################################################################################################
     
-    def execute_requests_put(self, request, accept='application/json', inputjson=None, contenttype='application/json'):
-        return self.execute_requests(request, 'PUT', accept, inputjson, contenttype)
+    def execute_requests_put(self, request, accept='application/json', inputcontent=None, contenttype='application/json'):
+        return self.execute_requests(request, 'PUT', accept, inputcontent, contenttype)
     
     ####################################################################################################
     
@@ -818,6 +820,10 @@ class AIPRestAPI:
             it.modules = modulelist 
         return snapshotlist 
     
+    def get_application_modules(self, domainname, applicationid, snapshotid):
+        modulelist = Module.loadlist(self.get_application_snapshot_modules_json(domainname, applicationid, snapshotid))
+        return modulelist
+    
     ########################################################################
     def get_total_number_violations_json(self, domain, applicationid, snapshotid):
         self.restutils.logger.info("Extracting the number of violations")
@@ -1135,6 +1141,22 @@ class AIPRestAPI:
             request += '&technologies=' + technoFilter
             
         return self.restutils.execute_requests_get(request)
+
+    ########################################################################
+    def update_backgroundfactmetric(self, domain, applicationid, snapshotid, metricid, coveragevalue, modulelist, central_schema="com_vogella_junit_first_central", app_name="com.vogella.junit.first"):
+        #AAD/applications/3/snapshots/10/results?background-facts=(66004)
+        request = domain + "/applications/" + str(applicationid) + "/snapshots/" + str(snapshotid) + "/results"
+        #?background-facts=(' + str(metricid) + ')'
+        #?background-facts=(' + metricid + ')'
+        
+        value = "ADG Database;Application Name;Module Name;Metric Id;Result\n"
+        formatedcoverage_for_hd = float(coveragevalue) / 100
+        value += central_schema + ";" + central_schema + ";;"+(metricid)+";" + str(formatedcoverage_for_hd) + "\n"
+        for it in modulelist:
+            # we don't compute a coverage value for the modules, so we inject 0 value
+            value += central_schema + ";" + app_name + ";" + it.modulename + ";"+(metricid)+";0\n"
+        
+        return self.restutils.execute_requests_put(request, accept='application/json', inputcontent=value, contenttype='text/csv')
     
     ########################################################################
     def create_scheduledexclusions_json(self, domain, applicationid, snapshotid, json_exclusions_to_create):

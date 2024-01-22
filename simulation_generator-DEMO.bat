@@ -3,7 +3,7 @@
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 REM configure python path, not required if python is on the path
 SET PYTHONPATH=
-REM SET PYTHONPATH=C:\Python\Python37\
+REM SET PYTHONPATH=C:\Python\Python312\
 SET PYTHONCMD=python
 IF NOT "%PYTHONPATH%" == "" SET PYTHONCMD=%PYTHONPATH%\python
 
@@ -14,6 +14,7 @@ ECHO =================================
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 REM install the additional python lib required
 REM IF NOT "%PYTHONPATH%" == "" "%PYTHONPATH%\Scripts\pip" install pandas
+REM IF NOT "%PYTHONPATH%" == "" "%PYTHONPATH%\Scripts\pip" install pyarrow
 REM IF NOT "%PYTHONPATH%" == "" "%PYTHONPATH%\Scripts\pip" install requests 
 REM IF NOT "%PYTHONPATH%" == "" "%PYTHONPATH%\Scripts\pip" install xlsxwriter
 
@@ -35,7 +36,7 @@ SET PASSWORD=cast
 
 :: [Optional] Application name regexp filter, if not defined all application will be exported
 ::SET APPFILTER=Webgoat^|eComm.*
-SET APPFILTER=eCommerce
+SET APPFILTER=shopizer
 ::HR Management with JEE
 ::Webgoat
 

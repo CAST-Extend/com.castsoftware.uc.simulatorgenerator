@@ -42,8 +42,15 @@ You need to configure either the batch file provided, or the command line runnin
 You need to provide the CAST Engineering Dashboard URL and credentials.
 <a name="operation"></a>
 # Operation instructions
-Requires a Python runtime 3.6 and 3 python libraries (that are installed by pip as the first step of the batch).  
+Requires a Python runtime 3.11 and 4 python libraries (that can be installed by pip as the first step of the batch).  
 Run the batch file or the command line running the python script to generate the Excel file.  
+Recommended python runtime version : 3.12  
+Recommended python plugin versions :  
+- requests : 2.31 (and above)  
+- pandas : 2.2 (and above)   
+- pyarrow 15.0 (and above)  
+- xlsxwriter 3.1.9 (and above)  
+
 
 <a name="expect"></a>
 # What results can you expect?
@@ -85,6 +92,10 @@ None
 - Excel 2019, Excel 2021 or Excel 365 are required since Excel formulas are using MAXIFS/MINIFS supported only starting Excel 2019
 <a name="rn"></a>
 # Release Notes
+## Version 1.3.3
+Change recommended Python version to 3.12 and add python plugin recommended versions  
+Add pyarrow plugin dependency to anticipate pandas future dependency to pyarrow
+Minor fixes  
 ## Version 1.3.2
 When load violations option is enabled :  
 	Fix the "Nb violations for action" formula when the Violations extraction is selected  
