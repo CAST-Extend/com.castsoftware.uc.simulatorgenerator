@@ -10,7 +10,7 @@
     <iconUrl>https://raw.githubusercontent.com/CAST-Extend/com.castsoftware.uc.simulatorgenerator/master/256px-Office-ms-excel.svg.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>This extension generates an Excel file that allows to simulate the grade impact and effort to fix a number of violations for a set of quality rules</description>
-    <releaseNotes>https://github.com/CAST-Extend/com.castsoftware.uc.simulatorgenerator/wiki#version-132</releaseNotes>
+    <releaseNotes>https://github.com/CAST-Extend/com.castsoftware.uc.simulatorgenerator/wiki#version-133</releaseNotes>
     <tags>CASTUserCommunity Quality</tags>
     <dependencies>
       <dependency id="CAIP" version="8.3" />
