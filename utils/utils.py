@@ -22,8 +22,9 @@ class Filter:
         None
         
 class ViolationFilter(Filter):
-    def __init__(self, criticalrulesonlyfilter, businesscriterionfilter, technofilter, violationstatusfilter, qridfilter, qrnamefilter, nbrowsfilter):
+    def __init__(self, criticalrulesonlyfilter, businesscriterionfilter, technicalcriterionfilter, technofilter, violationstatusfilter, qridfilter, qrnamefilter, nbrowsfilter):
         self.criticalrulesonly = criticalrulesonlyfilter
+        self.technicalCriterion = technicalcriterionfilter
         self.businesscriterion = businesscriterionfilter
         self.techno = technofilter
         self.violationstatus = violationstatusfilter
@@ -184,7 +185,7 @@ class RestUtils:
             if self.restclient == 'curl':
                 return self.execute_curl(request, apikey, json_filepath)
             elif self.restclient == 'requests':
-                return self.execute_requests(request)    
+                return self.execute_requests(request, apikey=self.apikey)    
     
     ####################################################################################################
     
@@ -200,7 +201,7 @@ class RestUtils:
         if self.restclient == 'curl':
             return self.execute_curl(request, apikey, json_filepath, requesttype, 'application/json', inputjsonstr)
         elif self.restclient == 'requests':
-            return self.execute_requests(request, requesttype, 'application/json', inputjsonstr, contenttype)      
+            return self.execute_requests(request, requesttype, self.apikey, 'application/json', inputjsonstr, contenttype)      
     
     ####################################################################################################
     """
@@ -306,11 +307,20 @@ class RestUtils:
             self.logger.info('Opening session to ' + uri)
             response = None
             request_headers = {}
-            #request_headers.update(self.get_default_http_headers())        
+            request_headers.update(self.get_default_http_headers())        
             request_headers.update({'accept':'application/json'})        
             try:
                 self.session = requests.session()
-                if self.user != None and self.password != None and self.user != 'N/A' and self.password != 'N/A':
+				# api key
+                if self.apikey != None and self.apikey != 'N/A':
+                    self.logger.info ('Using api key')
+                    # API key configured in the Health / Engineering / REST-API WAR
+                    request_headers.update({'X-API-KEY':self.apikey})
+                    # we are provide a user name hardcoded' 
+                    #request_headers.update({'X-API-USER':'admin_apikey'})            
+                    # API key configured in ExtenNG
+                    #request_headers.update({'x-nuget-apikey':self.apikey})
+                elif self.user != None and self.password != None and self.user != 'N/A' and self.password != 'N/A':
                     self.logger.info ('Using user and password')
                     #we need to base 64 encode it 
                     #and then decode it to acsii as python 3 stores it as a byte string
@@ -319,15 +329,6 @@ class RestUtils:
                     #user_and_pass = b64encode(auth).decode("ascii")
                     user_and_pass = b64encode(auth).decode("iso-8859-1")
                     request_headers.update({'Authorization':'Basic %s' %  user_and_pass})
-                # else if the api key is provided
-                elif self.apikey != None and self.apikey != 'N/A':
-                    self.logger.info ('Using api key')
-                    # API key configured in the Health / Engineering / REST-API WAR
-                    request_headers.update({'X-API-KEY':self.apikey})
-                    # we are provide a user name hardcoded' 
-                    #request_headers.update({'X-API-USER':'admin_apikey'})            
-                    # API key configured in ExtenNG
-                    #request_headers.update({'x-nuget-apikey':self.apikey})
                 
                 self.logger.info ('request headers = ' + str(request_headers))
                 
@@ -354,11 +355,12 @@ class RestUtils:
 
     def get_default_http_headers(self):
         # User agent & Name of the client added in the header (for the audit trail)
+        #default_headers = {}
         default_headers = {"User-Agent": "XY", "X-Client": self.extensionid} 
         return default_headers
 
     ####################################################################################################
-    def execute_requests(self, request, requesttype='GET', accept='application/json', inputjsonstr=None, contenttype='application/json'):
+    def execute_requests(self, request, requesttype='GET', apikey=None, accept='application/json', inputjsonstr=None, contenttype='application/json'):
         if self.session == None:
             self.session = self.open_session()
             
@@ -371,14 +373,22 @@ class RestUtils:
         
         request_headers = {}
         request_headers.update(self.get_default_http_headers())
-        request_headers.update({'accept' : accept})
+        request_headers.update({'Accept' : accept})
         try:
             request_headers.update({'X-XSRF-TOKEN': self.session.cookies['XSRF-TOKEN']})
         except KeyError:
             None
         request_headers.update({'Content-Type': contenttype})
+        if apikey and apikey != 'N/A':
+            request_headers.update({'x-api-key': apikey})
     
-        LogUtils.logdebug(self.logger,'Sending ' + requesttype + ' ' + request_text + ' with contenttype=' + contenttype + ' json=' + str(inputjsonstr), False)
+        LogUtils.logdebug(self.logger,'Sending ' + requesttype + ' ' + request_text + ' with headers=' + str(request_headers) + ' json=' + str(inputjsonstr), False)
+        curl_eq = 'curl -k '
+        if request_headers.get("Accept"): curl_eq+= ' -H "Accept: %s"' % (request_headers["Accept"])
+        if request_headers.get("x-api-key"): curl_eq+= ' -H "x-api-key: %s"' % (request_headers["x-api-key"])
+        curl_eq += ' "' + request_text + '"' #-o output.txt
+        LogUtils.logdebug(self.logger,'    cUrl equivalent=%s' % curl_eq, False)
+        
         #LogUtils.logdebug(self.logger,'  Request headers=' + json.dumps(request_headers) , False)
     
         # send the request
@@ -412,6 +422,7 @@ class RestUtils:
                     self.session_cookie = session_cookie
                     #print('3='+session_cookie)
                 
+                #LogUtils.loginfo(self.logger,"response.text="+response.text,True)
                 if contenttype == 'application/json':
                     output = response.json()
                 else:
@@ -422,23 +433,22 @@ class RestUtils:
     ####################################################################################################
     
     def execute_requests_get(self, request, accept='application/json', content_type='application/json'):
-        return self.execute_requests(request, 'GET', accept, None, content_type)
+        return self.execute_requests(request, 'GET', self.apikey, accept, None, content_type)
     
     ####################################################################################################
     
     def execute_requests_post(self, request, accept='application/json', inputjson=None, contenttype='application/json'):
-        return self.execute_requests(request, 'POST', inputjson, accept, contenttype)
+        return self.execute_requests(request, 'POST', self.apikey, inputjson, accept, contenttype)
     
     ####################################################################################################
     
     def execute_requests_put(self, request, accept='application/json', inputcontent=None, contenttype='application/json'):
-        return self.execute_requests(request, 'PUT', accept, inputcontent, contenttype)
+        return self.execute_requests(request, 'PUT', self.apikey, accept, inputcontent, contenttype)
     
     ####################################################################################################
     
     def execute_requests_delete(self, request, accept='application/json', inputjson=None, contenttype='application/json'):
-        return self.execute_requests(request, 'DELETE', accept, inputjson, contenttype)
-
+        return self.execute_requests(request, 'DELETE', self.apikey, accept, inputjson, contenttype)
 
 ########################################################################
 
@@ -976,6 +986,7 @@ class AIPRestAPI:
             request += '&status=' + violationfilter.violationstatus
         if violationfilter.businesscriterion == None:
             violationfilter.businesscriterion = "60017"
+        
         if violationfilter.businesscriterion != None:
             strbusinesscriterionfilter = str(violationfilter.businesscriterion)        
             # we can have multiple value separated with a comma
@@ -988,6 +999,17 @@ class AIPRestAPI:
                     request += 'nc:' + item + ','
             request = request[:-1]
             request += ')'
+
+            if violationfilter.technicalCriterion != None:
+                request += '&rule-pattern=('
+                for item in strbusinesscriterionfilter.split(sep=','):
+                    request += 'c:' + item + ','
+                request = request[:-1]
+                request += ')'
+
+            if violationfilter.qrid != None:
+                request='?rule-pattern=' + violationfilter.qridFilter
+            
             
         if violationfilter.techno != None:
             request += '&technologies=' + violationfilter.techno

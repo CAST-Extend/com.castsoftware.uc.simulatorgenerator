@@ -54,6 +54,7 @@ def init_parse_argument():
     requiredNamed.add_argument('-qrnamefilter', required=False, dest='qrnamefilter', help='For violations filtering, violation quality rule name regexp filter')
     requiredNamed.add_argument('-criticalrulesonlyfilter', required=False, dest='criticalrulesonlyfilter', help='For violations filtering, violation quality rules filter (True|False)')
     requiredNamed.add_argument('-businesscriterionfilter', required=False, dest='businesscriterionfilter', help='For violations filtering, business criterion filter : 60016,60012, ...)')
+    requiredNamed.add_argument('-technicalcriterionfilter', required=False, dest='technicalcriterionfilter', help='For violations filtering, technical criterion filter : 61027,61014, ...)')
     requiredNamed.add_argument('-technofilter', required=False, dest='technofilter', help='For violations filtering, violation quality rule technology filter (JEE, SQL, HTML5, Cobol...)')    
     
     requiredNamed.add_argument('-applicationfilter', required=False, dest='applicationfilter', help='Application name regexp filter')
@@ -143,6 +144,7 @@ if __name__ == '__main__':
     if args.criticalrulesonlyfilter != None and (args.criticalrulesonlyfilter == 'True' or args.criticalrulesonlyfilter == 'true'):
         criticalrulesonlyfilter = True
     businesscriterionfilter = args.businesscriterionfilter
+    technicalcriterionfilter = args.technicalcriterionfilter
     technofilter = args.technofilter
 
     # new params
@@ -212,6 +214,7 @@ if __name__ == '__main__':
         logger.info('qrnamefilter='+str(qrnamefilter))
         logger.info('criticalrulesonlyfilter='+str(criticalrulesonlyfilter))
         logger.info('businesscriterionfilter='+str(businesscriterionfilter))
+        logger.info('technicalcriterionfilter='+str(technicalcriterionfilter))
         logger.info('technofilter='+str(technofilter))
         logger.info('extensioninstallationfolder='+extensioninstallationfolder)
         logger.info('log level='+loglevel)
@@ -368,7 +371,7 @@ if __name__ == '__main__':
                             if loaddata and loadviolations: 
                                 LogUtils.loginfo(logger,'Extracting violations',True)
                                 LogUtils.loginfo(logger,'Loading violations from the REST API',True)
-                                violationfilter = ViolationFilter(criticalrulesonlyfilter, businesscriterionfilter, technofilter, None, qridfilter, qrnamefilter, nbrows)
+                                violationfilter = ViolationFilter(criticalrulesonlyfilter, businesscriterionfilter, technicalcriterionfilter, technofilter, None, qridfilter, qrnamefilter, technicalcriterionfilter, nbrows)
                                 listviolations = rest_service_aip.get_snapshot_violations(domain.name, objapp.id, objsnapshot.snapshotid, edurl,objsnapshot.href, tqiqm, listtccontributions, violationfilter)                                            
                             # generate output file                                    
                             fpath = get_excelfilepath(outputfolder, objapp.name)
